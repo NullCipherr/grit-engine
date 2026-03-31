@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "dev": "vite build --watch",
+    "demo": "vite examples/browser-demo --host",
     "build": "vite build && npm run build:types",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",

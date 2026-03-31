@@ -1,23 +1,45 @@
 # Roadmap
 
-## Short Term
+## Status Atual
 
-- [x] Stabilize public API naming and docs
-- [x] Add baseline unit tests for core math and collisions
-- [x] Expand integration examples for multiple frameworks
+### Curto Prazo (Concluído)
 
-## Mid Term
+- [x] Estabilizar nomenclatura da API pública e documentação
+- [x] Adicionar testes unitários base para matemática core e colisões
+- [x] Expandir exemplos de integração para múltiplos frameworks
 
-- [x] Deterministic seed mode for reproducible simulations
-- [x] Optional worker-based simulation execution (experimental worker ticker)
-- [x] Improved profiling tooling and benchmark suite (scripts + baseline docs)
+### Médio Prazo (Concluído)
 
-## Long Term
+- [x] Modo determinístico com seed para simulações reprodutíveis
+- [x] Execução opcional com worker ticker (experimental)
+- [x] Ferramentas de profiling e benchmark com baseline documentado
 
-- [ ] Modular plugin system for custom forces and constraints
-- [ ] Optional WASM acceleration path
-- [ ] Extended rendering backends and post-processing options
+### Longo Prazo (Concluído)
 
-## Product Direction
+- [x] Sistema modular de plugins para forças e constraints customizadas
+- [x] Caminho opcional de aceleração WASM com fallback seguro para JS
+- [x] Backends estendidos de renderização e opções de pós-processamento
 
-GRIT is intended as a reusable engine core for internal and commercial products, with wrapper layers per platform/framework.
+## Próximas Entregas
+
+### Curto Prazo
+
+- [ ] Testes automatizados para ciclo de plugins (registro, desregistro, ordem e isolamento)
+- [ ] Guia rápido de criação de plugin oficial com exemplos prontos para copiar
+- [ ] Telemetria básica de frame-time (ms) no callback de estatísticas
+
+### Médio Prazo
+
+- [ ] API para kernels WASM externos (carregamento, contrato e validação)
+- [ ] Snapshot visual determinístico para regressão gráfica (seed fixa)
+- [ ] Presets de pós-processamento por perfil (performance, balanced, cinematic)
+
+### Longo Prazo
+
+- [ ] Multi-camada de render com composição offscreen (quando disponível)
+- [ ] Runtime multiplayer/sincronização determinística para experiências compartilhadas
+- [ ] Ferramental de authoring visual para plugins e cenários interativos
+
+## Direção de Produto
+
+GRIT segue como núcleo reutilizável para produtos internos e comerciais, com camadas de integração por plataforma/framework e foco em previsibilidade, performance e extensibilidade.

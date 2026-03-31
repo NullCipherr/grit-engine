@@ -54,6 +54,9 @@ It is designed to be consumed by wrappers in React, Vue, Svelte, or vanilla Java
 - **DPR-aware resize pipeline** for visual quality and performance balance.
 - **Deterministic seed mode** for reproducible sessions.
 - **Optional worker ticker mode** for experimental scheduling.
+- **Plugin system** for custom forces and constraints.
+- **Optional WASM simulation path** with safe JS fallback.
+- **Multiple rendering backends** (`webgl2` and `canvas2d`) with post-processing controls.
 
 ---
 
@@ -207,6 +210,20 @@ npm run typecheck
 ```bash
 npm run dev
 ```
+
+### Browser Demo
+
+```bash
+npm run demo
+```
+
+Then open `http://localhost:5173/` (or the URL shown by Vite) to test:
+
+- Spawn burst, pause/resume, and clear simulation;
+- Switch render backend (`auto`, `webgl2`, `canvas2d`);
+- Switch simulation backend (`auto`, `wasm`, `js`);
+- Toggle post-processing (`bloom`, `vignette`, trail strength);
+- Enable/disable plugin force and plugin constraint behaviors.
 
 ### Test
 

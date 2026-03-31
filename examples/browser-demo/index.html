@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GRIT Engine Browser Demo</title>
+    <meta name="description" content="Demo de teste da GRIT Engine com plugins, backends e pós-processamento." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="panel">
+        <h1>GRIT Engine Demo</h1>
+        <p class="subtitle">Cenário de validação para navegador com plugins, renderização e backend de simulação.</p>
+
+        <div class="group">
+          <h2>Status</h2>
+          <p id="stats" class="status">Aguardando...</p>
+        </div>
+
+        <div class="group">
+          <h2>Execução</h2>
+          <label>
+            Render backend
+            <select id="render-backend">
+              <option value="auto">auto</option>
+              <option value="webgl2">webgl2</option>
+              <option value="canvas2d">canvas2d</option>
+            </select>
+          </label>
+
+          <label>
+            Simulação
+            <select id="simulation-backend">
+              <option value="auto">auto</option>
+              <option value="wasm">wasm</option>
+              <option value="js">js</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="group">
+          <h2>Pós-processamento</h2>
+          <label class="checkbox">
+            <input id="toggle-bloom" type="checkbox" checked />
+            Bloom
+          </label>
+          <label class="checkbox">
+            <input id="toggle-vignette" type="checkbox" />
+            Vinheta
+          </label>
+          <label>
+            Intensidade da trilha
+            <input id="trail" type="range" min="0" max="1" step="0.01" value="0.72" />
+          </label>
+        </div>
+
+        <div class="group">
+          <h2>Plugins</h2>
+          <label class="checkbox">
+            <input id="toggle-force-plugin" type="checkbox" checked />
+            Orbital Wind Force (plugin)
+          </label>
+          <label class="checkbox">
+            <input id="toggle-constraint-plugin" type="checkbox" checked />
+            Arena Constraint (plugin)
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="spawn">Spawn Burst</button>
+          <button id="pause">Pausar</button>
+          <button id="clear">Limpar</button>
+        </div>
+
+        <p class="hint">Use o mouse para atrair partículas. Clique e arraste para gerar mais partículas. <kbd>Shift</kbd> + clique cria obstáculos.</p>
+      </section>
+
+      <section class="stage" aria-label="Cenário da simulação">
+        <canvas id="sim-canvas" aria-label="Simulação de partículas"></canvas>
+        <canvas id="overlay-canvas" aria-hidden="true"></canvas>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

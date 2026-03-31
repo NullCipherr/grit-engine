@@ -1,4 +1,4 @@
-import { type EngineStats, type GritEngineOptions, type SimConfig } from './types';
+import { type EngineStats, type GritEngineOptions, type GritPlugin, type PostProcessingOptions, type RenderBackend, type SimConfig, type SimulationBackend } from './types';
 export declare class GritEngine {
     private readonly canvas;
     private readonly overlayCanvas?;
@@ -9,6 +9,8 @@ export declare class GritEngine {
     private readonly executionMode;
     private readonly onStats?;
     private renderer;
+    private renderBackend;
+    private simulationBackend;
     private grid;
     private requestId;
     private workerTicker;
@@ -20,13 +22,21 @@ export declare class GritEngine {
     private overlayDirty;
     private pointer;
     private config;
+    private postProcessing;
     private frameCount;
+    private frameIndex;
     private lastTime;
     private lastFpsTime;
     private lastUiUpdate;
     private fps;
     private random;
     private seededRandom;
+    private pluginsById;
+    private forcePlugins;
+    private constraintPlugins;
+    private framePlugins;
+    private pluginFrameContext;
+    private pluginParticleContext;
     constructor(options: GritEngineOptions);
     start(): void;
     stop(): void;
@@ -34,6 +44,12 @@ export declare class GritEngine {
     resize(): void;
     updateSettings(config: Partial<SimConfig>): void;
     getSettings(): SimConfig;
+    updatePostProcessing(options: Partial<PostProcessingOptions>): void;
+    getPostProcessing(): PostProcessingOptions;
+    getRenderBackend(): "webgl2" | "canvas2d";
+    setRenderBackend(backend: RenderBackend): void;
+    getSimulationBackend(): "js" | "wasm";
+    setSimulationBackend(backend: SimulationBackend): void;
     setPaused(paused: boolean): void;
     getPaused(): boolean;
     setPointer(x: number, y: number): void;
@@ -44,7 +60,18 @@ export declare class GritEngine {
     addObstacle(x: number, y: number): void;
     clear(): void;
     getStats(): EngineStats;
+    registerPlugin(plugin: GritPlugin): void;
+    unregisterPlugin(pluginId: string): boolean;
+    clearPlugins(): void;
+    getPlugins(): readonly GritPlugin[];
     private animate;
+    private updateParticleJsPath;
+    private updateParticleWasmPath;
+    private updatePluginContexts;
+    private runFrameStartPlugins;
+    private runFrameEndPlugins;
+    private runForcePlugins;
+    private runConstraintPlugins;
     private redrawOverlay;
     private emitStats;
     private configureRandom;

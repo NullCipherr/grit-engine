@@ -1,9 +1,23 @@
+import { createRenderer } from './core/rendererFactory';
+import type { Renderer } from './core/types';
 import { Obstacle } from './core/Obstacle';
 import { Particle } from './core/Particle';
 import { SpatialGrid } from './core/SpatialGrid';
-import { WebGLRenderer } from './core/WebGLRenderer';
 import { WorkerTicker } from './runtime/WorkerTicker';
-import { DEFAULT_SIM_CONFIG, type EngineStats, type GritEngineOptions, type SimConfig } from './types';
+import { resolveSimulationBackend } from './runtime/simulationBackend';
+import {
+  DEFAULT_POST_PROCESSING,
+  DEFAULT_SIM_CONFIG,
+  type EngineStats,
+  type GritEngineOptions,
+  type GritPlugin,
+  type GritPluginFrameContext,
+  type GritPluginParticleContext,
+  type PostProcessingOptions,
+  type RenderBackend,
+  type SimConfig,
+  type SimulationBackend
+} from './types';
 import { SeededRandom } from './utils/SeededRandom';
 
 const UI_UPDATE_INTERVAL_MS = 200;
@@ -19,7 +33,10 @@ export class GritEngine {
   private readonly executionMode: GritEngineOptions['executionMode'];
   private readonly onStats?: (stats: EngineStats) => void;
 
-  private renderer: WebGLRenderer;
+  private renderer: Renderer;
+  private renderBackend: Exclude<RenderBackend, 'auto'>;
+  private simulationBackend: Exclude<SimulationBackend, 'auto'>;
+
   private grid: SpatialGrid;
   private requestId: number | null = null;
   private workerTicker: WorkerTicker | null = null;
@@ -34,14 +51,41 @@ export class GritEngine {
   private pointer = { x: null as number | null, y: null as number | null };
 
   private config: SimConfig;
+  private postProcessing: PostProcessingOptions;
 
   private frameCount = 0;
+  private frameIndex = 0;
   private lastTime = performance.now();
   private lastFpsTime = performance.now();
   private lastUiUpdate = performance.now();
   private fps = 0;
   private random: (() => number) | null = null;
   private seededRandom: SeededRandom | null = null;
+
+  private pluginsById = new Map<string, GritPlugin>();
+  private forcePlugins: GritPlugin[] = [];
+  private constraintPlugins: GritPlugin[] = [];
+  private framePlugins: GritPlugin[] = [];
+
+  private pluginFrameContext: GritPluginFrameContext = {
+    config: DEFAULT_SIM_CONFIG,
+    canvasWidth: 0,
+    canvasHeight: 0,
+    dt: 0,
+    frame: 0,
+    now: 0
+  };
+
+  private pluginParticleContext: GritPluginParticleContext = {
+    config: DEFAULT_SIM_CONFIG,
+    canvasWidth: 0,
+    canvasHeight: 0,
+    dt: 0,
+    frame: 0,
+    now: 0,
+    pointerX: null,
+    pointerY: null
+  };
 
   constructor(options: GritEngineOptions) {
     this.canvas = options.canvas;
@@ -52,13 +96,26 @@ export class GritEngine {
     this.maxDpr = options.maxDpr ?? 2;
     this.executionMode = options.executionMode ?? 'main-thread';
     this.onStats = options.onStats;
+
     this.config = {
       ...DEFAULT_SIM_CONFIG,
       ...options.config
     };
 
+    this.postProcessing = {
+      ...DEFAULT_POST_PROCESSING,
+      ...options.postProcessing,
+      bloom: options.config?.bloom ?? options.postProcessing?.bloom ?? DEFAULT_POST_PROCESSING.bloom
+    };
+
     this.grid = new SpatialGrid(options.gridCellSize ?? 40);
-    this.renderer = new WebGLRenderer(this.canvas, this.maxParticles);
+
+    const { renderer, backend } = createRenderer(this.canvas, this.maxParticles, options.renderBackend ?? 'auto');
+    this.renderer = renderer;
+    this.renderBackend = backend;
+
+    this.simulationBackend = resolveSimulationBackend(options.simulationBackend ?? 'auto');
+
     this.configureRandom(options.seed);
 
     this.resize();
@@ -100,6 +157,7 @@ export class GritEngine {
 
   dispose() {
     this.stop();
+    this.clearPlugins();
     this.renderer.dispose();
   }
 
@@ -141,10 +199,48 @@ export class GritEngine {
       ...this.config,
       ...config
     };
+
+    if (typeof config.bloom === 'boolean') {
+      this.postProcessing = {
+        ...this.postProcessing,
+        bloom: config.bloom
+      };
+    }
   }
 
   getSettings(): SimConfig {
     return { ...this.config };
+  }
+
+  updatePostProcessing(options: Partial<PostProcessingOptions>) {
+    this.postProcessing = {
+      ...this.postProcessing,
+      ...options
+    };
+  }
+
+  getPostProcessing(): PostProcessingOptions {
+    return { ...this.postProcessing };
+  }
+
+  getRenderBackend() {
+    return this.renderBackend;
+  }
+
+  setRenderBackend(backend: RenderBackend) {
+    const { renderer, backend: resolvedBackend } = createRenderer(this.canvas, this.maxParticles, backend);
+
+    this.renderer.dispose();
+    this.renderer = renderer;
+    this.renderBackend = resolvedBackend;
+  }
+
+  getSimulationBackend() {
+    return this.simulationBackend;
+  }
+
+  setSimulationBackend(backend: SimulationBackend) {
+    this.simulationBackend = resolveSimulationBackend(backend);
   }
 
   setPaused(paused: boolean) {
@@ -210,12 +306,69 @@ export class GritEngine {
     };
   }
 
+  registerPlugin(plugin: GritPlugin) {
+    if (!plugin.id) {
+      throw new Error('Plugin precisa definir id único');
+    }
+
+    if (this.pluginsById.has(plugin.id)) {
+      throw new Error(`Plugin com id "${plugin.id}" já registrado`);
+    }
+
+    this.pluginsById.set(plugin.id, plugin);
+
+    if (plugin.applyForce) {
+      this.forcePlugins.push(plugin);
+    }
+
+    if (plugin.applyConstraint) {
+      this.constraintPlugins.push(plugin);
+    }
+
+    if (plugin.onFrameStart || plugin.onFrameEnd) {
+      this.framePlugins.push(plugin);
+    }
+
+    plugin.onRegister?.();
+  }
+
+  unregisterPlugin(pluginId: string) {
+    const plugin = this.pluginsById.get(pluginId);
+    if (!plugin) {
+      return false;
+    }
+
+    this.pluginsById.delete(pluginId);
+    this.forcePlugins = this.forcePlugins.filter((entry) => entry.id !== pluginId);
+    this.constraintPlugins = this.constraintPlugins.filter((entry) => entry.id !== pluginId);
+    this.framePlugins = this.framePlugins.filter((entry) => entry.id !== pluginId);
+    plugin.onUnregister?.();
+
+    return true;
+  }
+
+  clearPlugins() {
+    for (const plugin of this.pluginsById.values()) {
+      plugin.onUnregister?.();
+    }
+
+    this.pluginsById.clear();
+    this.forcePlugins.length = 0;
+    this.constraintPlugins.length = 0;
+    this.framePlugins.length = 0;
+  }
+
+  getPlugins(): readonly GritPlugin[] {
+    return Array.from(this.pluginsById.values());
+  }
+
   private animate = (currentTime: number) => {
     if (!this.running) return;
 
     if (!this.paused) {
       const dt = Math.min((currentTime - this.lastTime) / 16.666, 3);
       this.lastTime = currentTime;
+      this.frameIndex++;
 
       const { x: mx, y: my } = this.pointer;
 
@@ -225,6 +378,9 @@ export class GritEngine {
       }
 
       const useNeighbors = this.config.flocking || this.config.collisions;
+
+      this.updatePluginContexts(dt, currentTime, mx, my);
+      this.runFrameStartPlugins();
 
       for (let i = this.particles.length - 1; i >= 0; i--) {
         const particle = this.particles[i];
@@ -237,23 +393,24 @@ export class GritEngine {
           this.neighborsBuffer.length = 0;
         }
 
-        particle.update(
-          this.config,
-          this.canvas.width,
-          this.canvas.height,
-          mx,
-          my,
-          neighbors,
-          this.obstacles,
-          dt
-        );
+        this.runForcePlugins(particle);
+
+        if (this.simulationBackend === 'wasm') {
+          this.updateParticleWasmPath(particle, neighbors, mx, my, dt);
+        } else {
+          this.updateParticleJsPath(particle, neighbors, mx, my, dt);
+        }
+
+        this.runConstraintPlugins(particle);
 
         if (particle.isDead()) {
           this.particles.splice(i, 1);
         }
       }
 
-      this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.config.bloom);
+      this.runFrameEndPlugins();
+
+      this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.postProcessing);
       this.redrawOverlay();
 
       this.frameCount++;
@@ -274,6 +431,103 @@ export class GritEngine {
 
     this.requestId = requestAnimationFrame(this.animate);
   };
+
+  private updateParticleJsPath(
+    particle: Particle,
+    neighbors: Particle[],
+    mouseX: number | null,
+    mouseY: number | null,
+    dt: number
+  ) {
+    particle.update(
+      this.config,
+      this.canvas.width,
+      this.canvas.height,
+      mouseX,
+      mouseY,
+      neighbors,
+      this.obstacles,
+      dt
+    );
+  }
+
+  private updateParticleWasmPath(
+    particle: Particle,
+    neighbors: Particle[],
+    mouseX: number | null,
+    mouseY: number | null,
+    dt: number
+  ) {
+    // Caminho de compatibilidade para kernels WASM: quando nenhum kernel externo é
+    // injetado, a engine mantém o mesmo contrato e usa o integrador JS como fallback.
+    particle.update(
+      this.config,
+      this.canvas.width,
+      this.canvas.height,
+      mouseX,
+      mouseY,
+      neighbors,
+      this.obstacles,
+      dt
+    );
+  }
+
+  private updatePluginContexts(dt: number, now: number, pointerX: number | null, pointerY: number | null) {
+    this.pluginFrameContext = {
+      config: this.config,
+      canvasWidth: this.canvas.width,
+      canvasHeight: this.canvas.height,
+      dt,
+      frame: this.frameIndex,
+      now
+    };
+
+    this.pluginParticleContext = {
+      ...this.pluginFrameContext,
+      pointerX,
+      pointerY
+    };
+  }
+
+  private runFrameStartPlugins() {
+    if (this.framePlugins.length === 0) return;
+
+    for (let i = 0; i < this.framePlugins.length; i++) {
+      const plugin = this.framePlugins[i];
+      if (plugin.enabled === false || !plugin.onFrameStart) continue;
+      plugin.onFrameStart(this.pluginFrameContext);
+    }
+  }
+
+  private runFrameEndPlugins() {
+    if (this.framePlugins.length === 0) return;
+
+    for (let i = 0; i < this.framePlugins.length; i++) {
+      const plugin = this.framePlugins[i];
+      if (plugin.enabled === false || !plugin.onFrameEnd) continue;
+      plugin.onFrameEnd(this.pluginFrameContext);
+    }
+  }
+
+  private runForcePlugins(particle: Particle) {
+    if (this.forcePlugins.length === 0) return;
+
+    for (let i = 0; i < this.forcePlugins.length; i++) {
+      const plugin = this.forcePlugins[i];
+      if (plugin.enabled === false || !plugin.applyForce) continue;
+      plugin.applyForce(particle, this.pluginParticleContext);
+    }
+  }
+
+  private runConstraintPlugins(particle: Particle) {
+    if (this.constraintPlugins.length === 0) return;
+
+    for (let i = 0; i < this.constraintPlugins.length; i++) {
+      const plugin = this.constraintPlugins[i];
+      if (plugin.enabled === false || !plugin.applyConstraint) continue;
+      plugin.applyConstraint(particle, this.pluginParticleContext);
+    }
+  }
 
   private redrawOverlay() {
     if (!this.overlayCanvas || !this.overlayCtx || !this.overlayDirty) return;

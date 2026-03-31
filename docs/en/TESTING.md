@@ -31,4 +31,5 @@ The repository validates with:
 npm run test
 npm run typecheck
 npm run build
+npm run demo
 ```

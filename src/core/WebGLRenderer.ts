@@ -3,6 +3,8 @@
  * Licensed under the GRIT Source-Available License.
  */
 
+import type { PostProcessingOptions } from '../types';
+import type { Renderer } from './types';
 import { Particle } from './Particle';
 
 const BG_R = 17 / 255;
@@ -12,7 +14,7 @@ const BG_B = 28 / 255;
 const INSTANCE_STRIDE_FLOATS = 7; // x, y, size, r, g, b, alpha
 const INSTANCE_STRIDE_BYTES = INSTANCE_STRIDE_FLOATS * 4;
 
-export class WebGLRenderer {
+export class WebGLRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
   private gl: WebGL2RenderingContext;
 
@@ -30,6 +32,8 @@ export class WebGLRenderer {
 
   private uResolutionLoc: WebGLUniformLocation | null = null;
   private uBloomLoc: WebGLUniformLocation | null = null;
+  private uVignetteLoc: WebGLUniformLocation | null = null;
+  private uFadeAlphaLoc: WebGLUniformLocation | null = null;
 
   private firstFrame = true;
   private isContextLost = false;
@@ -37,6 +41,8 @@ export class WebGLRenderer {
   private lastWidth = -1;
   private lastHeight = -1;
   private lastBloom = -1;
+  private lastVignette = -1;
+  private lastFadeAlpha = -1;
 
   // 360-step LUT for HSL(h, 0.85, 0.65) -> RGB
   private readonly huePalette = new Float32Array(360 * 3);
@@ -163,6 +169,9 @@ export class WebGLRenderer {
       in float v_alpha;
       in float v_bloom;
 
+      uniform vec2 u_resolution;
+      uniform float u_vignette;
+
       out vec4 outColor;
 
       void main() {
@@ -176,6 +185,14 @@ export class WebGLRenderer {
         }
 
         alpha *= 1.0 - step(1.0, dist);
+
+        if (u_vignette > 0.5) {
+          vec2 uv = gl_FragCoord.xy / u_resolution;
+          float d = distance(uv, vec2(0.5));
+          float vignette = 1.0 - smoothstep(0.35, 0.75, d) * 0.35;
+          alpha *= vignette;
+        }
+
         outColor = vec4(v_color * alpha, alpha);
       }
     `;
@@ -189,9 +206,10 @@ export class WebGLRenderer {
 
     const fadeFs = `#version 300 es
       precision mediump float;
+      uniform float u_fadeAlpha;
       out vec4 outColor;
       void main() {
-        outColor = vec4(${BG_R.toFixed(8)}, ${BG_G.toFixed(8)}, ${BG_B.toFixed(8)}, 0.28);
+        outColor = vec4(${BG_R.toFixed(8)}, ${BG_G.toFixed(8)}, ${BG_B.toFixed(8)}, u_fadeAlpha);
       }
     `;
 
@@ -200,6 +218,8 @@ export class WebGLRenderer {
 
     this.uResolutionLoc = gl.getUniformLocation(this.program, 'u_resolution');
     this.uBloomLoc = gl.getUniformLocation(this.program, 'u_bloom');
+    this.uVignetteLoc = gl.getUniformLocation(this.program, 'u_vignette');
+    this.uFadeAlphaLoc = gl.getUniformLocation(this.fadeProgram, 'u_fadeAlpha');
 
     const quadVertices = new Float32Array([
       -1, -1,
@@ -264,6 +284,8 @@ export class WebGLRenderer {
     this.lastWidth = -1;
     this.lastHeight = -1;
     this.lastBloom = -1;
+    this.lastVignette = -1;
+    this.lastFadeAlpha = -1;
   }
 
   private createProgram(vs: string, fs: string): WebGLProgram {
@@ -319,8 +341,8 @@ export class WebGLRenderer {
     return program;
   }
 
-  render(particles: readonly Particle[], width: number, height: number, bloom: boolean) {
-    if (this.isContextLost || !this.program || !this.fadeProgram || !this.vao || !this.fadeVao || !this.instanceBuffer) {
+  render(particles: readonly Particle[], width: number, height: number, postProcessing: PostProcessingOptions) {
+    if (!this.program || !this.fadeProgram || !this.vao || !this.fadeVao || !this.instanceBuffer || this.isContextLost) {
       return;
     }
 
@@ -334,20 +356,23 @@ export class WebGLRenderer {
       this.firstFrame = false;
     }
 
-    // Fade pass
+    const trailStrength = Math.max(0, Math.min(postProcessing.trailStrength, 1));
+    const fadeAlpha = Math.min(Math.max(1 - trailStrength, 0.04), 0.92);
+
     gl.useProgram(this.fadeProgram);
     gl.bindVertexArray(this.fadeVao);
+    if (fadeAlpha !== this.lastFadeAlpha) {
+      gl.uniform1f(this.uFadeAlphaLoc, fadeAlpha);
+      this.lastFadeAlpha = fadeAlpha;
+    }
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    // Instance upload
     const count = Math.min(particles.length, this.maxParticles);
     let offset = 0;
 
     for (let i = 0; i < count; i++) {
       const p = particles[i];
-
-      // Avoid sqrt in CPU hot path
       const speedSq = p.vx * p.vx + p.vy * p.vy;
       const visualHue = (p.hue + Math.min(speedSq * 1.25, 60)) | 0;
       const hueIndex = ((visualHue % 360) + 360) % 360;
@@ -363,16 +388,9 @@ export class WebGLRenderer {
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.instanceBuffer);
-
-    // Orphan the old store before upload to reduce sync stalls on some drivers
     gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
-    gl.bufferSubData(
-      gl.ARRAY_BUFFER,
-      0,
-      this.instanceData.subarray(0, count * INSTANCE_STRIDE_FLOATS)
-    );
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.instanceData.subarray(0, count * INSTANCE_STRIDE_FLOATS));
 
-    // Particle pass
     gl.useProgram(this.program);
     gl.bindVertexArray(this.vao);
 
@@ -382,20 +400,25 @@ export class WebGLRenderer {
       this.lastHeight = height;
     }
 
-    const bloomValue = bloom ? 1 : 0;
+    const bloomValue = postProcessing.bloom ? 1 : 0;
     if (bloomValue !== this.lastBloom) {
-      gl.uniform1f(this.uBloomLoc, bloom ? 1.0 : 0.0);
+      gl.uniform1f(this.uBloomLoc, bloomValue);
       this.lastBloom = bloomValue;
     }
 
-    if (bloom) {
+    const vignetteValue = postProcessing.vignette ? 1 : 0;
+    if (vignetteValue !== this.lastVignette) {
+      gl.uniform1f(this.uVignetteLoc, vignetteValue);
+      this.lastVignette = vignetteValue;
+    }
+
+    if (postProcessing.bloom) {
       gl.blendFunc(gl.ONE, gl.ONE);
     } else {
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     }
 
     gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count);
-
     gl.bindVertexArray(null);
   }
 

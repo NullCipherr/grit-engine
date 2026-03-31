@@ -6,10 +6,12 @@ export declare class GritEngine {
     private readonly maxParticles;
     private readonly spawnBatch;
     private readonly maxDpr;
+    private readonly executionMode;
     private readonly onStats?;
     private renderer;
     private grid;
     private requestId;
+    private workerTicker;
     private running;
     private paused;
     private particles;
@@ -23,6 +25,8 @@ export declare class GritEngine {
     private lastFpsTime;
     private lastUiUpdate;
     private fps;
+    private random;
+    private seededRandom;
     constructor(options: GritEngineOptions);
     start(): void;
     stop(): void;
@@ -35,11 +39,15 @@ export declare class GritEngine {
     setPointer(x: number, y: number): void;
     clearPointer(): void;
     spawnAt(x: number, y: number): void;
+    setSeed(seed: number): void;
+    getSeed(): number | null;
     addObstacle(x: number, y: number): void;
     clear(): void;
     getStats(): EngineStats;
     private animate;
     private redrawOverlay;
     private emitStats;
+    private configureRandom;
+    private getRandom;
 }
 //# sourceMappingURL=GritEngine.d.ts.map

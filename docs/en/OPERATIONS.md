@@ -6,6 +6,9 @@
 - `npm run build:types`: generate only declaration files.
 - `npm run typecheck`: run TypeScript checks without emit.
 - `npm run dev`: watch-mode build.
+- `npm run test`: run unit test suite.
+- `npm run benchmark`: run baseline benchmark scenarios.
+- `npm run profile`: run quick profiling scenarios.
 
 ## Versioning
 

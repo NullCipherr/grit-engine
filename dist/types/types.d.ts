@@ -15,6 +15,7 @@ export interface EngineStats {
     particleCount: number;
     fps: number;
 }
+export type ExecutionMode = 'main-thread' | 'worker-ticker';
 export interface GritEngineOptions {
     canvas: HTMLCanvasElement;
     overlayCanvas?: HTMLCanvasElement;
@@ -22,6 +23,8 @@ export interface GritEngineOptions {
     spawnBatch?: number;
     gridCellSize?: number;
     maxDpr?: number;
+    seed?: number;
+    executionMode?: ExecutionMode;
     config?: Partial<SimConfig>;
     onStats?: (stats: EngineStats) => void;
 }

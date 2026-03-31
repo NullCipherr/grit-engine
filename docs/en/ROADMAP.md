@@ -2,21 +2,21 @@
 
 ## Short Term
 
-- Stabilize public API naming and docs
-- Add baseline unit tests for core math and collisions
-- Expand integration examples for multiple frameworks
+- [x] Stabilize public API naming and docs
+- [x] Add baseline unit tests for core math and collisions
+- [x] Expand integration examples for multiple frameworks
 
 ## Mid Term
 
-- Deterministic seed mode for reproducible simulations
-- Optional worker-based simulation execution
-- Improved profiling tooling and benchmark suite
+- [x] Deterministic seed mode for reproducible simulations
+- [x] Optional worker-based simulation execution (experimental worker ticker)
+- [x] Improved profiling tooling and benchmark suite (scripts + baseline docs)
 
 ## Long Term
 
-- Modular plugin system for custom forces and constraints
-- Optional WASM acceleration path
-- Extended rendering backends and post-processing options
+- [ ] Modular plugin system for custom forces and constraints
+- [ ] Optional WASM acceleration path
+- [ ] Extended rendering backends and post-processing options
 
 ## Product Direction
 

@@ -23,6 +23,7 @@ English is the primary language for this repository.
 - [Performance](docs/en/PERFORMANCE.md)
 - [Deployment](docs/en/DEPLOYMENT.md)
 - [Testing](docs/en/TESTING.md)
+- [Integrations](docs/en/INTEGRATIONS.md)
 - [Roadmap](docs/en/ROADMAP.md)
 
 ---
@@ -50,6 +51,8 @@ It is designed to be consumed by wrappers in React, Vue, Svelte, or vanilla Java
 - **GPU instanced rendering** with additive bloom mode support.
 - **Pointer-ready interactions** (spawn, obstacles, attract/repulse).
 - **DPR-aware resize pipeline** for visual quality and performance balance.
+- **Deterministic seed mode** for reproducible sessions.
+- **Optional worker ticker mode** for experimental scheduling.
 
 ---
 
@@ -88,6 +91,8 @@ import { GritEngine, DEFAULT_SIM_CONFIG, type GritEngineOptions, type SimConfig 
 const engine = new GritEngine({
   canvas,
   overlayCanvas,
+  seed: 42,
+  executionMode: 'main-thread',
   config: DEFAULT_SIM_CONFIG
 });
 
@@ -109,6 +114,8 @@ Main methods:
 - `addObstacle(x, y)`
 - `clear()`
 - `getStats()`
+- `setSeed(seed)`
+- `getSeed()`
 
 ---
 
@@ -132,11 +139,22 @@ Main methods:
 │   └── en/
 │       ├── ARCHITECTURE.md
 │       ├── DEPLOYMENT.md
+│       ├── INTEGRATIONS.md
 │       ├── OPERATIONS.md
 │       ├── PERFORMANCE.md
 │       ├── ROADMAP.md
 │       ├── SIMULATION.md
 │       └── TESTING.md
+├── examples/
+│   ├── react/
+│   ├── svelte/
+│   ├── vanilla/
+│   └── vue/
+├── scripts/
+│   ├── benchmark.mjs
+│   └── profile.mjs
+├── tests/
+│   └── core/
 ├── src/
 │   ├── core/
 │   │   ├── Obstacle.ts
@@ -187,6 +205,19 @@ npm run typecheck
 
 ```bash
 npm run dev
+```
+
+### Test
+
+```bash
+npm run test
+```
+
+### Benchmark / Profile
+
+```bash
+npm run benchmark
+npm run profile
 ```
 
 ---

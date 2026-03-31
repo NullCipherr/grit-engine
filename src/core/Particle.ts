@@ -51,19 +51,25 @@ export class Particle {
   // Fallback color cache
   private colorString: string;
 
-  constructor(x: number, y: number, color: string, config: SimConfig) {
+  constructor(
+    x: number,
+    y: number,
+    color: string,
+    config: SimConfig,
+    random: () => number = Math.random
+  ) {
     this.id = ++particleIdCounter;
     this.x = x;
     this.y = y;
-    this.vx = (Math.random() - 0.5) * 10;
-    this.vy = (Math.random() - 0.5) * 10;
+    this.vx = (random() - 0.5) * 10;
+    this.vy = (random() - 0.5) * 10;
     this.ax = 0;
     this.ay = 0;
-    this.maxLife = config.particleLife + Math.random() * 50;
+    this.maxLife = config.particleLife + random() * 50;
     this.life = this.maxLife;
-    this.baseSize = config.particleSize * (0.4 + Math.random() * 0.8);
+    this.baseSize = config.particleSize * (0.4 + random() * 0.8);
     this.size = this.baseSize;
-    this.hue = 200 + Math.random() * 60;
+    this.hue = 200 + random() * 60;
     this.mass = this.size;
 
     this.flockingTimer = (this.id % 3) * 11; // stagger between particles

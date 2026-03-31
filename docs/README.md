@@ -10,6 +10,7 @@ This folder contains technical documentation for GRIT Engine.
 - [Performance](en/PERFORMANCE.md)
 - [Deployment](en/DEPLOYMENT.md)
 - [Testing](en/TESTING.md)
+- [Integrations](en/INTEGRATIONS.md)
 - [Roadmap](en/ROADMAP.md)
 
 ## Assets

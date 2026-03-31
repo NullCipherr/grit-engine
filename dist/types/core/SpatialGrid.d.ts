@@ -1,6 +1,6 @@
 /**
- * @license
- * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) NullCipherr.
+ * Licensed under the GRIT Source-Available License.
  */
 import { Particle } from './Particle';
 export declare class SpatialGrid {

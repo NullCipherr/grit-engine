@@ -2,7 +2,9 @@ import { Obstacle } from './core/Obstacle';
 import { Particle } from './core/Particle';
 import { SpatialGrid } from './core/SpatialGrid';
 import { WebGLRenderer } from './core/WebGLRenderer';
+import { WorkerTicker } from './runtime/WorkerTicker';
 import { DEFAULT_SIM_CONFIG, type EngineStats, type GritEngineOptions, type SimConfig } from './types';
+import { SeededRandom } from './utils/SeededRandom';
 
 const UI_UPDATE_INTERVAL_MS = 200;
 const EMPTY_NEIGHBORS: Particle[] = [];
@@ -14,11 +16,13 @@ export class GritEngine {
   private readonly maxParticles: number;
   private readonly spawnBatch: number;
   private readonly maxDpr: number;
+  private readonly executionMode: GritEngineOptions['executionMode'];
   private readonly onStats?: (stats: EngineStats) => void;
 
   private renderer: WebGLRenderer;
   private grid: SpatialGrid;
   private requestId: number | null = null;
+  private workerTicker: WorkerTicker | null = null;
   private running = false;
   private paused = false;
 
@@ -36,6 +40,8 @@ export class GritEngine {
   private lastFpsTime = performance.now();
   private lastUiUpdate = performance.now();
   private fps = 0;
+  private random: (() => number) | null = null;
+  private seededRandom: SeededRandom | null = null;
 
   constructor(options: GritEngineOptions) {
     this.canvas = options.canvas;
@@ -44,6 +50,7 @@ export class GritEngine {
     this.maxParticles = options.maxParticles ?? 50_000;
     this.spawnBatch = options.spawnBatch ?? 100;
     this.maxDpr = options.maxDpr ?? 2;
+    this.executionMode = options.executionMode ?? 'main-thread';
     this.onStats = options.onStats;
     this.config = {
       ...DEFAULT_SIM_CONFIG,
@@ -52,6 +59,7 @@ export class GritEngine {
 
     this.grid = new SpatialGrid(options.gridCellSize ?? 40);
     this.renderer = new WebGLRenderer(this.canvas, this.maxParticles);
+    this.configureRandom(options.seed);
 
     this.resize();
     this.redrawOverlay();
@@ -63,11 +71,27 @@ export class GritEngine {
     this.lastTime = performance.now();
     this.lastFpsTime = this.lastTime;
     this.lastUiUpdate = this.lastTime;
+
+    if (this.executionMode === 'worker-ticker' && typeof Worker !== 'undefined') {
+      this.workerTicker = new WorkerTicker((timestamp) => {
+        this.animate(timestamp);
+      });
+      this.workerTicker.start();
+      return;
+    }
+
     this.requestId = requestAnimationFrame(this.animate);
   }
 
   stop() {
     this.running = false;
+
+    if (this.workerTicker) {
+      this.workerTicker.stop();
+      this.workerTicker.dispose();
+      this.workerTicker = null;
+    }
+
     if (this.requestId !== null) {
       cancelAnimationFrame(this.requestId);
       this.requestId = null;
@@ -152,9 +176,18 @@ export class GritEngine {
     const amount = available < this.spawnBatch ? available : this.spawnBatch;
 
     for (let i = 0; i < amount; i++) {
-      const color = colors[(Math.random() * colors.length) | 0];
-      this.particles.push(new Particle(x, y, color, this.config));
+      const rand = this.getRandom();
+      const color = colors[(rand() * colors.length) | 0];
+      this.particles.push(new Particle(x, y, color, this.config, rand));
     }
+  }
+
+  setSeed(seed: number) {
+    this.configureRandom(seed);
+  }
+
+  getSeed(): number | null {
+    return this.seededRandom?.getSeed() ?? null;
   }
 
   addObstacle(x: number, y: number) {
@@ -261,5 +294,20 @@ export class GritEngine {
       particleCount: this.particles.length,
       fps: this.fps
     });
+  }
+
+  private configureRandom(seed?: number) {
+    if (typeof seed !== 'number') {
+      this.seededRandom = null;
+      this.random = null;
+      return;
+    }
+
+    this.seededRandom = new SeededRandom(seed);
+    this.random = () => this.seededRandom!.next();
+  }
+
+  private getRandom(): () => number {
+    return this.random ?? Math.random;
   }
 }

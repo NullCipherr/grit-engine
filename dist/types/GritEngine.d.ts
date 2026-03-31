@@ -1,0 +1,45 @@
+import { type EngineStats, type GritEngineOptions, type SimConfig } from './types';
+export declare class GritEngine {
+    private readonly canvas;
+    private readonly overlayCanvas?;
+    private readonly overlayCtx;
+    private readonly maxParticles;
+    private readonly spawnBatch;
+    private readonly maxDpr;
+    private readonly onStats?;
+    private renderer;
+    private grid;
+    private requestId;
+    private running;
+    private paused;
+    private particles;
+    private obstacles;
+    private neighborsBuffer;
+    private overlayDirty;
+    private pointer;
+    private config;
+    private frameCount;
+    private lastTime;
+    private lastFpsTime;
+    private lastUiUpdate;
+    private fps;
+    constructor(options: GritEngineOptions);
+    start(): void;
+    stop(): void;
+    dispose(): void;
+    resize(): void;
+    updateSettings(config: Partial<SimConfig>): void;
+    getSettings(): SimConfig;
+    setPaused(paused: boolean): void;
+    getPaused(): boolean;
+    setPointer(x: number, y: number): void;
+    clearPointer(): void;
+    spawnAt(x: number, y: number): void;
+    addObstacle(x: number, y: number): void;
+    clear(): void;
+    getStats(): EngineStats;
+    private animate;
+    private redrawOverlay;
+    private emitStats;
+}
+//# sourceMappingURL=GritEngine.d.ts.map

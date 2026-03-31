@@ -1,0 +1,14 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+export declare class Obstacle {
+    x: number;
+    y: number;
+    radius: number;
+    color: string;
+    constructor(x: number, y: number, radius?: number);
+    draw(ctx: CanvasRenderingContext2D): void;
+    contains(x: number, y: number): boolean;
+}
+//# sourceMappingURL=Obstacle.d.ts.map

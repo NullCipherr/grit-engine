@@ -1,0 +1,54 @@
+GRIT SOURCE-AVAILABLE LICENSE (GSAL) v1.0
+
+Copyright (c) NullCipherr. All rights reserved.
+
+This license governs use of the GRIT Engine source code and related artifacts.
+
+1) DEFINITIONS
+
+"Software" means the source code, binaries, and documentation distributed in this repository.
+"Organization" means an individual or legal entity using the Software.
+
+2) GRANT OF RIGHTS
+
+Subject to this license, NullCipherr grants you a worldwide, non-exclusive, non-transferable, royalty-free license to:
+
+- Use the Software for personal, internal, and commercial projects;
+- Modify the Software for your own use;
+- Integrate compiled versions of the Software into your applications and services;
+- Distribute applications that include the Software in compiled/bundled form.
+
+3) RESTRICTIONS
+
+You may not, without prior written permission from NullCipherr:
+
+- Redistribute the Software source code publicly;
+- Re-license, sublicense, sell, rent, or commercially redistribute the Software as a standalone engine/library;
+- Publish forks intended to compete with the Software as an engine product;
+- Remove or alter copyright and license notices.
+
+4) OWNERSHIP
+
+The Software is licensed, not sold. NullCipherr retains all rights, title, and interest in and to the Software.
+
+5) NO OPEN SOURCE GRANT
+
+This is a source-available license and is NOT an OSI-approved open-source license.
+
+6) WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+7) LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL NULLCIPHERR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, OR ANY LOSS OF PROFITS, DATA, OR BUSINESS INTERRUPTION ARISING FROM USE OF THE SOFTWARE.
+
+8) TERMINATION
+
+This license terminates automatically if you breach its terms. Upon termination, you must cease use and distribution of the Software source.
+
+9) GOVERNING TERMS
+
+If any provision is held unenforceable, the remaining provisions remain in effect.
+
+For commercial redistribution or alternative terms, contact NullCipherr.

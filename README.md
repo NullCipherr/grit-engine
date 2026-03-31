@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="docs/assets/grit-engine-logo.png" alt="GRIT Engine Logo" width="220" />
   <h1>GRIT Engine</h1>
   <p><i>A high-performance WebGL2 particle engine for real-time interactive simulations</i></p>
 

@@ -21,11 +21,21 @@
         <div class="group">
           <h2>Execução</h2>
           <label>
+            Preset
+            <select id="preset">
+              <option value="performance">performance</option>
+              <option value="balanced" selected>balanced</option>
+              <option value="quality">quality</option>
+            </select>
+          </label>
+
+          <label>
             Render backend
             <select id="render-backend">
               <option value="auto">auto</option>
               <option value="webgl2">webgl2</option>
               <option value="canvas2d">canvas2d</option>
+              <option value="offscreen-worker">offscreen-worker</option>
             </select>
           </label>
 
@@ -36,6 +46,11 @@
               <option value="wasm">wasm</option>
               <option value="js">js</option>
             </select>
+          </label>
+
+          <label class="checkbox">
+            <input id="toggle-adaptive-budget" type="checkbox" checked />
+            Limite adaptativo por frame-time
           </label>
         </div>
 

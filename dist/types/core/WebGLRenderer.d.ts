@@ -10,9 +10,10 @@ export declare class WebGLRenderer implements Renderer {
     private gl;
     private program;
     private fadeProgram;
-    private vao;
+    private vaos;
     private fadeVao;
-    private instanceBuffer;
+    private instanceBuffers;
+    private activeInstanceSlot;
     private quadBuffer;
     private maxParticles;
     private instanceData;

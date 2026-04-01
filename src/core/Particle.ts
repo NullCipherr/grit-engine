@@ -24,6 +24,7 @@ const COHESION_WEIGHT = 0.001;
 
 // Collision tuning
 const MAX_COLLISION_NEIGHBORS = 12;
+type MulAddFn = (base: number, value: number, factor: number) => number;
 
 export class Particle {
   id: number;
@@ -90,8 +91,10 @@ export class Particle {
     mouseY: number | null,
     neighbors: Particle[],
     obstacles: Obstacle[],
-    dt: number
+    dt: number,
+    mulAdd?: MulAddFn
   ) {
+    const integrate = mulAdd ?? ((base: number, value: number, factor: number) => base + value * factor);
     // Cache config fields used in hot path
     const {
       attraction,
@@ -264,16 +267,16 @@ export class Particle {
 
     // 5. Euler Integration with Delta Time
     this.ay += gravity;
-    this.vx += this.ax * dt;
-    this.vy += this.ay * dt;
+    this.vx = integrate(this.vx, this.ax, dt);
+    this.vy = integrate(this.vy, this.ay, dt);
 
     // Time-dependent friction
     const frictionDt = Math.pow(friction, dt);
     this.vx *= frictionDt;
     this.vy *= frictionDt;
 
-    this.x += this.vx * dt;
-    this.y += this.vy * dt;
+    this.x = integrate(this.x, this.vx, dt);
+    this.y = integrate(this.y, this.vy, dt);
 
     this.ax = 0;
     this.ay = 0;

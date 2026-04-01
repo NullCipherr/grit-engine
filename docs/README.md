@@ -8,6 +8,8 @@ This folder contains technical documentation for GRIT Engine.
 - [Simulation Model](en/SIMULATION.md)
 - [Operations](en/OPERATIONS.md)
 - [Performance](en/PERFORMANCE.md)
+- [Performance Baseline](en/PERFORMANCE_BASELINE.md)
+- [Performance Matrix](en/PERFORMANCE_MATRIX.md)
 - [Deployment](en/DEPLOYMENT.md)
 - [Testing](en/TESTING.md)
 - [Integrations](en/INTEGRATIONS.md)

@@ -15,12 +15,30 @@ export interface SimConfig {
 export interface EngineStats {
   particleCount: number;
   fps: number;
+  frameTimeAvgMs: number;
+  frameTimeP95Ms: number;
+  frameTimeP99Ms: number;
+  activeParticleLimit: number;
+  adaptiveScale: number;
+  effectivePreset: PerformancePreset;
 }
 
 export type ExecutionMode = 'main-thread' | 'worker-ticker';
 
-export type RenderBackend = 'auto' | 'webgl2' | 'canvas2d';
+export type RenderBackend = 'auto' | 'webgl2' | 'canvas2d' | 'offscreen-worker';
 export type SimulationBackend = 'auto' | 'js' | 'wasm';
+export type PerformancePreset = 'performance' | 'balanced' | 'quality';
+
+export interface AdaptiveBudgetOptions {
+  enabled: boolean;
+  targetFrameMs: number;
+  lowWatermarkMs: number;
+  highWatermarkMs: number;
+  minScale: number;
+  recoveryRate: number;
+  dropRate: number;
+  updateIntervalFrames: number;
+}
 
 export interface PostProcessingOptions {
   bloom: boolean;
@@ -65,6 +83,10 @@ export interface GritEngineOptions {
   executionMode?: ExecutionMode;
   renderBackend?: RenderBackend;
   simulationBackend?: SimulationBackend;
+  performancePreset?: PerformancePreset;
+  adaptiveBudget?: Partial<AdaptiveBudgetOptions>;
+  hybridAdaptive?: boolean;
+  autoTune?: boolean;
   postProcessing?: Partial<PostProcessingOptions>;
   config?: Partial<SimConfig>;
   onStats?: (stats: EngineStats) => void;
@@ -88,4 +110,15 @@ export const DEFAULT_POST_PROCESSING: PostProcessingOptions = {
   bloom: true,
   trailStrength: 0.72,
   vignette: false
+};
+
+export const DEFAULT_ADAPTIVE_BUDGET: AdaptiveBudgetOptions = {
+  enabled: true,
+  targetFrameMs: 16.67,
+  lowWatermarkMs: 13.5,
+  highWatermarkMs: 20.5,
+  minScale: 0.35,
+  recoveryRate: 0.025,
+  dropRate: 0.08,
+  updateIntervalFrames: 24
 };

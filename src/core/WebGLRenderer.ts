@@ -13,6 +13,7 @@ const BG_B = 28 / 255;
 
 const INSTANCE_STRIDE_FLOATS = 7; // x, y, size, r, g, b, alpha
 const INSTANCE_STRIDE_BYTES = INSTANCE_STRIDE_FLOATS * 4;
+const INSTANCE_BUFFER_COUNT = 2;
 
 export class WebGLRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
@@ -21,10 +22,11 @@ export class WebGLRenderer implements Renderer {
   private program: WebGLProgram | null = null;
   private fadeProgram: WebGLProgram | null = null;
 
-  private vao: WebGLVertexArrayObject | null = null;
+  private vaos: Array<WebGLVertexArrayObject | null> = [];
   private fadeVao: WebGLVertexArrayObject | null = null;
 
-  private instanceBuffer: WebGLBuffer | null = null;
+  private instanceBuffers: Array<WebGLBuffer | null> = [];
+  private activeInstanceSlot = 0;
   private quadBuffer: WebGLBuffer | null = null;
 
   private maxParticles: number;
@@ -234,36 +236,47 @@ export class WebGLRenderer implements Renderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, quadVertices, gl.STATIC_DRAW);
 
-    this.vao = gl.createVertexArray();
-    if (!this.vao) throw new Error('Failed to create particle VAO');
+    this.vaos = [];
+    this.instanceBuffers = [];
 
-    gl.bindVertexArray(this.vao);
+    for (let i = 0; i < INSTANCE_BUFFER_COUNT; i++) {
+      const vao = gl.createVertexArray();
+      if (!vao) throw new Error('Failed to create particle VAO');
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      const instanceBuffer = gl.createBuffer();
+      if (!instanceBuffer) {
+        gl.deleteVertexArray(vao);
+        throw new Error('Failed to create instance buffer');
+      }
 
-    this.instanceBuffer = gl.createBuffer();
-    if (!this.instanceBuffer) throw new Error('Failed to create instance buffer');
+      gl.bindVertexArray(vao);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.instanceBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 0);
-    gl.vertexAttribDivisor(1, 1);
+      gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
 
-    gl.enableVertexAttribArray(2);
-    gl.vertexAttribPointer(2, 1, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 8);
-    gl.vertexAttribDivisor(2, 1);
+      gl.enableVertexAttribArray(1);
+      gl.vertexAttribPointer(1, 2, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 0);
+      gl.vertexAttribDivisor(1, 1);
 
-    gl.enableVertexAttribArray(3);
-    gl.vertexAttribPointer(3, 3, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 12);
-    gl.vertexAttribDivisor(3, 1);
+      gl.enableVertexAttribArray(2);
+      gl.vertexAttribPointer(2, 1, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 8);
+      gl.vertexAttribDivisor(2, 1);
 
-    gl.enableVertexAttribArray(4);
-    gl.vertexAttribPointer(4, 1, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 24);
-    gl.vertexAttribDivisor(4, 1);
+      gl.enableVertexAttribArray(3);
+      gl.vertexAttribPointer(3, 3, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 12);
+      gl.vertexAttribDivisor(3, 1);
+
+      gl.enableVertexAttribArray(4);
+      gl.vertexAttribPointer(4, 1, gl.FLOAT, false, INSTANCE_STRIDE_BYTES, 24);
+      gl.vertexAttribDivisor(4, 1);
+
+      this.vaos.push(vao);
+      this.instanceBuffers.push(instanceBuffer);
+    }
 
     this.fadeVao = gl.createVertexArray();
     if (!this.fadeVao) throw new Error('Failed to create fade VAO');
@@ -286,6 +299,7 @@ export class WebGLRenderer implements Renderer {
     this.lastBloom = -1;
     this.lastVignette = -1;
     this.lastFadeAlpha = -1;
+    this.activeInstanceSlot = 0;
   }
 
   private createProgram(vs: string, fs: string): WebGLProgram {
@@ -342,7 +356,14 @@ export class WebGLRenderer implements Renderer {
   }
 
   render(particles: readonly Particle[], width: number, height: number, postProcessing: PostProcessingOptions) {
-    if (!this.program || !this.fadeProgram || !this.vao || !this.fadeVao || !this.instanceBuffer || this.isContextLost) {
+    if (
+      !this.program ||
+      !this.fadeProgram ||
+      !this.fadeVao ||
+      this.vaos.length === 0 ||
+      this.instanceBuffers.length === 0 ||
+      this.isContextLost
+    ) {
       return;
     }
 
@@ -387,12 +408,18 @@ export class WebGLRenderer implements Renderer {
       this.instanceData[offset++] = p.life > 0 ? p.life / p.maxLife : 0;
     }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.instanceBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.instanceData.subarray(0, count * INSTANCE_STRIDE_FLOATS));
+    const slot = this.activeInstanceSlot;
+    const vao = this.vaos[slot];
+    const instanceBuffer = this.instanceBuffers[slot];
+    if (!vao || !instanceBuffer) {
+      return;
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.instanceData, 0, count * INSTANCE_STRIDE_FLOATS);
 
     gl.useProgram(this.program);
-    gl.bindVertexArray(this.vao);
+    gl.bindVertexArray(vao);
 
     if (width !== this.lastWidth || height !== this.lastHeight) {
       gl.uniform2f(this.uResolutionLoc, width, height);
@@ -420,6 +447,11 @@ export class WebGLRenderer implements Renderer {
 
     gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count);
     gl.bindVertexArray(null);
+
+    this.activeInstanceSlot++;
+    if (this.activeInstanceSlot >= this.instanceBuffers.length) {
+      this.activeInstanceSlot = 0;
+    }
   }
 
   resizeMaxParticles(maxParticles: number) {
@@ -428,10 +460,14 @@ export class WebGLRenderer implements Renderer {
     this.maxParticles = maxParticles;
     this.instanceData = new Float32Array(maxParticles * INSTANCE_STRIDE_FLOATS);
 
-    if (this.instanceBuffer) {
+    if (this.instanceBuffers.length > 0) {
       const gl = this.gl;
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.instanceBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
+      for (let i = 0; i < this.instanceBuffers.length; i++) {
+        const instanceBuffer = this.instanceBuffers[i];
+        if (!instanceBuffer) continue;
+        gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.instanceData.byteLength, gl.DYNAMIC_DRAW);
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
   }
@@ -439,9 +475,13 @@ export class WebGLRenderer implements Renderer {
   private disposeGpuResources() {
     const gl = this.gl;
 
-    if (this.instanceBuffer) {
-      gl.deleteBuffer(this.instanceBuffer);
-      this.instanceBuffer = null;
+    if (this.instanceBuffers.length > 0) {
+      for (let i = 0; i < this.instanceBuffers.length; i++) {
+        const instanceBuffer = this.instanceBuffers[i];
+        if (!instanceBuffer) continue;
+        gl.deleteBuffer(instanceBuffer);
+      }
+      this.instanceBuffers = [];
     }
 
     if (this.quadBuffer) {
@@ -449,9 +489,13 @@ export class WebGLRenderer implements Renderer {
       this.quadBuffer = null;
     }
 
-    if (this.vao) {
-      gl.deleteVertexArray(this.vao);
-      this.vao = null;
+    if (this.vaos.length > 0) {
+      for (let i = 0; i < this.vaos.length; i++) {
+        const vao = this.vaos[i];
+        if (!vao) continue;
+        gl.deleteVertexArray(vao);
+      }
+      this.vaos = [];
     }
 
     if (this.fadeVao) {

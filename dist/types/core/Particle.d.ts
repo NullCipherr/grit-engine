@@ -4,6 +4,7 @@
  */
 import type { SimConfig } from '../types';
 import { Obstacle } from './Obstacle';
+type MulAddFn = (base: number, value: number, factor: number) => number;
 export declare class Particle {
     id: number;
     x: number;
@@ -26,8 +27,9 @@ export declare class Particle {
     private flockNeighborCount;
     private colorString;
     constructor(x: number, y: number, color: string, config: SimConfig, random?: () => number);
-    update(config: SimConfig, canvasWidth: number, canvasHeight: number, mouseX: number | null, mouseY: number | null, neighbors: Particle[], obstacles: Obstacle[], dt: number): void;
+    update(config: SimConfig, canvasWidth: number, canvasHeight: number, mouseX: number | null, mouseY: number | null, neighbors: Particle[], obstacles: Obstacle[], dt: number, mulAdd?: MulAddFn): void;
     draw(ctx: CanvasRenderingContext2D, config: SimConfig, spriteCanvas?: HTMLCanvasElement): void;
     isDead(): boolean;
 }
+export {};
 //# sourceMappingURL=Particle.d.ts.map

@@ -22,6 +22,8 @@ English is the primary language for this repository.
 - [Simulation Model](docs/en/SIMULATION.md)
 - [Operations](docs/en/OPERATIONS.md)
 - [Performance](docs/en/PERFORMANCE.md)
+- [Performance Baseline](docs/en/PERFORMANCE_BASELINE.md)
+- [Performance Matrix](docs/en/PERFORMANCE_MATRIX.md)
 - [Deployment](docs/en/DEPLOYMENT.md)
 - [Testing](docs/en/TESTING.md)
 - [Integrations](docs/en/INTEGRATIONS.md)
@@ -56,7 +58,9 @@ It is designed to be consumed by wrappers in React, Vue, Svelte, or vanilla Java
 - **Optional worker ticker mode** for experimental scheduling.
 - **Plugin system** for custom forces and constraints.
 - **Optional WASM simulation path** with safe JS fallback.
-- **Multiple rendering backends** (`webgl2` and `canvas2d`) with post-processing controls.
+- **Multiple rendering backends** (`webgl2`, `canvas2d`, and experimental `offscreen-worker`).
+- **Execution presets** (`performance`, `balanced`, `quality`) and adaptive particle budget.
+- **Hybrid adaptive runtime** with local telemetry-based preset recommendation.
 
 ---
 
@@ -120,6 +124,8 @@ Main methods:
 - `getStats()`
 - `setSeed(seed)`
 - `getSeed()`
+- `setPerformancePreset(preset)`
+- `setAdaptiveBudgetEnabled(boolean)`
 
 ---
 
@@ -236,6 +242,7 @@ npm run test
 ```bash
 npm run benchmark
 npm run profile
+npm run perf:check
 ```
 
 ---

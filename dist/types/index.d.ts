@@ -4,6 +4,8 @@ export { Obstacle } from './core/Obstacle';
 export { SpatialGrid } from './core/SpatialGrid';
 export { WebGLRenderer } from './core/WebGLRenderer';
 export { Canvas2DRenderer } from './core/Canvas2DRenderer';
-export { DEFAULT_POST_PROCESSING, DEFAULT_SIM_CONFIG } from './types';
-export type { EngineStats, ExecutionMode, GritEngineOptions, GritPlugin, GritPluginFrameContext, GritPluginParticleContext, PostProcessingOptions, RenderBackend, SimConfig, SimulationBackend } from './types';
+export { OffscreenWorkerRenderer } from './core/OffscreenWorkerRenderer';
+export { listPerformancePresets, resolvePerformancePreset } from './runtime/performancePresets';
+export { DEFAULT_ADAPTIVE_BUDGET, DEFAULT_POST_PROCESSING, DEFAULT_SIM_CONFIG } from './types';
+export type { AdaptiveBudgetOptions, EngineStats, ExecutionMode, GritEngineOptions, GritPlugin, GritPluginFrameContext, GritPluginParticleContext, PerformancePreset, PostProcessingOptions, RenderBackend, SimConfig, SimulationBackend } from './types';
 //# sourceMappingURL=index.d.ts.map

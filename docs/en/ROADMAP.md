@@ -1,45 +1,53 @@
-# Roadmap
+# Roadmap de Performance
 
 ## Status Atual
 
 ### Curto Prazo (Concluído)
 
-- [x] Estabilizar nomenclatura da API pública e documentação
-- [x] Adicionar testes unitários base para matemática core e colisões
-- [x] Expandir exemplos de integração para múltiplos frameworks
+- [x] Criar suíte de benchmark reproduzível com cenários fixos (seed fixa, resolução fixa, presets)
+- [x] Instrumentar métricas de frame-time (média/P95/P99) no runtime
+- [x] Reduzir alocações no hot path da simulação (zero alocação por frame como alvo)
+- [x] Otimizar upload de instâncias no `WebGLRenderer` para minimizar stalls de driver
+- [x] Definir baseline oficial de performance por ambiente (desktop e notebook intermediário)
 
 ### Médio Prazo (Concluído)
 
-- [x] Modo determinístico com seed para simulações reprodutíveis
-- [x] Execução opcional com worker ticker (experimental)
-- [x] Ferramentas de profiling e benchmark com baseline documentado
+- [x] Introduzir presets de execução orientados a performance (`performance`, `balanced`, `quality`)
+- [x] Implementar culling/limites dinâmicos por pressão de frame-time
+- [x] Consolidar pipeline de simulação com estrutura de dados mais cache-friendly
+- [x] Evoluir fallback `canvas2d` para manter estabilidade em hardware sem WebGL2 robusto
+- [x] Criar teste de regressão de performance no CI com thresholds de alerta
 
 ### Longo Prazo (Concluído)
 
-- [x] Sistema modular de plugins para forças e constraints customizadas
-- [x] Caminho opcional de aceleração WASM com fallback seguro para JS
-- [x] Backends estendidos de renderização e opções de pós-processamento
+- [x] Implementar kernel WASM real para integração matemática no caminho de simulação
+- [x] Explorar `offscreen-worker` rendering quando suportado pelo ambiente
+- [x] Suportar execução híbrida adaptativa (preset/simulação) por pressão de frame-time
+- [x] Implementar auto-tuning de preset com base em telemetria local
+- [x] Publicar matriz oficial de performance por backend/dispositivo
 
-## Próximas Entregas
+## Próximos Ciclos
 
-### Curto Prazo
+### Curto Prazo (Próximo)
 
-- [ ] Testes automatizados para ciclo de plugins (registro, desregistro, ordem e isolamento)
-- [ ] Guia rápido de criação de plugin oficial com exemplos prontos para copiar
-- [ ] Telemetria básica de frame-time (ms) no callback de estatísticas
+- [ ] Adicionar métricas de memória (`usedJSHeapSize`) no callback de stats quando disponível
+- [ ] Criar benchmark browser-side real para comparar `webgl2`, `canvas2d` e `offscreen-worker`
+- [ ] Publicar relatório automatizado de benchmark em artifact de CI
 
-### Médio Prazo
+### Médio Prazo (Próximo)
 
-- [ ] API para kernels WASM externos (carregamento, contrato e validação)
-- [ ] Snapshot visual determinístico para regressão gráfica (seed fixa)
-- [ ] Presets de pós-processamento por perfil (performance, balanced, cinematic)
+- [ ] Expandir kernel WASM para blocos vetorizados (batch de partículas)
+- [ ] Implementar compressão opcional de atributos no transporte para worker renderer
+- [ ] Adicionar política de fallback entre backends por erro de contexto em runtime
 
-### Longo Prazo
+### Longo Prazo (Próximo)
 
-- [ ] Multi-camada de render com composição offscreen (quando disponível)
-- [ ] Runtime multiplayer/sincronização determinística para experiências compartilhadas
-- [ ] Ferramental de authoring visual para plugins e cenários interativos
+- [ ] Pipeline híbrido completo: simulação + render fora da main thread com sincronização eficiente
+- [ ] Scheduler multi-objetivo (latência, bateria e qualidade visual)
+- [ ] Matriz contínua de performance multi-plataforma (Linux/Windows/macOS + mobile)
 
-## Direção de Produto
+## Governança
 
-GRIT segue como núcleo reutilizável para produtos internos e comerciais, com camadas de integração por plataforma/framework e foco em previsibilidade, performance e extensibilidade.
+- PR com impacto em runtime/render deve anexar antes/depois (`benchmark`, `profile` e `perf:check`)
+- Regressão acima dos thresholds configurados no CI exige plano de mitigação
+- Toda release deve atualizar baseline e matriz de performance

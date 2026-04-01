@@ -1,0 +1,31 @@
+name: Performance Regression
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  perf-regression:
+    runs-on: ubuntu-latest
+    env:
+      PERF_THROUGHPUT_DROP_THRESHOLD: "0.35"
+      PERF_FRAME_INCREASE_THRESHOLD: "0.35"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Performance Regression Check
+        run: npm run perf:check

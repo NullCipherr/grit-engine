@@ -3,6 +3,7 @@ import {
   DEFAULT_SIM_CONFIG,
   GritEngine,
   type GritPlugin,
+  type PerformancePreset,
   type RenderBackend,
   type SimulationBackend
 } from '../../src';
@@ -13,8 +14,10 @@ const statsEl = document.querySelector<HTMLElement>('#stats');
 const spawnButton = document.querySelector<HTMLButtonElement>('#spawn');
 const pauseButton = document.querySelector<HTMLButtonElement>('#pause');
 const clearButton = document.querySelector<HTMLButtonElement>('#clear');
+const presetSelect = document.querySelector<HTMLSelectElement>('#preset');
 const renderSelect = document.querySelector<HTMLSelectElement>('#render-backend');
 const simulationSelect = document.querySelector<HTMLSelectElement>('#simulation-backend');
+const adaptiveBudgetToggle = document.querySelector<HTMLInputElement>('#toggle-adaptive-budget');
 const bloomToggle = document.querySelector<HTMLInputElement>('#toggle-bloom');
 const vignetteToggle = document.querySelector<HTMLInputElement>('#toggle-vignette');
 const trailInput = document.querySelector<HTMLInputElement>('#trail');
@@ -28,8 +31,10 @@ if (
   !spawnButton ||
   !pauseButton ||
   !clearButton ||
+  !presetSelect ||
   !renderSelect ||
   !simulationSelect ||
+  !adaptiveBudgetToggle ||
   !bloomToggle ||
   !vignetteToggle ||
   !trailInput ||
@@ -39,13 +44,37 @@ if (
   throw new Error('Falha ao inicializar a demo: elementos de UI não encontrados.');
 }
 
+const offscreenSupported = (() => {
+  if (typeof window === 'undefined') return false;
+  if (typeof Worker === 'undefined') return false;
+  if (typeof OffscreenCanvas === 'undefined') return false;
+  return typeof HTMLCanvasElement.prototype.transferControlToOffscreen === 'function';
+})();
+
+const offscreenOption = renderSelect.querySelector<HTMLOptionElement>('option[value="offscreen-worker"]');
+if (offscreenOption && !offscreenSupported) {
+  offscreenOption.disabled = true;
+  offscreenOption.textContent = 'offscreen-worker (indisponível)';
+}
+
+const url = new URL(window.location.href);
+const renderFromQuery = url.searchParams.get('render');
+if (renderFromQuery === 'auto' || renderFromQuery === 'webgl2' || renderFromQuery === 'canvas2d' || renderFromQuery === 'offscreen-worker') {
+  if (renderFromQuery === 'offscreen-worker' && !offscreenSupported) {
+    renderSelect.value = 'auto';
+  } else {
+    renderSelect.value = renderFromQuery;
+  }
+}
+
 const engine = new GritEngine({
   canvas,
   overlayCanvas,
   seed: 42,
   maxParticles: 80_000,
   spawnBatch: 220,
-  renderBackend: 'auto',
+  performancePreset: 'balanced',
+  renderBackend: renderSelect.value as RenderBackend,
   simulationBackend: 'auto',
   postProcessing: {
     ...DEFAULT_POST_PROCESSING,
@@ -61,8 +90,8 @@ const engine = new GritEngine({
     gravity: 0.05,
     friction: 0.985
   },
-  onStats: ({ fps, particleCount }) => {
-    statsEl.textContent = `FPS: ${fps} | Partículas: ${particleCount} | Render: ${engine.getRenderBackend()} | Sim: ${engine.getSimulationBackend()}`;
+  onStats: ({ fps, particleCount, frameTimeP95Ms, frameTimeP99Ms, activeParticleLimit, adaptiveScale }) => {
+    statsEl.textContent = `FPS: ${fps} | P95: ${frameTimeP95Ms.toFixed(2)}ms | P99: ${frameTimeP99Ms.toFixed(2)}ms | Partículas: ${particleCount}/${activeParticleLimit} | Escala: ${(adaptiveScale * 100).toFixed(0)}% | Render: ${engine.getRenderBackend()} | Sim: ${engine.getSimulationBackend()}`;
   }
 });
 
@@ -178,12 +207,29 @@ clearButton.addEventListener('click', () => {
   engine.clear();
 });
 
+presetSelect.addEventListener('change', () => {
+  engine.setPerformancePreset(presetSelect.value as PerformancePreset);
+});
+
 renderSelect.addEventListener('change', () => {
-  engine.setRenderBackend(renderSelect.value as RenderBackend);
+  if (renderSelect.value === 'offscreen-worker' && !offscreenSupported) {
+    renderSelect.value = 'auto';
+    return;
+  }
+
+  // Força recriação completa do contexto de canvas ao trocar backend.
+  // Alguns navegadores não permitem alternar 2D/WebGL no mesmo canvas já inicializado.
+  const next = new URL(window.location.href);
+  next.searchParams.set('render', renderSelect.value);
+  window.location.href = next.toString();
 });
 
 simulationSelect.addEventListener('change', () => {
   engine.setSimulationBackend(simulationSelect.value as SimulationBackend);
+});
+
+adaptiveBudgetToggle.addEventListener('change', () => {
+  engine.setAdaptiveBudgetEnabled(adaptiveBudgetToggle.checked);
 });
 
 bloomToggle.addEventListener('change', () => {

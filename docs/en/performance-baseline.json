@@ -1,0 +1,54 @@
+[
+  {
+    "scenario": "perf-1080p-performance",
+    "preset": "performance",
+    "resolution": "1920x1080",
+    "particles": 18000,
+    "frames": 120,
+    "seed": 42,
+    "avg_frame_ms": 4.539,
+    "p95_frame_ms": 8.074,
+    "p99_frame_ms": 9.274,
+    "est_fps": 220.32,
+    "throughput_particles_per_sec": 3963449
+  },
+  {
+    "scenario": "perf-1080p-balanced",
+    "preset": "balanced",
+    "resolution": "1920x1080",
+    "particles": 12000,
+    "frames": 120,
+    "seed": 42,
+    "avg_frame_ms": 25.479,
+    "p95_frame_ms": 32.628,
+    "p99_frame_ms": 39.218,
+    "est_fps": 39.25,
+    "throughput_particles_per_sec": 470952
+  },
+  {
+    "scenario": "perf-1440p-quality",
+    "preset": "quality",
+    "resolution": "2560x1440",
+    "particles": 9000,
+    "frames": 120,
+    "seed": 42,
+    "avg_frame_ms": 13.52,
+    "p95_frame_ms": 18.58,
+    "p99_frame_ms": 27.748,
+    "est_fps": 73.96,
+    "throughput_particles_per_sec": 665638
+  },
+  {
+    "scenario": "spatial-grid-probe",
+    "preset": "balanced",
+    "resolution": "1920x1080",
+    "particles": 30000,
+    "frames": 2000,
+    "seed": 42,
+    "avg_frame_ms": 0.0048,
+    "p95_frame_ms": 0,
+    "p99_frame_ms": 0,
+    "est_fps": 0,
+    "throughput_particles_per_sec": 14844115
+  }
+]

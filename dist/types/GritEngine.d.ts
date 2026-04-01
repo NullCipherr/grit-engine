@@ -1,4 +1,4 @@
-import { type EngineStats, type GritEngineOptions, type GritPlugin, type PostProcessingOptions, type RenderBackend, type SimConfig, type SimulationBackend } from './types';
+import { type EngineStats, type GritEngineOptions, type GritPlugin, type PerformancePreset, type PostProcessingOptions, type RenderBackend, type SimConfig, type SimulationBackend } from './types';
 export declare class GritEngine {
     private readonly canvas;
     private readonly overlayCanvas?;
@@ -11,6 +11,11 @@ export declare class GritEngine {
     private renderer;
     private renderBackend;
     private simulationBackend;
+    private performancePreset;
+    private readonly hybridAdaptiveEnabled;
+    private hybridCooldownTicks;
+    private adaptiveBudget;
+    private activeParticleLimit;
     private grid;
     private requestId;
     private workerTicker;
@@ -31,6 +36,12 @@ export declare class GritEngine {
     private fps;
     private random;
     private seededRandom;
+    private readonly telemetryTuner;
+    private wasmKernel;
+    private wasmMulAdd;
+    private frameTimeWindow;
+    private frameTimeSummary;
+    private adaptiveScale;
     private pluginsById;
     private forcePlugins;
     private constraintPlugins;
@@ -46,10 +57,13 @@ export declare class GritEngine {
     getSettings(): SimConfig;
     updatePostProcessing(options: Partial<PostProcessingOptions>): void;
     getPostProcessing(): PostProcessingOptions;
-    getRenderBackend(): "webgl2" | "canvas2d";
+    getRenderBackend(): "webgl2" | "canvas2d" | "offscreen-worker";
     setRenderBackend(backend: RenderBackend): void;
     getSimulationBackend(): "js" | "wasm";
     setSimulationBackend(backend: SimulationBackend): void;
+    getPerformancePreset(): PerformancePreset;
+    setPerformancePreset(preset: PerformancePreset): void;
+    setAdaptiveBudgetEnabled(enabled: boolean): void;
     setPaused(paused: boolean): void;
     getPaused(): boolean;
     setPointer(x: number, y: number): void;
@@ -74,6 +88,9 @@ export declare class GritEngine {
     private runConstraintPlugins;
     private redrawOverlay;
     private emitStats;
+    private applyActiveParticleBudget;
+    private applyHybridRuntimeTuning;
+    private tryInitializeWasmKernel;
     private configureRandom;
     private getRandom;
 }

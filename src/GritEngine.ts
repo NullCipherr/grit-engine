@@ -3,9 +3,15 @@ import type { Renderer } from './core/types';
 import { Obstacle } from './core/Obstacle';
 import { Particle } from './core/Particle';
 import { SpatialGrid } from './core/SpatialGrid';
+import { AdaptiveParticleBudget } from './runtime/AdaptiveParticleBudget';
+import { FrameTimeWindow, type FrameTimeSummary } from './runtime/FrameTimeWindow';
+import { resolvePerformancePreset } from './runtime/performancePresets';
+import { LocalTelemetryTuner } from './runtime/TelemetryTuner';
+import { WasmMulAddKernel } from './runtime/WasmMathKernel';
 import { WorkerTicker } from './runtime/WorkerTicker';
 import { resolveSimulationBackend } from './runtime/simulationBackend';
 import {
+  DEFAULT_ADAPTIVE_BUDGET,
   DEFAULT_POST_PROCESSING,
   DEFAULT_SIM_CONFIG,
   type EngineStats,
@@ -13,6 +19,7 @@ import {
   type GritPlugin,
   type GritPluginFrameContext,
   type GritPluginParticleContext,
+  type PerformancePreset,
   type PostProcessingOptions,
   type RenderBackend,
   type SimConfig,
@@ -22,6 +29,25 @@ import { SeededRandom } from './utils/SeededRandom';
 
 const UI_UPDATE_INTERVAL_MS = 200;
 const EMPTY_NEIGHBORS: Particle[] = [];
+const SPAWN_COLORS = [
+  'rgba(102, 138, 255, 1)',
+  'rgba(156, 135, 188, 1)',
+  'rgba(52, 211, 153, 1)'
+];
+
+interface MutablePluginFrameContext {
+  config: Readonly<SimConfig>;
+  canvasWidth: number;
+  canvasHeight: number;
+  dt: number;
+  frame: number;
+  now: number;
+}
+
+interface MutablePluginParticleContext extends MutablePluginFrameContext {
+  pointerX: number | null;
+  pointerY: number | null;
+}
 
 export class GritEngine {
   private readonly canvas: HTMLCanvasElement;
@@ -36,6 +62,11 @@ export class GritEngine {
   private renderer: Renderer;
   private renderBackend: Exclude<RenderBackend, 'auto'>;
   private simulationBackend: Exclude<SimulationBackend, 'auto'>;
+  private performancePreset: PerformancePreset;
+  private readonly hybridAdaptiveEnabled: boolean;
+  private hybridCooldownTicks = 0;
+  private adaptiveBudget: AdaptiveParticleBudget;
+  private activeParticleLimit: number;
 
   private grid: SpatialGrid;
   private requestId: number | null = null;
@@ -61,13 +92,24 @@ export class GritEngine {
   private fps = 0;
   private random: (() => number) | null = null;
   private seededRandom: SeededRandom | null = null;
+  private readonly telemetryTuner: LocalTelemetryTuner;
+  private wasmKernel: WasmMulAddKernel | null = null;
+  private wasmMulAdd: ((base: number, value: number, factor: number) => number) | null = null;
+  private frameTimeWindow = new FrameTimeWindow(360, 0.25, 120);
+  private frameTimeSummary: FrameTimeSummary = {
+    sampleCount: 0,
+    avgMs: 0,
+    p95Ms: 0,
+    p99Ms: 0
+  };
+  private adaptiveScale = 1;
 
   private pluginsById = new Map<string, GritPlugin>();
   private forcePlugins: GritPlugin[] = [];
   private constraintPlugins: GritPlugin[] = [];
   private framePlugins: GritPlugin[] = [];
 
-  private pluginFrameContext: GritPluginFrameContext = {
+  private pluginFrameContext: MutablePluginFrameContext = {
     config: DEFAULT_SIM_CONFIG,
     canvasWidth: 0,
     canvasHeight: 0,
@@ -76,7 +118,7 @@ export class GritEngine {
     now: 0
   };
 
-  private pluginParticleContext: GritPluginParticleContext = {
+  private pluginParticleContext: MutablePluginParticleContext = {
     config: DEFAULT_SIM_CONFIG,
     canvasWidth: 0,
     canvasHeight: 0,
@@ -96,17 +138,29 @@ export class GritEngine {
     this.maxDpr = options.maxDpr ?? 2;
     this.executionMode = options.executionMode ?? 'main-thread';
     this.onStats = options.onStats;
+    this.hybridAdaptiveEnabled = options.hybridAdaptive ?? true;
+    this.telemetryTuner = new LocalTelemetryTuner(options.autoTune ?? true);
+
+    const requestedPreset = options.performancePreset ?? 'balanced';
+    this.performancePreset = this.telemetryTuner.recommendPreset(requestedPreset);
+    const presetBundle = resolvePerformancePreset(this.performancePreset);
 
     this.config = {
-      ...DEFAULT_SIM_CONFIG,
+      ...presetBundle.config,
       ...options.config
     };
 
     this.postProcessing = {
-      ...DEFAULT_POST_PROCESSING,
+      ...presetBundle.postProcessing,
       ...options.postProcessing,
-      bloom: options.config?.bloom ?? options.postProcessing?.bloom ?? DEFAULT_POST_PROCESSING.bloom
+      bloom: options.config?.bloom ?? options.postProcessing?.bloom ?? presetBundle.postProcessing.bloom
     };
+
+    this.adaptiveBudget = new AdaptiveParticleBudget(this.maxParticles, {
+      ...DEFAULT_ADAPTIVE_BUDGET,
+      ...options.adaptiveBudget
+    });
+    this.activeParticleLimit = this.maxParticles;
 
     this.grid = new SpatialGrid(options.gridCellSize ?? 40);
 
@@ -115,6 +169,7 @@ export class GritEngine {
     this.renderBackend = backend;
 
     this.simulationBackend = resolveSimulationBackend(options.simulationBackend ?? 'auto');
+    this.tryInitializeWasmKernel();
 
     this.configureRandom(options.seed);
 
@@ -128,6 +183,10 @@ export class GritEngine {
     this.lastTime = performance.now();
     this.lastFpsTime = this.lastTime;
     this.lastUiUpdate = this.lastTime;
+    this.frameTimeWindow.reset();
+    this.adaptiveBudget.reset();
+    this.activeParticleLimit = this.maxParticles;
+    this.adaptiveScale = 1;
 
     if (this.executionMode === 'worker-ticker' && typeof Worker !== 'undefined') {
       this.workerTicker = new WorkerTicker((timestamp) => {
@@ -157,6 +216,7 @@ export class GritEngine {
 
   dispose() {
     this.stop();
+    this.telemetryTuner.persist(this.performancePreset);
     this.clearPlugins();
     this.renderer.dispose();
   }
@@ -241,6 +301,22 @@ export class GritEngine {
 
   setSimulationBackend(backend: SimulationBackend) {
     this.simulationBackend = resolveSimulationBackend(backend);
+    this.tryInitializeWasmKernel();
+  }
+
+  getPerformancePreset() {
+    return this.performancePreset;
+  }
+
+  setPerformancePreset(preset: PerformancePreset) {
+    const bundle = resolvePerformancePreset(preset);
+    this.performancePreset = preset;
+    this.config = { ...bundle.config };
+    this.postProcessing = { ...bundle.postProcessing };
+  }
+
+  setAdaptiveBudgetEnabled(enabled: boolean) {
+    this.adaptiveBudget.setEnabled(enabled);
   }
 
   setPaused(paused: boolean) {
@@ -260,20 +336,14 @@ export class GritEngine {
   }
 
   spawnAt(x: number, y: number) {
-    if (this.particles.length >= this.maxParticles) return;
+    if (this.particles.length >= this.activeParticleLimit) return;
 
-    const colors = [
-      'rgba(102, 138, 255, 1)',
-      'rgba(156, 135, 188, 1)',
-      'rgba(52, 211, 153, 1)'
-    ];
-
-    const available = this.maxParticles - this.particles.length;
+    const available = this.activeParticleLimit - this.particles.length;
     const amount = available < this.spawnBatch ? available : this.spawnBatch;
 
     for (let i = 0; i < amount; i++) {
       const rand = this.getRandom();
-      const color = colors[(rand() * colors.length) | 0];
+      const color = SPAWN_COLORS[(rand() * SPAWN_COLORS.length) | 0];
       this.particles.push(new Particle(x, y, color, this.config, rand));
     }
   }
@@ -300,9 +370,20 @@ export class GritEngine {
   }
 
   getStats(): EngineStats {
+    this.frameTimeWindow.snapshot(this.frameTimeSummary);
+    const budget = this.adaptiveBudget.snapshot();
+    this.activeParticleLimit = budget.activeParticleLimit;
+    this.adaptiveScale = budget.scale;
+
     return {
       particleCount: this.particles.length,
-      fps: this.fps
+      fps: this.fps,
+      frameTimeAvgMs: this.frameTimeSummary.avgMs,
+      frameTimeP95Ms: this.frameTimeSummary.p95Ms,
+      frameTimeP99Ms: this.frameTimeSummary.p99Ms,
+      activeParticleLimit: this.activeParticleLimit,
+      adaptiveScale: this.adaptiveScale,
+      effectivePreset: this.performancePreset
     };
   }
 
@@ -366,14 +447,18 @@ export class GritEngine {
     if (!this.running) return;
 
     if (!this.paused) {
-      const dt = Math.min((currentTime - this.lastTime) / 16.666, 3);
+      const frameMs = currentTime - this.lastTime;
+      const dt = Math.min(frameMs / 16.666, 3);
       this.lastTime = currentTime;
       this.frameIndex++;
+      this.frameTimeWindow.push(frameMs);
 
       const { x: mx, y: my } = this.pointer;
+      this.applyActiveParticleBudget();
 
       this.grid.clear();
-      for (let i = 0; i < this.particles.length; i++) {
+      const particleCount = this.particles.length;
+      for (let i = 0; i < particleCount; i++) {
         this.grid.add(this.particles[i]);
       }
 
@@ -382,7 +467,8 @@ export class GritEngine {
       this.updatePluginContexts(dt, currentTime, mx, my);
       this.runFrameStartPlugins();
 
-      for (let i = this.particles.length - 1; i >= 0; i--) {
+      let aliveWriteIndex = 0;
+      for (let i = 0; i < particleCount; i++) {
         const particle = this.particles[i];
 
         let neighbors = EMPTY_NEIGHBORS;
@@ -403,9 +489,13 @@ export class GritEngine {
 
         this.runConstraintPlugins(particle);
 
-        if (particle.isDead()) {
-          this.particles.splice(i, 1);
+        if (!particle.isDead()) {
+          this.particles[aliveWriteIndex++] = particle;
         }
+      }
+
+      if (aliveWriteIndex !== particleCount) {
+        this.particles.length = aliveWriteIndex;
       }
 
       this.runFrameEndPlugins();
@@ -468,25 +558,27 @@ export class GritEngine {
       mouseY,
       neighbors,
       this.obstacles,
-      dt
+      dt,
+      this.wasmMulAdd ?? undefined
     );
   }
 
   private updatePluginContexts(dt: number, now: number, pointerX: number | null, pointerY: number | null) {
-    this.pluginFrameContext = {
-      config: this.config,
-      canvasWidth: this.canvas.width,
-      canvasHeight: this.canvas.height,
-      dt,
-      frame: this.frameIndex,
-      now
-    };
+    this.pluginFrameContext.config = this.config;
+    this.pluginFrameContext.canvasWidth = this.canvas.width;
+    this.pluginFrameContext.canvasHeight = this.canvas.height;
+    this.pluginFrameContext.dt = dt;
+    this.pluginFrameContext.frame = this.frameIndex;
+    this.pluginFrameContext.now = now;
 
-    this.pluginParticleContext = {
-      ...this.pluginFrameContext,
-      pointerX,
-      pointerY
-    };
+    this.pluginParticleContext.config = this.config;
+    this.pluginParticleContext.canvasWidth = this.canvas.width;
+    this.pluginParticleContext.canvasHeight = this.canvas.height;
+    this.pluginParticleContext.dt = dt;
+    this.pluginParticleContext.frame = this.frameIndex;
+    this.pluginParticleContext.now = now;
+    this.pluginParticleContext.pointerX = pointerX;
+    this.pluginParticleContext.pointerY = pointerY;
   }
 
   private runFrameStartPlugins() {
@@ -495,7 +587,7 @@ export class GritEngine {
     for (let i = 0; i < this.framePlugins.length; i++) {
       const plugin = this.framePlugins[i];
       if (plugin.enabled === false || !plugin.onFrameStart) continue;
-      plugin.onFrameStart(this.pluginFrameContext);
+      plugin.onFrameStart(this.pluginFrameContext as GritPluginFrameContext);
     }
   }
 
@@ -505,7 +597,7 @@ export class GritEngine {
     for (let i = 0; i < this.framePlugins.length; i++) {
       const plugin = this.framePlugins[i];
       if (plugin.enabled === false || !plugin.onFrameEnd) continue;
-      plugin.onFrameEnd(this.pluginFrameContext);
+      plugin.onFrameEnd(this.pluginFrameContext as GritPluginFrameContext);
     }
   }
 
@@ -515,7 +607,7 @@ export class GritEngine {
     for (let i = 0; i < this.forcePlugins.length; i++) {
       const plugin = this.forcePlugins[i];
       if (plugin.enabled === false || !plugin.applyForce) continue;
-      plugin.applyForce(particle, this.pluginParticleContext);
+      plugin.applyForce(particle, this.pluginParticleContext as GritPluginParticleContext);
     }
   }
 
@@ -525,7 +617,7 @@ export class GritEngine {
     for (let i = 0; i < this.constraintPlugins.length; i++) {
       const plugin = this.constraintPlugins[i];
       if (plugin.enabled === false || !plugin.applyConstraint) continue;
-      plugin.applyConstraint(particle, this.pluginParticleContext);
+      plugin.applyConstraint(particle, this.pluginParticleContext as GritPluginParticleContext);
     }
   }
 
@@ -543,11 +635,78 @@ export class GritEngine {
   }
 
   private emitStats(force = false) {
+    this.frameTimeWindow.snapshot(this.frameTimeSummary);
+    this.adaptiveBudget.update(this.frameTimeSummary.p95Ms, this.frameTimeSummary.p99Ms);
+    this.telemetryTuner.capture(this.frameTimeSummary.p99Ms, this.fps);
+    this.applyHybridRuntimeTuning();
+
+    const budget = this.adaptiveBudget.snapshot();
+    this.activeParticleLimit = budget.activeParticleLimit;
+    this.adaptiveScale = budget.scale;
+
     if (!this.onStats && !force) return;
+
     this.onStats?.({
       particleCount: this.particles.length,
-      fps: this.fps
+      fps: this.fps,
+      frameTimeAvgMs: this.frameTimeSummary.avgMs,
+      frameTimeP95Ms: this.frameTimeSummary.p95Ms,
+      frameTimeP99Ms: this.frameTimeSummary.p99Ms,
+      activeParticleLimit: this.activeParticleLimit,
+      adaptiveScale: this.adaptiveScale,
+      effectivePreset: this.performancePreset
     });
+  }
+
+  private applyActiveParticleBudget() {
+    if (this.particles.length <= this.activeParticleLimit) return;
+    this.particles.length = this.activeParticleLimit;
+  }
+
+  private applyHybridRuntimeTuning() {
+    if (!this.hybridAdaptiveEnabled) return;
+
+    if (this.hybridCooldownTicks > 0) {
+      this.hybridCooldownTicks--;
+      return;
+    }
+
+    const p99 = this.frameTimeSummary.p99Ms;
+
+    if (p99 > 30 && this.performancePreset !== 'performance') {
+      this.setPerformancePreset('performance');
+      this.setSimulationBackend('wasm');
+      this.hybridCooldownTicks = 12;
+      return;
+    }
+
+    if (p99 < 14 && this.performancePreset === 'performance') {
+      this.setPerformancePreset('balanced');
+      this.hybridCooldownTicks = 12;
+      return;
+    }
+
+    if (p99 < 10 && this.performancePreset === 'balanced') {
+      this.setPerformancePreset('quality');
+      this.hybridCooldownTicks = 18;
+    }
+  }
+
+  private tryInitializeWasmKernel() {
+    if (this.simulationBackend !== 'wasm') return;
+    if (this.wasmKernel) return;
+
+    this.wasmKernel = new WasmMulAddKernel();
+    this.wasmKernel
+      .init()
+      .then(() => {
+        if (!this.wasmKernel?.ready) return;
+        this.wasmMulAdd = (base: number, value: number, factor: number) =>
+          this.wasmKernel!.mulAdd(base, value, factor);
+      })
+      .catch(() => {
+        this.wasmMulAdd = null;
+      });
   }
 
   private configureRandom(seed?: number) {

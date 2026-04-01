@@ -32,4 +32,7 @@ npm run test
 npm run typecheck
 npm run build
 npm run demo
+npm run benchmark
+npm run profile
+npm run perf:check
 ```

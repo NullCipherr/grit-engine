@@ -18,6 +18,7 @@ export type {
   PerformancePreset,
   PostProcessingOptions,
   RenderBackend,
+  WorkerTransportCompression,
   SimConfig,
   SimulationBackend
 } from './types';

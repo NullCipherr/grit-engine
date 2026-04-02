@@ -1,0 +1,142 @@
+:root {
+  --bg: #0b1220;
+  --panel: #141f36;
+  --panel-strong: #1a2948;
+  --text: #eaf0ff;
+  --muted: #a9b9d9;
+  --accent: #2ad4a5;
+  --accent-2: #4ba5ff;
+  --danger: #ff7f7f;
+  --border: #2b3a5a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 10%, #1f355f 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, #1c4f4d 0%, transparent 45%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.layout {
+  width: min(1120px, 100% - 2rem);
+  margin: 2rem auto 3rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.controls,
+.results,
+.stage {
+  background: linear-gradient(170deg, var(--panel) 0%, var(--panel-strong) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.hero h1 {
+  margin: 0.2rem 0;
+}
+
+.kicker {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.controls {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+
+input,
+select,
+button {
+  font: inherit;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #0f1930;
+  color: var(--text);
+  padding: 0.6rem 0.7rem;
+}
+
+button {
+  cursor: pointer;
+  font-weight: 700;
+  background: linear-gradient(95deg, var(--accent), var(--accent-2));
+  color: #041327;
+  border: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+#json-output {
+  background: #0a1327;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  max-height: 280px;
+  overflow: auto;
+  color: var(--muted);
+}
+
+.stage {
+  min-height: 420px;
+}
+
+#bench-canvas {
+  width: 100%;
+  height: 420px;
+  display: block;
+  border-radius: 10px;
+  background: #11131c;
+}
+
+.status-error {
+  color: var(--danger);
+}
+
+@media (max-width: 700px) {
+  .layout {
+    width: min(1120px, 100% - 1rem);
+    margin-top: 1rem;
+  }
+
+  #bench-canvas,
+  .stage {
+    min-height: 300px;
+    height: 300px;
+  }
+}

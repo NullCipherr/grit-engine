@@ -23,7 +23,8 @@ import {
   type PostProcessingOptions,
   type RenderBackend,
   type SimConfig,
-  type SimulationBackend
+  type SimulationBackend,
+  type WorkerTransportCompression
 } from './types';
 import { SeededRandom } from './utils/SeededRandom';
 
@@ -49,6 +50,11 @@ interface MutablePluginParticleContext extends MutablePluginFrameContext {
   pointerY: number | null;
 }
 
+interface PerformanceMemoryShape {
+  usedJSHeapSize?: number;
+  jsHeapSizeLimit?: number;
+}
+
 export class GritEngine {
   private readonly canvas: HTMLCanvasElement;
   private readonly overlayCanvas?: HTMLCanvasElement;
@@ -58,6 +64,8 @@ export class GritEngine {
   private readonly maxDpr: number;
   private readonly executionMode: GritEngineOptions['executionMode'];
   private readonly onStats?: (stats: EngineStats) => void;
+  private readonly workerTransportCompression: WorkerTransportCompression;
+  private readonly runtimeBackendFallbackEnabled: boolean;
 
   private renderer: Renderer;
   private renderBackend: Exclude<RenderBackend, 'auto'>;
@@ -103,6 +111,8 @@ export class GritEngine {
     p99Ms: 0
   };
   private adaptiveScale = 1;
+  private usedJSHeapSize: number | undefined = undefined;
+  private jsHeapSizeLimit: number | undefined = undefined;
 
   private pluginsById = new Map<string, GritPlugin>();
   private forcePlugins: GritPlugin[] = [];
@@ -138,6 +148,8 @@ export class GritEngine {
     this.maxDpr = options.maxDpr ?? 2;
     this.executionMode = options.executionMode ?? 'main-thread';
     this.onStats = options.onStats;
+    this.workerTransportCompression = options.workerTransportCompression ?? 'none';
+    this.runtimeBackendFallbackEnabled = options.runtimeBackendFallback ?? true;
     this.hybridAdaptiveEnabled = options.hybridAdaptive ?? true;
     this.telemetryTuner = new LocalTelemetryTuner(options.autoTune ?? true);
 
@@ -164,9 +176,12 @@ export class GritEngine {
 
     this.grid = new SpatialGrid(options.gridCellSize ?? 40);
 
-    const { renderer, backend } = createRenderer(this.canvas, this.maxParticles, options.renderBackend ?? 'auto');
+    const { renderer, backend } = createRenderer(this.canvas, this.maxParticles, options.renderBackend ?? 'auto', {
+      workerTransportCompression: this.workerTransportCompression
+    });
     this.renderer = renderer;
     this.renderBackend = backend;
+    this.bindRendererErrorHandler();
 
     this.simulationBackend = resolveSimulationBackend(options.simulationBackend ?? 'auto');
     this.tryInitializeWasmKernel();
@@ -288,11 +303,14 @@ export class GritEngine {
   }
 
   setRenderBackend(backend: RenderBackend) {
-    const { renderer, backend: resolvedBackend } = createRenderer(this.canvas, this.maxParticles, backend);
+    const { renderer, backend: resolvedBackend } = createRenderer(this.canvas, this.maxParticles, backend, {
+      workerTransportCompression: this.workerTransportCompression
+    });
 
     this.renderer.dispose();
     this.renderer = renderer;
     this.renderBackend = resolvedBackend;
+    this.bindRendererErrorHandler();
   }
 
   getSimulationBackend() {
@@ -372,6 +390,7 @@ export class GritEngine {
   getStats(): EngineStats {
     this.frameTimeWindow.snapshot(this.frameTimeSummary);
     const budget = this.adaptiveBudget.snapshot();
+    this.sampleMemoryStats();
     this.activeParticleLimit = budget.activeParticleLimit;
     this.adaptiveScale = budget.scale;
 
@@ -383,7 +402,9 @@ export class GritEngine {
       frameTimeP99Ms: this.frameTimeSummary.p99Ms,
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
-      effectivePreset: this.performancePreset
+      effectivePreset: this.performancePreset,
+      usedJSHeapSize: this.usedJSHeapSize,
+      jsHeapSizeLimit: this.jsHeapSizeLimit
     };
   }
 
@@ -641,6 +662,7 @@ export class GritEngine {
     this.applyHybridRuntimeTuning();
 
     const budget = this.adaptiveBudget.snapshot();
+    this.sampleMemoryStats();
     this.activeParticleLimit = budget.activeParticleLimit;
     this.adaptiveScale = budget.scale;
 
@@ -654,7 +676,9 @@ export class GritEngine {
       frameTimeP99Ms: this.frameTimeSummary.p99Ms,
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
-      effectivePreset: this.performancePreset
+      effectivePreset: this.performancePreset,
+      usedJSHeapSize: this.usedJSHeapSize,
+      jsHeapSizeLimit: this.jsHeapSizeLimit
     });
   }
 
@@ -707,6 +731,54 @@ export class GritEngine {
       .catch(() => {
         this.wasmMulAdd = null;
       });
+  }
+
+  private bindRendererErrorHandler() {
+    this.renderer.setErrorHandler?.((reason) => {
+      this.handleRendererRuntimeError(reason);
+    });
+  }
+
+  private handleRendererRuntimeError(_reason: string) {
+    if (!this.runtimeBackendFallbackEnabled) return;
+
+    const nextBackend = this.resolveFallbackBackend(this.renderBackend);
+    if (!nextBackend) return;
+
+    let nextRendererPayload: ReturnType<typeof createRenderer> | null = null;
+    try {
+      nextRendererPayload = createRenderer(this.canvas, this.maxParticles, nextBackend, {
+        workerTransportCompression: this.workerTransportCompression
+      });
+    } catch {
+      return;
+    }
+    if (!nextRendererPayload) return;
+
+    this.renderer.dispose();
+    this.renderer = nextRendererPayload.renderer;
+    this.renderBackend = nextRendererPayload.backend;
+    this.bindRendererErrorHandler();
+  }
+
+  private resolveFallbackBackend(current: Exclude<RenderBackend, 'auto'>): Exclude<RenderBackend, 'auto'> | null {
+    if (current === 'offscreen-worker') return 'webgl2';
+    if (current === 'webgl2') return 'canvas2d';
+    return null;
+  }
+
+  private sampleMemoryStats() {
+    const perf = performance as Performance & {
+      memory?: PerformanceMemoryShape;
+    };
+    const memory = perf.memory;
+    if (!memory) return;
+    if (typeof memory.usedJSHeapSize === 'number') {
+      this.usedJSHeapSize = memory.usedJSHeapSize;
+    }
+    if (typeof memory.jsHeapSizeLimit === 'number') {
+      this.jsHeapSizeLimit = memory.jsHeapSizeLimit;
+    }
   }
 
   private configureRandom(seed?: number) {

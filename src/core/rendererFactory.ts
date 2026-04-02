@@ -1,4 +1,4 @@
-import type { RenderBackend } from '../types';
+import type { RenderBackend, WorkerTransportCompression } from '../types';
 import { Canvas2DRenderer } from './Canvas2DRenderer';
 import { OffscreenWorkerRenderer } from './OffscreenWorkerRenderer';
 import type { Renderer } from './types';
@@ -31,14 +31,19 @@ export function resolveRenderBackend(canvas: HTMLCanvasElement, requested: Rende
 export function createRenderer(
   canvas: HTMLCanvasElement,
   maxParticles: number,
-  requested: RenderBackend
+  requested: RenderBackend,
+  options?: {
+    workerTransportCompression?: WorkerTransportCompression;
+  }
 ): { renderer: Renderer; backend: Exclude<RenderBackend, 'auto'> } {
   const backend = resolveRenderBackend(canvas, requested);
 
   if (backend === 'offscreen-worker') {
     try {
       return {
-        renderer: new OffscreenWorkerRenderer(canvas, maxParticles),
+        renderer: new OffscreenWorkerRenderer(canvas, maxParticles, {
+          compression: options?.workerTransportCompression ?? 'none'
+        }),
         backend
       };
     } catch {

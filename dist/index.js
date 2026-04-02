@@ -1,7 +1,7 @@
 var Pt = Object.defineProperty;
-var St = (h, t, e) => t in h ? Pt(h, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : h[t] = e;
-var s = (h, t, e) => St(h, typeof t != "symbol" ? t + "" : t, e);
-class wt {
+var wt = (h, t, e) => t in h ? Pt(h, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : h[t] = e;
+var s = (h, t, e) => wt(h, typeof t != "symbol" ? t + "" : t, e);
+class At {
   constructor(t, e, i = 40) {
     s(this, "x");
     s(this, "y");
@@ -19,10 +19,10 @@ class wt {
     return i * i + r * r <= this.radius * this.radius;
   }
 }
-let At = 0;
-const Q = 2e-4, J = 0.0141421356, Ct = 16e4, Z = 0.8, _ = -0.7, tt = 8, Mt = 33, et = 0.02, it = 1e-3, st = 12;
-class kt {
-  constructor(t, e, i, r, a = Math.random) {
+let kt = 0;
+const X = 2e-4, Z = 0.0141421356, Ct = 16e4, tt = 0.8, _ = -0.7, et = 8, Mt = 33, it = 0.02, st = 1e-3, rt = 12;
+class Ft {
+  constructor(t, e, i, r, n = Math.random) {
     s(this, "id");
     s(this, "x");
     s(this, "y");
@@ -45,98 +45,98 @@ class kt {
     s(this, "flockNeighborCount");
     // Fallback color cache
     s(this, "colorString");
-    this.id = ++At, this.x = t, this.y = e, this.vx = (a() - 0.5) * 10, this.vy = (a() - 0.5) * 10, this.ax = 0, this.ay = 0, this.maxLife = r.particleLife + a() * 50, this.life = this.maxLife, this.baseSize = r.particleSize * (0.4 + a() * 0.8), this.size = this.baseSize, this.hue = 200 + a() * 60, this.mass = this.size, this.flockingTimer = this.id % 3 * 11, this.flockAvgVx = 0, this.flockAvgVy = 0, this.flockAvgX = this.x, this.flockAvgY = this.y, this.flockNeighborCount = 0, this.colorString = i;
+    this.id = ++kt, this.x = t, this.y = e, this.vx = (n() - 0.5) * 10, this.vy = (n() - 0.5) * 10, this.ax = 0, this.ay = 0, this.maxLife = r.particleLife + n() * 50, this.life = this.maxLife, this.baseSize = r.particleSize * (0.4 + n() * 0.8), this.size = this.baseSize, this.hue = 200 + n() * 60, this.mass = this.size, this.flockingTimer = this.id % 3 * 11, this.flockAvgVx = 0, this.flockAvgVy = 0, this.flockAvgX = this.x, this.flockAvgY = this.y, this.flockNeighborCount = 0, this.colorString = i;
   }
-  update(t, e, i, r, a, n, o, l, f) {
-    const c = f ?? ((m, g, d) => m + g * d), {
+  update(t, e, i, r, n, a, l, o, c) {
+    const d = c ?? ((m, g, f) => m + g * f), {
       attraction: u,
       repulsion: w,
-      vortex: k,
+      vortex: M,
       flocking: F,
       collisions: R,
       gravity: y,
-      friction: E
+      friction: I
     } = t;
-    if (this.size = this.baseSize, this.mass = this.size > 0.1 ? this.size : 0.1, r !== null && a !== null) {
-      const m = r - this.x, g = a - this.y, d = m * m + g * g;
-      if (d < Ct) {
-        const p = (u - w) / (d + 500);
-        this.ax += m * p, this.ay += g * p, k && (this.ax += g * 0.03, this.ay -= m * 0.03);
+    if (this.size = this.baseSize, this.mass = this.size > 0.1 ? this.size : 0.1, r !== null && n !== null) {
+      const m = r - this.x, g = n - this.y, f = m * m + g * g;
+      if (f < Ct) {
+        const p = (u - w) / (f + 500);
+        this.ax += m * p, this.ay += g * p, M && (this.ax += g * 0.03, this.ay -= m * 0.03);
       }
     }
-    const C = n.length;
-    if (F && C > 0) {
-      if (this.flockingTimer += l * 16.6667, this.flockingTimer >= Mt) {
+    const k = a.length;
+    if (F && k > 0) {
+      if (this.flockingTimer += o * 16.6667, this.flockingTimer >= Mt) {
         this.flockingTimer = 0;
-        const m = C < tt ? C : tt;
-        let g = 0, d = 0, p = 0, x = 0;
-        for (let P = 0; P < m; P++) {
-          const b = n[P];
-          g += b.vx, d += b.vy, p += b.x, x += b.y;
+        const m = k < et ? k : et;
+        let g = 0, f = 0, p = 0, x = 0;
+        for (let S = 0; S < m; S++) {
+          const b = a[S];
+          g += b.vx, f += b.vy, p += b.x, x += b.y;
         }
         const v = 1 / m;
-        this.flockAvgVx = g * v, this.flockAvgVy = d * v, this.flockAvgX = p * v, this.flockAvgY = x * v, this.flockNeighborCount = m;
+        this.flockAvgVx = g * v, this.flockAvgVy = f * v, this.flockAvgX = p * v, this.flockAvgY = x * v, this.flockNeighborCount = m;
       }
-      this.flockNeighborCount > 0 && (this.ax += (this.flockAvgVx - this.vx) * et, this.ay += (this.flockAvgVy - this.vy) * et, this.ax += (this.flockAvgX - this.x) * it, this.ay += (this.flockAvgY - this.y) * it);
+      this.flockNeighborCount > 0 && (this.ax += (this.flockAvgVx - this.vx) * it, this.ay += (this.flockAvgVy - this.vy) * it, this.ax += (this.flockAvgX - this.x) * st, this.ay += (this.flockAvgY - this.y) * st);
     }
-    if (R && C > 0) {
-      const m = C < st ? C : st;
+    if (R && k > 0) {
+      const m = k < rt ? k : rt;
       for (let g = 0; g < m; g++) {
-        const d = n[g];
-        if (this.id >= d.id) continue;
-        let p = d.x - this.x, x = d.y - this.y, v = p * p + x * x;
-        const P = this.size + d.size;
-        if (v < P * P) {
-          let b = J;
-          v <= 0 ? (p = 0.01, x = 0.01, v = Q) : b = Math.sqrt(v);
-          const A = p / b, M = x / b, B = P - b, G = this.mass + d.mass, H = G > 0 ? 1 / G : 1, q = this.mass * H, Y = d.mass * H;
-          this.x -= A * B * Y, this.y -= M * B * Y, d.x += A * B * q, d.y += M * B * q;
-          const xt = this.vx - d.vx, bt = this.vy - d.vy, $ = xt * A + bt * M;
+        const f = a[g];
+        if (this.id >= f.id) continue;
+        let p = f.x - this.x, x = f.y - this.y, v = p * p + x * x;
+        const S = this.size + f.size;
+        if (v < S * S) {
+          let b = Z;
+          v <= 0 ? (p = 0.01, x = 0.01, v = X) : b = Math.sqrt(v);
+          const A = p / b, C = x / b, E = S - b, G = this.mass + f.mass, q = G > 0 ? 1 / G : 1, Y = this.mass * q, j = f.mass * q;
+          this.x -= A * E * j, this.y -= C * E * j, f.x += A * E * Y, f.y += C * E * Y;
+          const bt = this.vx - f.vx, St = this.vy - f.vy, $ = bt * A + St * C;
           if ($ < 0) {
-            const K = -1.8 * $ / (1 / this.mass + 1 / d.mass), j = K * A, X = K * M;
-            this.vx += j / this.mass, this.vy += X / this.mass, d.vx -= j / d.mass, d.vy -= X / d.mass;
+            const K = -1.8 * $ / (1 / this.mass + 1 / f.mass), Q = K * A, J = K * C;
+            this.vx += Q / this.mass, this.vy += J / this.mass, f.vx -= Q / f.mass, f.vy -= J / f.mass;
           }
         }
       }
     }
-    for (let m = 0; m < o.length; m++) {
-      const g = o[m];
-      let d = this.x - g.x, p = this.y - g.y, x = d * d + p * p;
+    for (let m = 0; m < l.length; m++) {
+      const g = l[m];
+      let f = this.x - g.x, p = this.y - g.y, x = f * f + p * p;
       const v = this.size + g.radius;
       if (x < v * v) {
-        let P = J;
-        x <= 0 ? (d = 0.01, p = 0.01, x = Q) : P = Math.sqrt(x);
-        const b = d / P, A = p / P;
+        let S = Z;
+        x <= 0 ? (f = 0.01, p = 0.01, x = X) : S = Math.sqrt(x);
+        const b = f / S, A = p / S;
         this.x = g.x + b * v, this.y = g.y + A * v;
-        const M = this.vx * b + this.vy * A;
-        this.vx = (this.vx - 2 * M * b) * Z, this.vy = (this.vy - 2 * M * A) * Z;
+        const C = this.vx * b + this.vy * A;
+        this.vx = (this.vx - 2 * C * b) * tt, this.vy = (this.vy - 2 * C * A) * tt;
       }
     }
-    this.ay += y, this.vx = c(this.vx, this.ax, l), this.vy = c(this.vy, this.ay, l);
-    const I = Math.pow(E, l);
-    this.vx *= I, this.vy *= I, this.x = c(this.x, this.vx, l), this.y = c(this.y, this.vy, l), this.ax = 0, this.ay = 0, this.x < this.size ? (this.x = this.size, this.vx *= _) : this.x > e - this.size && (this.x = e - this.size, this.vx *= _), this.y < this.size ? (this.y = this.size, this.vy *= _) : this.y > i - this.size && (this.y = i - this.size, this.vy *= _), this.life -= l;
+    this.ay += y, this.vx = d(this.vx, this.ax, o), this.vy = d(this.vy, this.ay, o);
+    const z = Math.pow(I, o);
+    this.vx *= z, this.vy *= z, this.x = d(this.x, this.vx, o), this.y = d(this.y, this.vy, o), this.ax = 0, this.ay = 0, this.x < this.size ? (this.x = this.size, this.vx *= _) : this.x > e - this.size && (this.x = e - this.size, this.vx *= _), this.y < this.size ? (this.y = this.size, this.vy *= _) : this.y > i - this.size && (this.y = i - this.size, this.vy *= _), this.life -= o;
   }
   draw(t, e, i) {
     const r = this.life > 0 ? this.life / this.maxLife : 0;
     if (t.globalAlpha = r, i) {
-      const o = this.size * (e.bloom ? 3 : 1.5);
+      const l = this.size * (e.bloom ? 3 : 1.5);
       t.drawImage(
         i,
-        this.x - o,
-        this.y - o,
-        o * 2,
-        o * 2
+        this.x - l,
+        this.y - l,
+        l * 2,
+        l * 2
       );
       return;
     }
-    const a = this.vx * this.vx + this.vy * this.vy, n = this.hue + Math.sqrt(a) * 5 | 0;
-    this.colorString = `hsl(${n}, 85%, 65%)`, t.fillStyle = this.colorString, t.beginPath(), t.arc(this.x, this.y, this.size, 0, Math.PI * 2), t.fill();
+    const n = this.vx * this.vx + this.vy * this.vy, a = this.hue + Math.sqrt(n) * 5 | 0;
+    this.colorString = `hsl(${a}, 85%, 65%)`, t.fillStyle = this.colorString, t.beginPath(), t.arc(this.x, this.y, this.size, 0, Math.PI * 2), t.fill();
   }
   isDead() {
     return this.life <= 0;
   }
 }
-const rt = "#11131c", S = 48, z = 48, D = 16.67;
+const at = "#11131c", P = 48, D = 48, U = 16.67;
 class O {
   constructor(t, e = 5e4) {
     s(this, "canvas");
@@ -144,7 +144,7 @@ class O {
     s(this, "maxParticles");
     s(this, "firstFrame", !0);
     s(this, "drawStride", 1);
-    s(this, "smoothedRenderMs", D);
+    s(this, "smoothedRenderMs", U);
     s(this, "solidColorPalette");
     s(this, "glowSpritePalette");
     this.canvas = t;
@@ -154,13 +154,13 @@ class O {
     this.ctx = i, this.maxParticles = e, this.solidColorPalette = this.buildSolidPalette(), this.glowSpritePalette = this.buildGlowPalette();
   }
   render(t, e, i, r) {
-    const a = performance.now(), n = this.ctx;
-    this.firstFrame && (n.globalAlpha = 1, n.fillStyle = rt, n.fillRect(0, 0, e, i), this.firstFrame = !1), this.updateQualityPolicy(t.length, r.bloom);
-    const o = Math.max(0, Math.min(r.trailStrength, 1)), l = Math.min(Math.max(1 - o, 0.04), 0.92);
-    n.globalCompositeOperation = "source-over", n.globalAlpha = l, n.fillStyle = rt, n.fillRect(0, 0, e, i);
-    const f = Math.min(this.maxParticles, t.length);
-    if (n.globalCompositeOperation = r.bloom ? "lighter" : "source-over", this.drawStride > 1 ? this.renderFastPath(t, f, r.bloom) : this.renderQualityPath(t, f, r.bloom), r.vignette && this.drawStride < 4) {
-      const u = n.createRadialGradient(
+    const n = performance.now(), a = this.ctx;
+    this.firstFrame && (a.globalAlpha = 1, a.fillStyle = at, a.fillRect(0, 0, e, i), this.firstFrame = !1), this.updateQualityPolicy(t.length, r.bloom);
+    const l = Math.max(0, Math.min(r.trailStrength, 1)), o = Math.min(Math.max(1 - l, 0.04), 0.92);
+    a.globalCompositeOperation = "source-over", a.globalAlpha = o, a.fillStyle = at, a.fillRect(0, 0, e, i);
+    const c = Math.min(this.maxParticles, t.length);
+    if (a.globalCompositeOperation = r.bloom ? "lighter" : "source-over", this.drawStride > 1 ? this.renderFastPath(t, c, r.bloom) : this.renderQualityPath(t, c, r.bloom), r.vignette && this.drawStride < 4) {
+      const u = a.createRadialGradient(
         e * 0.5,
         i * 0.5,
         Math.min(e, i) * 0.18,
@@ -168,10 +168,10 @@ class O {
         i * 0.5,
         Math.max(e, i) * 0.75
       );
-      u.addColorStop(0, "rgba(0, 0, 0, 0)"), u.addColorStop(1, "rgba(0, 0, 0, 0.4)"), n.globalAlpha = 1, n.globalCompositeOperation = "source-over", n.fillStyle = u, n.fillRect(0, 0, e, i);
+      u.addColorStop(0, "rgba(0, 0, 0, 0)"), u.addColorStop(1, "rgba(0, 0, 0, 0.4)"), a.globalAlpha = 1, a.globalCompositeOperation = "source-over", a.fillStyle = u, a.fillRect(0, 0, e, i);
     }
-    const c = performance.now() - a;
-    this.smoothedRenderMs += (c - this.smoothedRenderMs) * 0.08;
+    const d = performance.now() - n;
+    this.smoothedRenderMs += (d - this.smoothedRenderMs) * 0.08;
   }
   resizeMaxParticles(t) {
     this.maxParticles = t;
@@ -180,78 +180,78 @@ class O {
     this.ctx.globalCompositeOperation = "source-over", this.ctx.globalAlpha = 1;
   }
   updateQualityPolicy(t, e) {
-    const i = t / Math.max(this.maxParticles, 1), r = e ? 1.45 : 1, a = this.smoothedRenderMs * r * (1 + i * 0.35);
-    a > D * 1.45 ? this.drawStride = Math.min(this.drawStride + 1, 4) : a < D * 0.86 && (this.drawStride = Math.max(this.drawStride - 1, 1));
+    const i = t / Math.max(this.maxParticles, 1), r = e ? 1.45 : 1, n = this.smoothedRenderMs * r * (1 + i * 0.35);
+    n > U * 1.45 ? this.drawStride = Math.min(this.drawStride + 1, 4) : n < U * 0.86 && (this.drawStride = Math.max(this.drawStride - 1, 1));
   }
   renderFastPath(t, e, i) {
     const r = this.ctx;
-    for (let a = 0; a < e; a += this.drawStride) {
-      const n = t[a], o = n.life > 0 ? n.life / n.maxLife : 0;
-      if (o <= 0.01) continue;
-      r.globalAlpha = o;
-      const l = this.paletteIndex(n.hue + Math.min((n.vx * n.vx + n.vy * n.vy) * 1.25, 60));
+    for (let n = 0; n < e; n += this.drawStride) {
+      const a = t[n], l = a.life > 0 ? a.life / a.maxLife : 0;
+      if (l <= 0.01) continue;
+      r.globalAlpha = l;
+      const o = this.paletteIndex(a.hue + Math.min((a.vx * a.vx + a.vy * a.vy) * 1.25, 60));
       if (i) {
-        const f = this.glowSpritePalette[l];
-        if (f) {
-          const c = n.size * 2.4, u = c * 2;
-          r.drawImage(f, n.x - c, n.y - c, u, u);
+        const c = this.glowSpritePalette[o];
+        if (c) {
+          const d = a.size * 2.4, u = d * 2;
+          r.drawImage(c, a.x - d, a.y - d, u, u);
         } else
-          r.fillStyle = this.solidColorPalette[l], r.fillRect(n.x - n.size, n.y - n.size, n.size * 2, n.size * 2);
+          r.fillStyle = this.solidColorPalette[o], r.fillRect(a.x - a.size, a.y - a.size, a.size * 2, a.size * 2);
       } else
-        r.fillStyle = this.solidColorPalette[l], r.fillRect(n.x - n.size, n.y - n.size, n.size * 2, n.size * 2);
+        r.fillStyle = this.solidColorPalette[o], r.fillRect(a.x - a.size, a.y - a.size, a.size * 2, a.size * 2);
     }
   }
   renderQualityPath(t, e, i) {
     const r = this.ctx;
-    for (let a = 0; a < e; a++) {
-      const n = t[a], o = n.life > 0 ? n.life / n.maxLife : 0;
-      if (o <= 0.01) continue;
-      r.globalAlpha = o;
-      const l = this.paletteIndex(n.hue + Math.min((n.vx * n.vx + n.vy * n.vy) * 1.25, 60));
+    for (let n = 0; n < e; n++) {
+      const a = t[n], l = a.life > 0 ? a.life / a.maxLife : 0;
+      if (l <= 0.01) continue;
+      r.globalAlpha = l;
+      const o = this.paletteIndex(a.hue + Math.min((a.vx * a.vx + a.vy * a.vy) * 1.25, 60));
       if (i) {
-        const f = this.glowSpritePalette[l];
-        if (f) {
-          const c = n.size * 2.6, u = c * 2;
-          r.drawImage(f, n.x - c, n.y - c, u, u);
+        const c = this.glowSpritePalette[o];
+        if (c) {
+          const d = a.size * 2.6, u = d * 2;
+          r.drawImage(c, a.x - d, a.y - d, u, u);
           continue;
         }
       }
-      r.fillStyle = this.solidColorPalette[l], r.beginPath(), r.arc(n.x, n.y, n.size, 0, Math.PI * 2), r.fill();
+      r.fillStyle = this.solidColorPalette[o], r.beginPath(), r.arc(a.x, a.y, a.size, 0, Math.PI * 2), r.fill();
     }
   }
   paletteIndex(t) {
     const e = (t % 360 + 360) % 360;
-    return Math.floor(e / 360 * S) % S;
+    return Math.floor(e / 360 * P) % P;
   }
   buildSolidPalette() {
-    const t = new Array(S);
-    for (let e = 0; e < S; e++) {
-      const i = Math.floor(e / S * 360);
+    const t = new Array(P);
+    for (let e = 0; e < P; e++) {
+      const i = Math.floor(e / P * 360);
       t[e] = `hsl(${i}, 85%, 65%)`;
     }
     return t;
   }
   buildGlowPalette() {
-    const t = new Array(S);
+    const t = new Array(P);
     if (typeof document > "u") {
-      for (let e = 0; e < S; e++) t[e] = null;
+      for (let e = 0; e < P; e++) t[e] = null;
       return t;
     }
-    for (let e = 0; e < S; e++) {
-      const i = Math.floor(e / S * 360), r = document.createElement("canvas");
-      r.width = z, r.height = z;
-      const a = r.getContext("2d");
-      if (!a) {
+    for (let e = 0; e < P; e++) {
+      const i = Math.floor(e / P * 360), r = document.createElement("canvas");
+      r.width = D, r.height = D;
+      const n = r.getContext("2d");
+      if (!n) {
         t[e] = null;
         continue;
       }
-      const n = z * 0.5, o = a.createRadialGradient(n, n, 0, n, n, n);
-      o.addColorStop(0, `hsla(${i}, 85%, 70%, 1)`), o.addColorStop(1, `hsla(${i}, 85%, 70%, 0)`), a.fillStyle = o, a.beginPath(), a.arc(n, n, n, 0, Math.PI * 2), a.fill(), t[e] = r;
+      const a = D * 0.5, l = n.createRadialGradient(a, a, 0, a, a, a);
+      l.addColorStop(0, `hsla(${i}, 85%, 70%, 1)`), l.addColorStop(1, `hsla(${i}, 85%, 70%, 0)`), n.fillStyle = l, n.beginPath(), n.arc(a, a, a, 0, Math.PI * 2), n.fill(), t[e] = r;
     }
     return t;
   }
 }
-const at = "#11131c", V = 5, Ft = `
+const nt = "#11131c", B = 5, yt = 64, Rt = `
 let canvas = null;
 let ctx = null;
 let maxParticles = 50000;
@@ -267,6 +267,11 @@ self.onmessage = (event) => {
     }
     if (canvas) {
       ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+      // Alguns navegadores aceitam OffscreenCanvas, mas falham com flags avançadas.
+      // Fazemos fallback para assinatura básica antes de marcar erro fatal.
+      if (!ctx) {
+        ctx = canvas.getContext('2d');
+      }
       if (!ctx) {
         self.postMessage({ type: 'error', message: 'offscreen-2d-context-unavailable' });
         return;
@@ -305,7 +310,7 @@ self.onmessage = (event) => {
 
     if (firstFrame) {
       ctx.globalAlpha = 1;
-      ctx.fillStyle = '${at}';
+      ctx.fillStyle = '${nt}';
       ctx.fillRect(0, 0, width, height);
       firstFrame = false;
     }
@@ -313,20 +318,35 @@ self.onmessage = (event) => {
     const fadeAlpha = Math.min(Math.max(1 - trailStrength, 0.04), 0.92);
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = fadeAlpha;
-    ctx.fillStyle = '${at}';
+    ctx.fillStyle = '${nt}';
     ctx.fillRect(0, 0, width, height);
 
+    const compression = data.compression || 'none';
     const packed = data.packed;
     const count = Math.min(data.count, maxParticles);
     ctx.globalCompositeOperation = bloom ? 'lighter' : 'source-over';
 
     for (let i = 0; i < count; i++) {
-      const offset = i * ${V};
-      const x = packed[offset];
-      const y = packed[offset + 1];
-      const size = packed[offset + 2];
-      const hue = packed[offset + 3];
-      const alpha = packed[offset + 4];
+      const offset = i * ${B};
+      let x = 0;
+      let y = 0;
+      let size = 0;
+      let hue = 0;
+      let alpha = 0;
+
+      if (compression === 'quantized16') {
+        x = (packed[offset] / 65535) * width;
+        y = (packed[offset + 1] / 65535) * height;
+        size = (packed[offset + 2] / 65535) * ${yt};
+        hue = (packed[offset + 3] / 65535) * 360;
+        alpha = packed[offset + 4] / 65535;
+      } else {
+        x = packed[offset];
+        y = packed[offset + 1];
+        size = packed[offset + 2];
+        hue = packed[offset + 3];
+        alpha = packed[offset + 4];
+      }
 
       if (alpha <= 0.01) continue;
 
@@ -360,69 +380,81 @@ self.onmessage = (event) => {
   self.postMessage({ type: 'rendered' });
 };
 `;
-class Rt {
-  constructor(t, e) {
+class Bt {
+  constructor(t, e, i) {
     s(this, "worker");
     s(this, "workerUrl");
     s(this, "maxParticles");
-    s(this, "packedData");
+    s(this, "packedDataFloat");
+    s(this, "packedDataQ16");
+    s(this, "compression");
     s(this, "inFlight", !1);
     s(this, "ready", !1);
     s(this, "failed", !1);
+    s(this, "lastErrorReason", null);
     s(this, "lastWidth", -1);
     s(this, "lastHeight", -1);
+    s(this, "onError", null);
     if (typeof Worker > "u" || typeof t.transferControlToOffscreen != "function")
       throw new Error("Offscreen worker rendering not supported");
-    const i = new Blob([Ft], { type: "text/javascript" });
-    this.workerUrl = URL.createObjectURL(i), this.worker = new Worker(this.workerUrl);
-    const r = t.transferControlToOffscreen();
-    this.maxParticles = e, this.packedData = new Float32Array(e * V), this.worker.onmessage = (a) => {
-      var o;
-      const n = (o = a.data) == null ? void 0 : o.type;
-      if (n === "ready") {
+    const r = new Blob([Rt], { type: "text/javascript" });
+    this.workerUrl = URL.createObjectURL(r), this.worker = new Worker(this.workerUrl);
+    const n = t.transferControlToOffscreen();
+    this.maxParticles = e, this.compression = (i == null ? void 0 : i.compression) ?? "none", this.packedDataFloat = new Float32Array(e * B), this.packedDataQ16 = new Uint16Array(e * B), this.worker.onmessage = (a) => {
+      var o, c;
+      const l = (o = a.data) == null ? void 0 : o.type;
+      if (l === "ready") {
         this.ready = !0;
         return;
       }
-      n === "error" && (this.failed = !0), this.inFlight = !1;
+      l === "error" && (this.failed = !0, this.lastErrorReason = a.data.message ?? "offscreen-worker-render-error", (c = this.onError) == null || c.call(this, this.lastErrorReason)), this.inFlight = !1;
     }, this.worker.onerror = () => {
-      this.failed = !0, this.inFlight = !1;
+      var a;
+      this.failed = !0, this.inFlight = !1, this.lastErrorReason = "offscreen-worker-error", (a = this.onError) == null || a.call(this, this.lastErrorReason);
     }, this.worker.postMessage(
       {
         type: "init",
-        canvas: r,
+        canvas: n,
         maxParticles: e
       },
-      [r]
+      [n]
     );
   }
   render(t, e, i, r) {
     if (this.failed || !this.ready || this.inFlight) return;
     (e !== this.lastWidth || i !== this.lastHeight) && (this.worker.postMessage({ type: "resize", width: e, height: i }), this.lastWidth = e, this.lastHeight = i);
-    const a = Math.min(t.length, this.maxParticles);
-    let n = 0;
-    for (let o = 0; o < a; o++) {
-      const l = t[o], f = l.vx * l.vx + l.vy * l.vy, c = ((l.hue + Math.min(f * 1.25, 60)) % 360 + 360) % 360, u = l.life > 0 ? l.life / l.maxLife : 0;
-      this.packedData[n++] = l.x, this.packedData[n++] = l.y, this.packedData[n++] = l.size, this.packedData[n++] = c, this.packedData[n++] = u;
+    const n = Math.min(t.length, this.maxParticles);
+    let a = 0;
+    for (let l = 0; l < n; l++) {
+      const o = t[l], c = o.vx * o.vx + o.vy * o.vy, d = ((o.hue + Math.min(c * 1.25, 60)) % 360 + 360) % 360, u = o.life > 0 ? o.life / o.maxLife : 0;
+      this.compression === "quantized16" ? (this.packedDataQ16[a++] = this.quantizeUnit(o.x / Math.max(e, 1)), this.packedDataQ16[a++] = this.quantizeUnit(o.y / Math.max(i, 1)), this.packedDataQ16[a++] = this.quantizeUnit(o.size / yt), this.packedDataQ16[a++] = this.quantizeUnit(d / 360), this.packedDataQ16[a++] = this.quantizeUnit(u)) : (this.packedDataFloat[a++] = o.x, this.packedDataFloat[a++] = o.y, this.packedDataFloat[a++] = o.size, this.packedDataFloat[a++] = d, this.packedDataFloat[a++] = u);
     }
     this.inFlight = !0, this.worker.postMessage({
       type: "render",
+      compression: this.compression,
       width: e,
       height: i,
-      count: a,
+      count: n,
       bloom: r.bloom,
       trailStrength: r.trailStrength,
       vignette: r.vignette,
-      packed: this.packedData
+      packed: this.compression === "quantized16" ? this.packedDataQ16 : this.packedDataFloat
     });
   }
   resizeMaxParticles(t) {
-    t !== this.maxParticles && (this.maxParticles = t, this.packedData = new Float32Array(t * V), this.worker.postMessage({ type: "set-max-particles", maxParticles: t }));
+    t !== this.maxParticles && (this.maxParticles = t, this.packedDataFloat = new Float32Array(t * B), this.packedDataQ16 = new Uint16Array(t * B), this.worker.postMessage({ type: "set-max-particles", maxParticles: t }));
+  }
+  setErrorHandler(t) {
+    this.onError = t, this.onError && this.failed && this.lastErrorReason && this.onError(this.lastErrorReason);
   }
   dispose() {
     this.worker.terminate(), URL.revokeObjectURL(this.workerUrl);
   }
+  quantizeUnit(t) {
+    return Math.max(0, Math.min(1, t)) * 65535 | 0;
+  }
 }
-const nt = 17 / 255, ot = 19 / 255, lt = 28 / 255, T = 7, L = T * 4, Bt = 2;
+const ot = 17 / 255, lt = 19 / 255, ht = 28 / 255, L = 7, T = L * 4, Et = 2;
 class _t {
   constructor(t, e = 5e4) {
     s(this, "canvas");
@@ -442,6 +474,7 @@ class _t {
     s(this, "uFadeAlphaLoc", null);
     s(this, "firstFrame", !0);
     s(this, "isContextLost", !1);
+    s(this, "onError", null);
     s(this, "lastWidth", -1);
     s(this, "lastHeight", -1);
     s(this, "lastBloom", -1);
@@ -450,10 +483,17 @@ class _t {
     // 360-step LUT for HSL(h, 0.85, 0.65) -> RGB
     s(this, "huePalette", new Float32Array(360 * 3));
     s(this, "handleContextLost", (t) => {
-      t.preventDefault(), this.isContextLost = !0;
+      var e;
+      t.preventDefault(), this.isContextLost = !0, (e = this.onError) == null || e.call(this, "webgl-context-lost");
     });
     s(this, "handleContextRestored", () => {
-      this.isContextLost = !1, this.initResources();
+      var t;
+      this.isContextLost = !1;
+      try {
+        this.initResources();
+      } catch {
+        (t = this.onError) == null || t.call(this, "webgl-context-restore-failed");
+      }
     });
     this.canvas = t;
     const i = t.getContext("webgl2", {
@@ -465,7 +505,7 @@ class _t {
     });
     if (!i)
       throw new Error("WebGL2 not supported");
-    this.gl = i, this.maxParticles = e, this.instanceData = new Float32Array(e * T), this.buildHuePalette(), this.initResources(), this.attachContextEvents();
+    this.gl = i, this.maxParticles = e, this.instanceData = new Float32Array(e * L), this.buildHuePalette(), this.initResources(), this.attachContextEvents();
   }
   attachContextEvents() {
     this.canvas.addEventListener("webglcontextlost", this.handleContextLost, !1), this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored, !1);
@@ -475,20 +515,20 @@ class _t {
   }
   buildHuePalette() {
     for (let t = 0; t < 360; t++) {
-      const [e, i, r] = this.hslToRgb(t / 360, 0.85, 0.65), a = t * 3;
-      this.huePalette[a] = e, this.huePalette[a + 1] = i, this.huePalette[a + 2] = r;
+      const [e, i, r] = this.hslToRgb(t / 360, 0.85, 0.65), n = t * 3;
+      this.huePalette[n] = e, this.huePalette[n + 1] = i, this.huePalette[n + 2] = r;
     }
   }
   hslToRgb(t, e, i) {
     if (e === 0) return [i, i, i];
-    const r = (o, l, f) => {
-      let c = f;
-      return c < 0 && (c += 1), c > 1 && (c -= 1), c < 1 / 6 ? o + (l - o) * 6 * c : c < 1 / 2 ? l : c < 2 / 3 ? o + (l - o) * (2 / 3 - c) * 6 : o;
-    }, a = i < 0.5 ? i * (1 + e) : i + e - i * e, n = 2 * i - a;
+    const r = (l, o, c) => {
+      let d = c;
+      return d < 0 && (d += 1), d > 1 && (d -= 1), d < 1 / 6 ? l + (o - l) * 6 * d : d < 1 / 2 ? o : d < 2 / 3 ? l + (o - l) * (2 / 3 - d) * 6 : l;
+    }, n = i < 0.5 ? i * (1 + e) : i + e - i * e, a = 2 * i - n;
     return [
-      r(n, a, t + 1 / 3),
-      r(n, a, t),
-      r(n, a, t - 1 / 3)
+      r(a, n, t + 1 / 3),
+      r(a, n, t),
+      r(a, n, t - 1 / 3)
     ];
   }
   initResources() {
@@ -563,16 +603,16 @@ class _t {
       void main() {
         gl_Position = vec4(a_position, 0.0, 1.0);
       }
-    `, a = `#version 300 es
+    `, n = `#version 300 es
       precision mediump float;
       uniform float u_fadeAlpha;
       out vec4 outColor;
       void main() {
-        outColor = vec4(${nt.toFixed(8)}, ${ot.toFixed(8)}, ${lt.toFixed(8)}, u_fadeAlpha);
+        outColor = vec4(${ot.toFixed(8)}, ${lt.toFixed(8)}, ${ht.toFixed(8)}, u_fadeAlpha);
       }
     `;
-    this.program = this.createProgram(e, i), this.fadeProgram = this.createProgram(r, a), this.uResolutionLoc = t.getUniformLocation(this.program, "u_resolution"), this.uBloomLoc = t.getUniformLocation(this.program, "u_bloom"), this.uVignetteLoc = t.getUniformLocation(this.program, "u_vignette"), this.uFadeAlphaLoc = t.getUniformLocation(this.fadeProgram, "u_fadeAlpha");
-    const n = new Float32Array([
+    this.program = this.createProgram(e, i), this.fadeProgram = this.createProgram(r, n), this.uResolutionLoc = t.getUniformLocation(this.program, "u_resolution"), this.uBloomLoc = t.getUniformLocation(this.program, "u_bloom"), this.uVignetteLoc = t.getUniformLocation(this.program, "u_vignette"), this.uFadeAlphaLoc = t.getUniformLocation(this.fadeProgram, "u_fadeAlpha");
+    const a = new Float32Array([
       -1,
       -1,
       1,
@@ -583,14 +623,14 @@ class _t {
       1
     ]);
     if (this.quadBuffer = t.createBuffer(), !this.quadBuffer) throw new Error("Failed to create quad buffer");
-    t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.bufferData(t.ARRAY_BUFFER, n, t.STATIC_DRAW), this.vaos = [], this.instanceBuffers = [];
-    for (let o = 0; o < Bt; o++) {
-      const l = t.createVertexArray();
-      if (!l) throw new Error("Failed to create particle VAO");
-      const f = t.createBuffer();
-      if (!f)
-        throw t.deleteVertexArray(l), new Error("Failed to create instance buffer");
-      t.bindVertexArray(l), t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.enableVertexAttribArray(0), t.vertexAttribPointer(0, 2, t.FLOAT, !1, 0, 0), t.bindBuffer(t.ARRAY_BUFFER, f), t.bufferData(t.ARRAY_BUFFER, this.instanceData.byteLength, t.DYNAMIC_DRAW), t.enableVertexAttribArray(1), t.vertexAttribPointer(1, 2, t.FLOAT, !1, L, 0), t.vertexAttribDivisor(1, 1), t.enableVertexAttribArray(2), t.vertexAttribPointer(2, 1, t.FLOAT, !1, L, 8), t.vertexAttribDivisor(2, 1), t.enableVertexAttribArray(3), t.vertexAttribPointer(3, 3, t.FLOAT, !1, L, 12), t.vertexAttribDivisor(3, 1), t.enableVertexAttribArray(4), t.vertexAttribPointer(4, 1, t.FLOAT, !1, L, 24), t.vertexAttribDivisor(4, 1), this.vaos.push(l), this.instanceBuffers.push(f);
+    t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.bufferData(t.ARRAY_BUFFER, a, t.STATIC_DRAW), this.vaos = [], this.instanceBuffers = [];
+    for (let l = 0; l < Et; l++) {
+      const o = t.createVertexArray();
+      if (!o) throw new Error("Failed to create particle VAO");
+      const c = t.createBuffer();
+      if (!c)
+        throw t.deleteVertexArray(o), new Error("Failed to create instance buffer");
+      t.bindVertexArray(o), t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.enableVertexAttribArray(0), t.vertexAttribPointer(0, 2, t.FLOAT, !1, 0, 0), t.bindBuffer(t.ARRAY_BUFFER, c), t.bufferData(t.ARRAY_BUFFER, this.instanceData.byteLength, t.DYNAMIC_DRAW), t.enableVertexAttribArray(1), t.vertexAttribPointer(1, 2, t.FLOAT, !1, T, 0), t.vertexAttribDivisor(1, 1), t.enableVertexAttribArray(2), t.vertexAttribPointer(2, 1, t.FLOAT, !1, T, 8), t.vertexAttribDivisor(2, 1), t.enableVertexAttribArray(3), t.vertexAttribPointer(3, 3, t.FLOAT, !1, T, 12), t.vertexAttribDivisor(3, 1), t.enableVertexAttribArray(4), t.vertexAttribPointer(4, 1, t.FLOAT, !1, T, 24), t.vertexAttribDivisor(4, 1), this.vaos.push(o), this.instanceBuffers.push(c);
     }
     if (this.fadeVao = t.createVertexArray(), !this.fadeVao) throw new Error("Failed to create fade VAO");
     t.bindVertexArray(this.fadeVao), t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.enableVertexAttribArray(0), t.vertexAttribPointer(0, 2, t.FLOAT, !1, 0, 0), t.bindVertexArray(null), t.bindBuffer(t.ARRAY_BUFFER, null), t.disable(t.DEPTH_TEST), t.disable(t.CULL_FACE), t.enable(t.BLEND), this.firstFrame = !0, this.lastWidth = -1, this.lastHeight = -1, this.lastBloom = -1, this.lastVignette = -1, this.lastFadeAlpha = -1, this.activeInstanceSlot = 0;
@@ -599,49 +639,49 @@ class _t {
     const i = this.gl, r = i.createShader(i.VERTEX_SHADER);
     if (!r) throw new Error("Failed to create vertex shader");
     if (i.shaderSource(r, t), i.compileShader(r), !i.getShaderParameter(r, i.COMPILE_STATUS)) {
-      const o = i.getShaderInfoLog(r) || "Unknown vertex shader error";
-      throw i.deleteShader(r), new Error(`Vertex shader compile error: ${o}`);
+      const l = i.getShaderInfoLog(r) || "Unknown vertex shader error";
+      throw i.deleteShader(r), new Error(`Vertex shader compile error: ${l}`);
     }
-    const a = i.createShader(i.FRAGMENT_SHADER);
-    if (!a)
-      throw i.deleteShader(r), new Error("Failed to create fragment shader");
-    if (i.shaderSource(a, e), i.compileShader(a), !i.getShaderParameter(a, i.COMPILE_STATUS)) {
-      const o = i.getShaderInfoLog(a) || "Unknown fragment shader error";
-      throw i.deleteShader(r), i.deleteShader(a), new Error(`Fragment shader compile error: ${o}`);
-    }
-    const n = i.createProgram();
+    const n = i.createShader(i.FRAGMENT_SHADER);
     if (!n)
-      throw i.deleteShader(r), i.deleteShader(a), new Error("Failed to create program");
-    if (i.attachShader(n, r), i.attachShader(n, a), i.linkProgram(n), i.deleteShader(r), i.deleteShader(a), !i.getProgramParameter(n, i.LINK_STATUS)) {
-      const o = i.getProgramInfoLog(n) || "Unknown program link error";
-      throw i.deleteProgram(n), new Error(`Program link error: ${o}`);
+      throw i.deleteShader(r), new Error("Failed to create fragment shader");
+    if (i.shaderSource(n, e), i.compileShader(n), !i.getShaderParameter(n, i.COMPILE_STATUS)) {
+      const l = i.getShaderInfoLog(n) || "Unknown fragment shader error";
+      throw i.deleteShader(r), i.deleteShader(n), new Error(`Fragment shader compile error: ${l}`);
     }
-    return n;
+    const a = i.createProgram();
+    if (!a)
+      throw i.deleteShader(r), i.deleteShader(n), new Error("Failed to create program");
+    if (i.attachShader(a, r), i.attachShader(a, n), i.linkProgram(a), i.deleteShader(r), i.deleteShader(n), !i.getProgramParameter(a, i.LINK_STATUS)) {
+      const l = i.getProgramInfoLog(a) || "Unknown program link error";
+      throw i.deleteProgram(a), new Error(`Program link error: ${l}`);
+    }
+    return a;
   }
   render(t, e, i, r) {
     if (!this.program || !this.fadeProgram || !this.fadeVao || this.vaos.length === 0 || this.instanceBuffers.length === 0 || this.isContextLost)
       return;
-    const a = this.gl;
-    a.viewport(0, 0, e, i), this.firstFrame && (a.clearColor(nt, ot, lt, 1), a.clear(a.COLOR_BUFFER_BIT), this.firstFrame = !1);
-    const n = Math.max(0, Math.min(r.trailStrength, 1)), o = Math.min(Math.max(1 - n, 0.04), 0.92);
-    a.useProgram(this.fadeProgram), a.bindVertexArray(this.fadeVao), o !== this.lastFadeAlpha && (a.uniform1f(this.uFadeAlphaLoc, o), this.lastFadeAlpha = o), a.blendFunc(a.SRC_ALPHA, a.ONE_MINUS_SRC_ALPHA), a.drawArrays(a.TRIANGLE_STRIP, 0, 4);
-    const l = Math.min(t.length, this.maxParticles);
-    let f = 0;
-    for (let R = 0; R < l; R++) {
-      const y = t[R], E = y.vx * y.vx + y.vy * y.vy, m = ((y.hue + Math.min(E * 1.25, 60) | 0) % 360 + 360) % 360 * 3;
-      this.instanceData[f++] = y.x, this.instanceData[f++] = y.y, this.instanceData[f++] = y.size, this.instanceData[f++] = this.huePalette[m], this.instanceData[f++] = this.huePalette[m + 1], this.instanceData[f++] = this.huePalette[m + 2], this.instanceData[f++] = y.life > 0 ? y.life / y.maxLife : 0;
+    const n = this.gl;
+    n.viewport(0, 0, e, i), this.firstFrame && (n.clearColor(ot, lt, ht, 1), n.clear(n.COLOR_BUFFER_BIT), this.firstFrame = !1);
+    const a = Math.max(0, Math.min(r.trailStrength, 1)), l = Math.min(Math.max(1 - a, 0.04), 0.92);
+    n.useProgram(this.fadeProgram), n.bindVertexArray(this.fadeVao), l !== this.lastFadeAlpha && (n.uniform1f(this.uFadeAlphaLoc, l), this.lastFadeAlpha = l), n.blendFunc(n.SRC_ALPHA, n.ONE_MINUS_SRC_ALPHA), n.drawArrays(n.TRIANGLE_STRIP, 0, 4);
+    const o = Math.min(t.length, this.maxParticles);
+    let c = 0;
+    for (let R = 0; R < o; R++) {
+      const y = t[R], I = y.vx * y.vx + y.vy * y.vy, m = ((y.hue + Math.min(I * 1.25, 60) | 0) % 360 + 360) % 360 * 3;
+      this.instanceData[c++] = y.x, this.instanceData[c++] = y.y, this.instanceData[c++] = y.size, this.instanceData[c++] = this.huePalette[m], this.instanceData[c++] = this.huePalette[m + 1], this.instanceData[c++] = this.huePalette[m + 2], this.instanceData[c++] = y.life > 0 ? y.life / y.maxLife : 0;
     }
-    const c = this.activeInstanceSlot, u = this.vaos[c], w = this.instanceBuffers[c];
+    const d = this.activeInstanceSlot, u = this.vaos[d], w = this.instanceBuffers[d];
     if (!u || !w)
       return;
-    a.bindBuffer(a.ARRAY_BUFFER, w), a.bufferSubData(a.ARRAY_BUFFER, 0, this.instanceData, 0, l * T), a.useProgram(this.program), a.bindVertexArray(u), (e !== this.lastWidth || i !== this.lastHeight) && (a.uniform2f(this.uResolutionLoc, e, i), this.lastWidth = e, this.lastHeight = i);
-    const k = r.bloom ? 1 : 0;
-    k !== this.lastBloom && (a.uniform1f(this.uBloomLoc, k), this.lastBloom = k);
+    n.bindBuffer(n.ARRAY_BUFFER, w), n.bufferSubData(n.ARRAY_BUFFER, 0, this.instanceData, 0, o * L), n.useProgram(this.program), n.bindVertexArray(u), (e !== this.lastWidth || i !== this.lastHeight) && (n.uniform2f(this.uResolutionLoc, e, i), this.lastWidth = e, this.lastHeight = i);
+    const M = r.bloom ? 1 : 0;
+    M !== this.lastBloom && (n.uniform1f(this.uBloomLoc, M), this.lastBloom = M);
     const F = r.vignette ? 1 : 0;
-    F !== this.lastVignette && (a.uniform1f(this.uVignetteLoc, F), this.lastVignette = F), r.bloom ? a.blendFunc(a.ONE, a.ONE) : a.blendFunc(a.ONE, a.ONE_MINUS_SRC_ALPHA), a.drawArraysInstanced(a.TRIANGLE_STRIP, 0, 4, l), a.bindVertexArray(null), this.activeInstanceSlot++, this.activeInstanceSlot >= this.instanceBuffers.length && (this.activeInstanceSlot = 0);
+    F !== this.lastVignette && (n.uniform1f(this.uVignetteLoc, F), this.lastVignette = F), r.bloom ? n.blendFunc(n.ONE, n.ONE) : n.blendFunc(n.ONE, n.ONE_MINUS_SRC_ALPHA), n.drawArraysInstanced(n.TRIANGLE_STRIP, 0, 4, o), n.bindVertexArray(null), this.activeInstanceSlot++, this.activeInstanceSlot >= this.instanceBuffers.length && (this.activeInstanceSlot = 0);
   }
   resizeMaxParticles(t) {
-    if (t !== this.maxParticles && (this.maxParticles = t, this.instanceData = new Float32Array(t * T), this.instanceBuffers.length > 0)) {
+    if (t !== this.maxParticles && (this.maxParticles = t, this.instanceData = new Float32Array(t * L), this.instanceBuffers.length > 0)) {
       const e = this.gl;
       for (let i = 0; i < this.instanceBuffers.length; i++) {
         const r = this.instanceBuffers[i];
@@ -649,6 +689,9 @@ class _t {
       }
       e.bindBuffer(e.ARRAY_BUFFER, null);
     }
+  }
+  setErrorHandler(t) {
+    this.onError = t;
   }
   disposeGpuResources() {
     const t = this.gl;
@@ -672,7 +715,7 @@ class _t {
     this.detachContextEvents(), this.disposeGpuResources();
   }
 }
-function Lt(h, t) {
+function Tt(h, t) {
   return t === "offscreen-worker" ? "offscreen-worker" : t === "canvas2d" ? "canvas2d" : t === "webgl2" || h.getContext("webgl2", {
     antialias: !1,
     preserveDrawingBuffer: !1,
@@ -681,13 +724,15 @@ function Lt(h, t) {
     powerPreference: "high-performance"
   }) ? "webgl2" : "canvas2d";
 }
-function ht(h, t, e) {
-  const i = Lt(h, e);
-  if (i === "offscreen-worker")
+function N(h, t, e, i) {
+  const r = Tt(h, e);
+  if (r === "offscreen-worker")
     try {
       return {
-        renderer: new Rt(h, t),
-        backend: i
+        renderer: new Bt(h, t, {
+          compression: (i == null ? void 0 : i.workerTransportCompression) ?? "none"
+        }),
+        backend: r
       };
     } catch {
       return {
@@ -695,11 +740,11 @@ function ht(h, t, e) {
         backend: "canvas2d"
       };
     }
-  if (i === "webgl2")
+  if (r === "webgl2")
     try {
       return {
         renderer: new _t(h, t),
-        backend: i
+        backend: r
       };
     } catch {
       return {
@@ -709,11 +754,11 @@ function ht(h, t, e) {
     }
   return {
     renderer: new O(h, t),
-    backend: i
+    backend: r
   };
 }
 const ct = [];
-class Tt {
+class Lt {
   constructor(t) {
     s(this, "grid");
     s(this, "cellSize");
@@ -735,18 +780,18 @@ class Tt {
   }
   add(t) {
     const e = this.toGridCoord(t.x), i = this.toGridCoord(t.y), r = this.hash(e, i);
-    let a = this.grid.get(r);
-    a || (a = [], this.grid.set(r, a)), a.push(t);
+    let n = this.grid.get(r);
+    n || (n = [], this.grid.set(r, n)), n.push(t);
   }
   getNeighbors(t) {
     const e = this.toGridCoord(t.x), i = this.toGridCoord(t.y), r = [];
-    for (let a = e - 1; a <= e + 1; a++)
-      for (let n = i - 1; n <= i + 1; n++) {
-        const o = this.grid.get(this.hash(a, n));
-        if (o)
-          for (let l = 0; l < o.length; l++) {
-            const f = o[l];
-            f !== t && r.push(f);
+    for (let n = e - 1; n <= e + 1; n++)
+      for (let a = i - 1; a <= i + 1; a++) {
+        const l = this.grid.get(this.hash(n, a));
+        if (l)
+          for (let o = 0; o < l.length; o++) {
+            const c = l[o];
+            c !== t && r.push(c);
           }
       }
     return r.length > 0 ? r : ct;
@@ -754,13 +799,13 @@ class Tt {
   getNeighborsInto(t, e) {
     e.length = 0;
     const i = this.toGridCoord(t.x), r = this.toGridCoord(t.y);
-    for (let a = i - 1; a <= i + 1; a++)
-      for (let n = r - 1; n <= r + 1; n++) {
-        const o = this.grid.get(this.hash(a, n));
-        if (o)
-          for (let l = 0; l < o.length; l++) {
-            const f = o[l];
-            f !== t && e.push(f);
+    for (let n = i - 1; n <= i + 1; n++)
+      for (let a = r - 1; a <= r + 1; a++) {
+        const l = this.grid.get(this.hash(n, a));
+        if (l)
+          for (let o = 0; o < l.length; o++) {
+            const c = l[o];
+            c !== t && e.push(c);
           }
       }
   }
@@ -769,7 +814,7 @@ class Tt {
     return this.grid.get(this.hash(i, r)) ?? ct;
   }
 }
-class Et {
+class It {
   constructor(t, e) {
     s(this, "baseLimit");
     s(this, "options");
@@ -808,8 +853,8 @@ class Et {
     };
   }
 }
-const U = 0;
-class It {
+const H = 0;
+class zt {
   constructor(t = 300, e = 0.25, i = 120) {
     s(this, "samples");
     s(this, "buckets");
@@ -818,8 +863,8 @@ class It {
     s(this, "writeIndex", 0);
     s(this, "size", 0);
     s(this, "sumMs", 0);
-    const r = Math.max(1, t | 0), a = Math.max(0.05, e), n = Math.max(16, i);
-    this.samples = new Float32Array(r), this.bucketSizeMs = a, this.maxBucketMs = n, this.buckets = new Uint32Array(Math.floor(n / a) + 1);
+    const r = Math.max(1, t | 0), n = Math.max(0.05, e), a = Math.max(16, i);
+    this.samples = new Float32Array(r), this.bucketSizeMs = n, this.maxBucketMs = a, this.buckets = new Uint32Array(Math.floor(a / n) + 1);
   }
   push(t) {
     const e = this.clampFrameMs(t);
@@ -843,7 +888,7 @@ class It {
     return this.size === 0 ? (e.sampleCount = 0, e.avgMs = 0, e.p95Ms = 0, e.p99Ms = 0, e) : (e.sampleCount = this.size, e.avgMs = this.sumMs / this.size, e.p95Ms = this.percentileFromHistogram(0.95), e.p99Ms = this.percentileFromHistogram(0.99), e);
   }
   clampFrameMs(t) {
-    return !Number.isFinite(t) || t < U ? U : t > this.maxBucketMs ? this.maxBucketMs : t;
+    return !Number.isFinite(t) || t < H ? H : t > this.maxBucketMs ? this.maxBucketMs : t;
   }
   toBucket(t) {
     const e = Math.floor(t / this.bucketSizeMs);
@@ -870,11 +915,11 @@ const W = {
   flocking: !0,
   collisions: !0,
   obstacleMode: !1
-}, ft = {
+}, dt = {
   bloom: !0,
   trailStrength: 0.72,
   vignette: !1
-}, zt = {
+}, Dt = {
   enabled: !0,
   targetFrameMs: 16.67,
   lowWatermarkMs: 13.5,
@@ -884,7 +929,7 @@ const W = {
   dropRate: 0.08,
   updateIntervalFrames: 24
 };
-function N(h, t, e) {
+function V(h, t, e) {
   return {
     preset: h,
     config: {
@@ -892,14 +937,14 @@ function N(h, t, e) {
       ...t
     },
     postProcessing: {
-      ...ft,
+      ...dt,
       ...e,
-      bloom: e.bloom ?? t.bloom ?? ft.bloom
+      bloom: e.bloom ?? t.bloom ?? dt.bloom
     }
   };
 }
-const Dt = {
-  performance: N(
+const Ut = {
+  performance: V(
     "performance",
     {
       attraction: 3,
@@ -919,7 +964,7 @@ const Dt = {
       vignette: !1
     }
   ),
-  balanced: N(
+  balanced: V(
     "balanced",
     {
       attraction: 6,
@@ -939,7 +984,7 @@ const Dt = {
       vignette: !1
     }
   ),
-  quality: N(
+  quality: V(
     "quality",
     {
       attraction: 10,
@@ -960,13 +1005,13 @@ const Dt = {
     }
   )
 };
-function dt(h) {
-  return Dt[h];
+function ft(h) {
+  return Ut[h];
 }
-function Xt() {
+function Jt() {
   return ["performance", "balanced", "quality"];
 }
-const yt = "grit-engine:telemetry:v2", ut = 24;
+const xt = "grit-engine:telemetry:v2", ut = 24;
 function Ot() {
   return typeof navigator > "u" || typeof screen > "u" ? "server" : [
     navigator.userAgent,
@@ -980,7 +1025,7 @@ function mt() {
   if (typeof localStorage > "u")
     return { records: [] };
   try {
-    const h = localStorage.getItem(yt);
+    const h = localStorage.getItem(xt);
     if (!h) return { records: [] };
     const t = JSON.parse(h);
     return Array.isArray(t.records) ? t : { records: [] };
@@ -988,14 +1033,14 @@ function mt() {
     return { records: [] };
   }
 }
-function Ut(h) {
+function Nt(h) {
   if (!(typeof localStorage > "u"))
     try {
-      localStorage.setItem(yt, JSON.stringify(h));
+      localStorage.setItem(xt, JSON.stringify(h));
     } catch {
     }
 }
-class Nt {
+class Ht {
   constructor(t) {
     s(this, "deviceId", Ot());
     s(this, "enabled");
@@ -1022,7 +1067,7 @@ class Nt {
       avgFps: Number(this.avgFps.toFixed(2)),
       samples: this.sampleCount,
       updatedAt: Date.now()
-    }), i.length > ut && (i.length = ut), Ut({ records: i });
+    }), i.length > ut && (i.length = ut), Nt({ records: i });
   }
 }
 const Vt = new Uint8Array([
@@ -1095,6 +1140,20 @@ class Wt {
   mulAdd(t, e, i) {
     return this.integrateFn ? this.integrateFn(t, e, i) : t + e * i;
   }
+  mulAddBatch(t, e, i, r) {
+    const n = Math.min(t.length, e.length), a = r ?? new Float32Array(n);
+    if (a.length < n)
+      throw new Error("Buffer de saída insuficiente para mulAddBatch");
+    if (!this.integrateFn) {
+      for (let o = 0; o < n; o++)
+        a[o] = t[o] + e[o] * i;
+      return a;
+    }
+    const l = this.integrateFn;
+    for (let o = 0; o < n; o++)
+      a[o] = l(t[o], e[o], i);
+    return a;
+  }
 }
 class Gt {
   constructor(t) {
@@ -1119,8 +1178,8 @@ class Gt {
         }
       };
     `, i = new Blob([e], { type: "application/javascript" }), r = URL.createObjectURL(i);
-    this.worker = new Worker(r), URL.revokeObjectURL(r), this.listener = (a) => {
-      t(a.data);
+    this.worker = new Worker(r), URL.revokeObjectURL(r), this.listener = (n) => {
+      t(n.data);
     }, this.worker.addEventListener("message", this.listener);
   }
   start() {
@@ -1133,12 +1192,12 @@ class Gt {
     this.worker.removeEventListener("message", this.listener), this.worker.terminate();
   }
 }
-const Ht = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]);
+const qt = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]);
 function gt() {
   if (typeof WebAssembly > "u")
     return !1;
   try {
-    return WebAssembly.validate(Ht);
+    return WebAssembly.validate(qt);
   } catch {
     return !1;
   }
@@ -1146,8 +1205,8 @@ function gt() {
 function pt(h) {
   return h === "js" ? "js" : gt() ? "wasm" : "js";
 }
-const qt = 4294967296;
-class Yt {
+const Yt = 4294967296;
+class jt {
   constructor(t) {
     s(this, "state");
     s(this, "initialSeed");
@@ -1157,7 +1216,7 @@ class Yt {
   next() {
     this.state += 1831565813;
     let t = this.state;
-    return t = Math.imul(t ^ t >>> 15, t | 1), t ^= t + Math.imul(t ^ t >>> 7, t | 61), ((t ^ t >>> 14) >>> 0) / qt;
+    return t = Math.imul(t ^ t >>> 15, t | 1), t ^= t + Math.imul(t ^ t >>> 7, t | 61), ((t ^ t >>> 14) >>> 0) / Yt;
   }
   setSeed(t) {
     const e = t >>> 0;
@@ -1172,7 +1231,7 @@ const $t = 200, Kt = [], vt = [
   "rgba(156, 135, 188, 1)",
   "rgba(52, 211, 153, 1)"
 ];
-class Qt {
+class Xt {
   constructor(t) {
     s(this, "canvas");
     s(this, "overlayCanvas");
@@ -1182,6 +1241,8 @@ class Qt {
     s(this, "maxDpr");
     s(this, "executionMode");
     s(this, "onStats");
+    s(this, "workerTransportCompression");
+    s(this, "runtimeBackendFallbackEnabled");
     s(this, "renderer");
     s(this, "renderBackend");
     s(this, "simulationBackend");
@@ -1213,7 +1274,7 @@ class Qt {
     s(this, "telemetryTuner");
     s(this, "wasmKernel", null);
     s(this, "wasmMulAdd", null);
-    s(this, "frameTimeWindow", new It(360, 0.25, 120));
+    s(this, "frameTimeWindow", new zt(360, 0.25, 120));
     s(this, "frameTimeSummary", {
       sampleCount: 0,
       avgMs: 0,
@@ -1221,6 +1282,8 @@ class Qt {
       p99Ms: 0
     });
     s(this, "adaptiveScale", 1);
+    s(this, "usedJSHeapSize");
+    s(this, "jsHeapSizeLimit");
     s(this, "pluginsById", /* @__PURE__ */ new Map());
     s(this, "forcePlugins", []);
     s(this, "constraintPlugins", []);
@@ -1250,44 +1313,46 @@ class Qt {
         else {
           const e = t - this.lastTime, i = Math.min(e / 16.666, 3);
           this.lastTime = t, this.frameIndex++, this.frameTimeWindow.push(e);
-          const { x: r, y: a } = this.pointer;
+          const { x: r, y: n } = this.pointer;
           this.applyActiveParticleBudget(), this.grid.clear();
-          const n = this.particles.length;
-          for (let c = 0; c < n; c++)
-            this.grid.add(this.particles[c]);
-          const o = this.config.flocking || this.config.collisions;
-          this.updatePluginContexts(i, t, r, a), this.runFrameStartPlugins();
-          let l = 0;
-          for (let c = 0; c < n; c++) {
-            const u = this.particles[c];
+          const a = this.particles.length;
+          for (let d = 0; d < a; d++)
+            this.grid.add(this.particles[d]);
+          const l = this.config.flocking || this.config.collisions;
+          this.updatePluginContexts(i, t, r, n), this.runFrameStartPlugins();
+          let o = 0;
+          for (let d = 0; d < a; d++) {
+            const u = this.particles[d];
             let w = Kt;
-            o ? (this.grid.getNeighborsInto(u, this.neighborsBuffer), w = this.neighborsBuffer) : this.neighborsBuffer.length = 0, this.runForcePlugins(u), this.simulationBackend === "wasm" ? this.updateParticleWasmPath(u, w, r, a, i) : this.updateParticleJsPath(u, w, r, a, i), this.runConstraintPlugins(u), u.isDead() || (this.particles[l++] = u);
+            l ? (this.grid.getNeighborsInto(u, this.neighborsBuffer), w = this.neighborsBuffer) : this.neighborsBuffer.length = 0, this.runForcePlugins(u), this.simulationBackend === "wasm" ? this.updateParticleWasmPath(u, w, r, n, i) : this.updateParticleJsPath(u, w, r, n, i), this.runConstraintPlugins(u), u.isDead() || (this.particles[o++] = u);
           }
-          l !== n && (this.particles.length = l), this.runFrameEndPlugins(), this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.postProcessing), this.redrawOverlay(), this.frameCount++;
-          const f = t - this.lastFpsTime;
-          f >= 1e3 && (this.fps = Math.round(this.frameCount * 1e3 / f), this.frameCount = 0, this.lastFpsTime = t), t - this.lastUiUpdate >= $t && (this.lastUiUpdate = t, this.emitStats());
+          o !== a && (this.particles.length = o), this.runFrameEndPlugins(), this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.postProcessing), this.redrawOverlay(), this.frameCount++;
+          const c = t - this.lastFpsTime;
+          c >= 1e3 && (this.fps = Math.round(this.frameCount * 1e3 / c), this.frameCount = 0, this.lastFpsTime = t), t - this.lastUiUpdate >= $t && (this.lastUiUpdate = t, this.emitStats());
         }
         this.requestId = requestAnimationFrame(this.animate);
       }
     });
-    var n, o, l;
-    this.canvas = t.canvas, this.overlayCanvas = t.overlayCanvas, this.overlayCtx = ((n = this.overlayCanvas) == null ? void 0 : n.getContext("2d")) ?? null, this.maxParticles = t.maxParticles ?? 5e4, this.spawnBatch = t.spawnBatch ?? 100, this.maxDpr = t.maxDpr ?? 2, this.executionMode = t.executionMode ?? "main-thread", this.onStats = t.onStats, this.hybridAdaptiveEnabled = t.hybridAdaptive ?? !0, this.telemetryTuner = new Nt(t.autoTune ?? !0);
+    var a, l, o;
+    this.canvas = t.canvas, this.overlayCanvas = t.overlayCanvas, this.overlayCtx = ((a = this.overlayCanvas) == null ? void 0 : a.getContext("2d")) ?? null, this.maxParticles = t.maxParticles ?? 5e4, this.spawnBatch = t.spawnBatch ?? 100, this.maxDpr = t.maxDpr ?? 2, this.executionMode = t.executionMode ?? "main-thread", this.onStats = t.onStats, this.workerTransportCompression = t.workerTransportCompression ?? "none", this.runtimeBackendFallbackEnabled = t.runtimeBackendFallback ?? !0, this.hybridAdaptiveEnabled = t.hybridAdaptive ?? !0, this.telemetryTuner = new Ht(t.autoTune ?? !0);
     const e = t.performancePreset ?? "balanced";
     this.performancePreset = this.telemetryTuner.recommendPreset(e);
-    const i = dt(this.performancePreset);
+    const i = ft(this.performancePreset);
     this.config = {
       ...i.config,
       ...t.config
     }, this.postProcessing = {
       ...i.postProcessing,
       ...t.postProcessing,
-      bloom: ((o = t.config) == null ? void 0 : o.bloom) ?? ((l = t.postProcessing) == null ? void 0 : l.bloom) ?? i.postProcessing.bloom
-    }, this.adaptiveBudget = new Et(this.maxParticles, {
-      ...zt,
+      bloom: ((l = t.config) == null ? void 0 : l.bloom) ?? ((o = t.postProcessing) == null ? void 0 : o.bloom) ?? i.postProcessing.bloom
+    }, this.adaptiveBudget = new It(this.maxParticles, {
+      ...Dt,
       ...t.adaptiveBudget
-    }), this.activeParticleLimit = this.maxParticles, this.grid = new Tt(t.gridCellSize ?? 40);
-    const { renderer: r, backend: a } = ht(this.canvas, this.maxParticles, t.renderBackend ?? "auto");
-    this.renderer = r, this.renderBackend = a, this.simulationBackend = pt(t.simulationBackend ?? "auto"), this.tryInitializeWasmKernel(), this.configureRandom(t.seed), this.resize(), this.redrawOverlay();
+    }), this.activeParticleLimit = this.maxParticles, this.grid = new Lt(t.gridCellSize ?? 40);
+    const { renderer: r, backend: n } = N(this.canvas, this.maxParticles, t.renderBackend ?? "auto", {
+      workerTransportCompression: this.workerTransportCompression
+    });
+    this.renderer = r, this.renderBackend = n, this.bindRendererErrorHandler(), this.simulationBackend = pt(t.simulationBackend ?? "auto"), this.tryInitializeWasmKernel(), this.configureRandom(t.seed), this.resize(), this.redrawOverlay();
   }
   start() {
     if (!this.running) {
@@ -1307,8 +1372,8 @@ class Qt {
     this.stop(), this.telemetryTuner.persist(this.performancePreset), this.clearPlugins(), this.renderer.dispose();
   }
   resize() {
-    const t = Math.min(window.devicePixelRatio || 1, this.maxDpr), e = this.canvas.getBoundingClientRect(), i = Math.max(1, Math.floor(e.width)), r = Math.max(1, Math.floor(e.height)), a = Math.max(1, Math.floor(i * t)), n = Math.max(1, Math.floor(r * t));
-    (this.canvas.width !== a || this.canvas.height !== n) && (this.canvas.width = a, this.canvas.height = n, this.canvas.style.width = `${i}px`, this.canvas.style.height = `${r}px`), this.overlayCanvas && (this.overlayCanvas.width !== a || this.overlayCanvas.height !== n) && (this.overlayCanvas.width = a, this.overlayCanvas.height = n, this.overlayCanvas.style.width = `${i}px`, this.overlayCanvas.style.height = `${r}px`, this.overlayDirty = !0), this.overlayCtx && (this.overlayCtx.setTransform(1, 0, 0, 1, 0, 0), this.overlayCtx.scale(t, t));
+    const t = Math.min(window.devicePixelRatio || 1, this.maxDpr), e = this.canvas.getBoundingClientRect(), i = Math.max(1, Math.floor(e.width)), r = Math.max(1, Math.floor(e.height)), n = Math.max(1, Math.floor(i * t)), a = Math.max(1, Math.floor(r * t));
+    (this.canvas.width !== n || this.canvas.height !== a) && (this.canvas.width = n, this.canvas.height = a, this.canvas.style.width = `${i}px`, this.canvas.style.height = `${r}px`), this.overlayCanvas && (this.overlayCanvas.width !== n || this.overlayCanvas.height !== a) && (this.overlayCanvas.width = n, this.overlayCanvas.height = a, this.overlayCanvas.style.width = `${i}px`, this.overlayCanvas.style.height = `${r}px`, this.overlayDirty = !0), this.overlayCtx && (this.overlayCtx.setTransform(1, 0, 0, 1, 0, 0), this.overlayCtx.scale(t, t));
   }
   updateSettings(t) {
     this.config = {
@@ -1335,8 +1400,10 @@ class Qt {
     return this.renderBackend;
   }
   setRenderBackend(t) {
-    const { renderer: e, backend: i } = ht(this.canvas, this.maxParticles, t);
-    this.renderer.dispose(), this.renderer = e, this.renderBackend = i;
+    const { renderer: e, backend: i } = N(this.canvas, this.maxParticles, t, {
+      workerTransportCompression: this.workerTransportCompression
+    });
+    this.renderer.dispose(), this.renderer = e, this.renderBackend = i, this.bindRendererErrorHandler();
   }
   getSimulationBackend() {
     return this.simulationBackend;
@@ -1348,7 +1415,7 @@ class Qt {
     return this.performancePreset;
   }
   setPerformancePreset(t) {
-    const e = dt(t);
+    const e = ft(t);
     this.performancePreset = t, this.config = { ...e.config }, this.postProcessing = { ...e.postProcessing };
   }
   setAdaptiveBudgetEnabled(t) {
@@ -1369,9 +1436,9 @@ class Qt {
   spawnAt(t, e) {
     if (this.particles.length >= this.activeParticleLimit) return;
     const i = this.activeParticleLimit - this.particles.length, r = i < this.spawnBatch ? i : this.spawnBatch;
-    for (let a = 0; a < r; a++) {
-      const n = this.getRandom(), o = vt[n() * vt.length | 0];
-      this.particles.push(new kt(t, e, o, this.config, n));
+    for (let n = 0; n < r; n++) {
+      const a = this.getRandom(), l = vt[a() * vt.length | 0];
+      this.particles.push(new Ft(t, e, l, this.config, a));
     }
   }
   setSeed(t) {
@@ -1382,7 +1449,7 @@ class Qt {
     return ((t = this.seededRandom) == null ? void 0 : t.getSeed()) ?? null;
   }
   addObstacle(t, e) {
-    this.obstacles.push(new wt(t, e)), this.overlayDirty = !0;
+    this.obstacles.push(new At(t, e)), this.overlayDirty = !0;
   }
   clear() {
     this.particles.length = 0, this.obstacles.length = 0, this.neighborsBuffer.length = 0, this.overlayDirty = !0, this.emitStats(!0);
@@ -1390,7 +1457,7 @@ class Qt {
   getStats() {
     this.frameTimeWindow.snapshot(this.frameTimeSummary);
     const t = this.adaptiveBudget.snapshot();
-    return this.activeParticleLimit = t.activeParticleLimit, this.adaptiveScale = t.scale, {
+    return this.sampleMemoryStats(), this.activeParticleLimit = t.activeParticleLimit, this.adaptiveScale = t.scale, {
       particleCount: this.particles.length,
       fps: this.fps,
       frameTimeAvgMs: this.frameTimeSummary.avgMs,
@@ -1398,7 +1465,9 @@ class Qt {
       frameTimeP99Ms: this.frameTimeSummary.p99Ms,
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
-      effectivePreset: this.performancePreset
+      effectivePreset: this.performancePreset,
+      usedJSHeapSize: this.usedJSHeapSize,
+      jsHeapSizeLimit: this.jsHeapSizeLimit
     };
   }
   registerPlugin(t) {
@@ -1423,7 +1492,7 @@ class Qt {
   getPlugins() {
     return Array.from(this.pluginsById.values());
   }
-  updateParticleJsPath(t, e, i, r, a) {
+  updateParticleJsPath(t, e, i, r, n) {
     t.update(
       this.config,
       this.canvas.width,
@@ -1432,10 +1501,10 @@ class Qt {
       r,
       e,
       this.obstacles,
-      a
+      n
     );
   }
-  updateParticleWasmPath(t, e, i, r, a) {
+  updateParticleWasmPath(t, e, i, r, n) {
     t.update(
       this.config,
       this.canvas.width,
@@ -1444,7 +1513,7 @@ class Qt {
       r,
       e,
       this.obstacles,
-      a,
+      n,
       this.wasmMulAdd ?? void 0
     );
   }
@@ -1491,7 +1560,7 @@ class Qt {
     var i;
     this.frameTimeWindow.snapshot(this.frameTimeSummary), this.adaptiveBudget.update(this.frameTimeSummary.p95Ms, this.frameTimeSummary.p99Ms), this.telemetryTuner.capture(this.frameTimeSummary.p99Ms, this.fps), this.applyHybridRuntimeTuning();
     const e = this.adaptiveBudget.snapshot();
-    this.activeParticleLimit = e.activeParticleLimit, this.adaptiveScale = e.scale, !(!this.onStats && !t) && ((i = this.onStats) == null || i.call(this, {
+    this.sampleMemoryStats(), this.activeParticleLimit = e.activeParticleLimit, this.adaptiveScale = e.scale, !(!this.onStats && !t) && ((i = this.onStats) == null || i.call(this, {
       particleCount: this.particles.length,
       fps: this.fps,
       frameTimeAvgMs: this.frameTimeSummary.avgMs,
@@ -1499,7 +1568,9 @@ class Qt {
       frameTimeP99Ms: this.frameTimeSummary.p99Ms,
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
-      effectivePreset: this.performancePreset
+      effectivePreset: this.performancePreset,
+      usedJSHeapSize: this.usedJSHeapSize,
+      jsHeapSizeLimit: this.jsHeapSizeLimit
     }));
   }
   applyActiveParticleBudget() {
@@ -1530,12 +1601,39 @@ class Qt {
       this.wasmMulAdd = null;
     })));
   }
+  bindRendererErrorHandler() {
+    var t, e;
+    (e = (t = this.renderer).setErrorHandler) == null || e.call(t, (i) => {
+      this.handleRendererRuntimeError(i);
+    });
+  }
+  handleRendererRuntimeError(t) {
+    if (!this.runtimeBackendFallbackEnabled) return;
+    const e = this.resolveFallbackBackend(this.renderBackend);
+    if (!e) return;
+    let i = null;
+    try {
+      i = N(this.canvas, this.maxParticles, e, {
+        workerTransportCompression: this.workerTransportCompression
+      });
+    } catch {
+      return;
+    }
+    i && (this.renderer.dispose(), this.renderer = i.renderer, this.renderBackend = i.backend, this.bindRendererErrorHandler());
+  }
+  resolveFallbackBackend(t) {
+    return t === "offscreen-worker" ? "webgl2" : t === "webgl2" ? "canvas2d" : null;
+  }
+  sampleMemoryStats() {
+    const e = performance.memory;
+    e && (typeof e.usedJSHeapSize == "number" && (this.usedJSHeapSize = e.usedJSHeapSize), typeof e.jsHeapSizeLimit == "number" && (this.jsHeapSizeLimit = e.jsHeapSizeLimit));
+  }
   configureRandom(t) {
     if (typeof t != "number") {
       this.seededRandom = null, this.random = null;
       return;
     }
-    this.seededRandom = new Yt(t), this.random = () => this.seededRandom.next();
+    this.seededRandom = new jt(t), this.random = () => this.seededRandom.next();
   }
   getRandom() {
     return this.random ?? Math.random;
@@ -1543,15 +1641,15 @@ class Qt {
 }
 export {
   O as Canvas2DRenderer,
-  zt as DEFAULT_ADAPTIVE_BUDGET,
-  ft as DEFAULT_POST_PROCESSING,
+  Dt as DEFAULT_ADAPTIVE_BUDGET,
+  dt as DEFAULT_POST_PROCESSING,
   W as DEFAULT_SIM_CONFIG,
-  Qt as GritEngine,
-  wt as Obstacle,
-  Rt as OffscreenWorkerRenderer,
-  kt as Particle,
-  Tt as SpatialGrid,
+  Xt as GritEngine,
+  At as Obstacle,
+  Bt as OffscreenWorkerRenderer,
+  Ft as Particle,
+  Lt as SpatialGrid,
   _t as WebGLRenderer,
-  Xt as listPerformancePresets,
-  dt as resolvePerformancePreset
+  Jt as listPerformancePresets,
+  ft as resolvePerformancePreset
 };

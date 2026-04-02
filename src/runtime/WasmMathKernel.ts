@@ -10,6 +10,7 @@ const MUL_ADD_WASM_MODULE = new Uint8Array([
 export interface WasmMathKernel {
   readonly ready: boolean;
   mulAdd(base: number, value: number, factor: number): number;
+  mulAddBatch(base: Float32Array, values: Float32Array, factor: number, out?: Float32Array): Float32Array;
 }
 
 export class WasmMulAddKernel implements WasmMathKernel {
@@ -39,5 +40,28 @@ export class WasmMulAddKernel implements WasmMathKernel {
     }
 
     return this.integrateFn(base, value, factor);
+  }
+
+  mulAddBatch(base: Float32Array, values: Float32Array, factor: number, out?: Float32Array): Float32Array {
+    const size = Math.min(base.length, values.length);
+    const target = out ?? new Float32Array(size);
+
+    if (target.length < size) {
+      throw new Error('Buffer de saída insuficiente para mulAddBatch');
+    }
+
+    if (!this.integrateFn) {
+      for (let i = 0; i < size; i++) {
+        target[i] = base[i] + values[i] * factor;
+      }
+      return target;
+    }
+
+    const fn = this.integrateFn;
+    for (let i = 0; i < size; i++) {
+      target[i] = fn(base[i], values[i], factor);
+    }
+
+    return target;
   }
 }

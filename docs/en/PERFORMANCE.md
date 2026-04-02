@@ -15,6 +15,8 @@ O callback `onStats` agora inclui:
 - `particleCount`
 - `activeParticleLimit`
 - `adaptiveScale`
+- `usedJSHeapSize` (quando suportado pelo browser)
+- `jsHeapSizeLimit` (quando suportado pelo browser)
 
 As métricas de frame-time são calculadas em janela deslizante fixa para evitar alocações recorrentes.
 
@@ -27,6 +29,10 @@ As métricas de frame-time são calculadas em janela deslizante fixa para evitar
   - Perfil micro de operações críticas (`particle.update` e lookup do grid)
 - `npm run perf:check`
   - Validação automática de regressão comparando benchmark atual com baseline versionada
+  - Gera relatório em `artifacts/performance/perf-report.{json,md}`
+- `npm run benchmark:browser`
+  - Benchmark real em navegador comparando `webgl2`, `canvas2d` e `offscreen-worker`
+  - Interface dedicada em `examples/browser-benchmark`
 
 ## Baseline Oficial
 
@@ -46,7 +52,10 @@ Matriz por backend/dispositivo: [PERFORMANCE_MATRIX.md](./PERFORMANCE_MATRIX.md)
 - Compaction pass para remoção de partículas mortas sem `splice` em loop
 - Fallback `canvas2d` com paleta/sprites pré-geradas e degradação progressiva de qualidade
 - Kernel WASM real para operação de integração (`mulAdd`) no caminho `simulationBackend='wasm'`
+- API de kernel WASM expandida para lote (`mulAddBatch`) em blocos vetorizados
 - Backend experimental `offscreen-worker` para exploração de render fora da main thread
+- Compressão opcional (`quantized16`) de atributos no transporte para `offscreen-worker`
+- Fallback automático de backend por erro de contexto (`offscreen-worker -> webgl2 -> canvas2d`)
 - Runtime híbrido adaptativo com telemetria local para ajuste de preset por dispositivo
 
 ## Boas Práticas de PR

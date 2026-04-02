@@ -29,3 +29,11 @@ jobs:
 
       - name: Performance Regression Check
         run: npm run perf:check
+
+      - name: Upload Performance Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: artifacts/performance/
+          if-no-files-found: warn

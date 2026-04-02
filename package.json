@@ -26,6 +26,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "benchmark": "npm run build && node scripts/benchmark.mjs",
+    "benchmark:browser": "vite examples/browser-benchmark --host",
     "profile": "npm run build && node scripts/profile.mjs",
     "perf:check": "npm run build && node scripts/perf-regression-check.mjs"
   },

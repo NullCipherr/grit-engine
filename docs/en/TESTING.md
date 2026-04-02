@@ -33,6 +33,7 @@ npm run typecheck
 npm run build
 npm run demo
 npm run benchmark
+npm run benchmark:browser
 npm run profile
 npm run perf:check
 ```

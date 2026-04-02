@@ -44,12 +44,71 @@ if (
   throw new Error('Falha ao inicializar a demo: elementos de UI não encontrados.');
 }
 
-const offscreenSupported = (() => {
+const offscreenFeatureDetected = (() => {
   if (typeof window === 'undefined') return false;
   if (typeof Worker === 'undefined') return false;
   if (typeof OffscreenCanvas === 'undefined') return false;
   return typeof HTMLCanvasElement.prototype.transferControlToOffscreen === 'function';
 })();
+
+async function probeOffscreenWorkerSupport(timeoutMs = 1200): Promise<boolean> {
+  if (!offscreenFeatureDetected) return false;
+
+  const probeCanvas = document.createElement('canvas');
+  let offscreen: OffscreenCanvas;
+  try {
+    offscreen = probeCanvas.transferControlToOffscreen();
+  } catch {
+    return false;
+  }
+
+  const probeWorkerSource = `
+    self.onmessage = (event) => {
+      const canvas = event.data?.canvas;
+      if (!canvas) {
+        self.postMessage({ ok: false });
+        return;
+      }
+      try {
+        let ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+        if (!ctx) ctx = canvas.getContext('2d');
+        self.postMessage({ ok: !!ctx });
+      } catch {
+        self.postMessage({ ok: false });
+      }
+    };
+  `;
+
+  return await new Promise<boolean>((resolve) => {
+    const blob = new Blob([probeWorkerSource], { type: 'text/javascript' });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
+
+    const settle = (supported: boolean) => {
+      worker.terminate();
+      URL.revokeObjectURL(workerUrl);
+      resolve(supported);
+    };
+
+    const timer = window.setTimeout(() => {
+      settle(false);
+    }, timeoutMs);
+
+    worker.onmessage = (event) => {
+      window.clearTimeout(timer);
+      settle(Boolean((event.data as { ok?: boolean } | null)?.ok));
+    };
+
+    worker.onerror = () => {
+      window.clearTimeout(timer);
+      settle(false);
+    };
+
+    worker.postMessage({ canvas: offscreen }, [offscreen]);
+  });
+}
+
+const offscreenSupported = await probeOffscreenWorkerSupport();
 
 const offscreenOption = renderSelect.querySelector<HTMLOptionElement>('option[value="offscreen-worker"]');
 if (offscreenOption && !offscreenSupported) {
@@ -61,6 +120,7 @@ const url = new URL(window.location.href);
 const renderFromQuery = url.searchParams.get('render');
 if (renderFromQuery === 'auto' || renderFromQuery === 'webgl2' || renderFromQuery === 'canvas2d' || renderFromQuery === 'offscreen-worker') {
   if (renderFromQuery === 'offscreen-worker' && !offscreenSupported) {
+    statsEl.textContent = 'offscreen-worker indisponível neste navegador; usando backend automático.';
     renderSelect.value = 'auto';
   } else {
     renderSelect.value = renderFromQuery;

@@ -39,6 +39,7 @@ export class WebGLRenderer implements Renderer {
 
   private firstFrame = true;
   private isContextLost = false;
+  private onError: ((reason: string) => void) | null = null;
 
   private lastWidth = -1;
   private lastHeight = -1;
@@ -86,11 +87,16 @@ export class WebGLRenderer implements Renderer {
   private handleContextLost = (event: Event) => {
     event.preventDefault();
     this.isContextLost = true;
+    this.onError?.('webgl-context-lost');
   };
 
   private handleContextRestored = () => {
     this.isContextLost = false;
-    this.initResources();
+    try {
+      this.initResources();
+    } catch {
+      this.onError?.('webgl-context-restore-failed');
+    }
   };
 
   private buildHuePalette() {
@@ -470,6 +476,10 @@ export class WebGLRenderer implements Renderer {
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
+  }
+
+  setErrorHandler(handler: ((reason: string) => void) | null) {
+    this.onError = handler;
   }
 
   private disposeGpuResources() {

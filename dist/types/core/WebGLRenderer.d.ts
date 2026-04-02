@@ -23,6 +23,7 @@ export declare class WebGLRenderer implements Renderer {
     private uFadeAlphaLoc;
     private firstFrame;
     private isContextLost;
+    private onError;
     private lastWidth;
     private lastHeight;
     private lastBloom;
@@ -40,6 +41,7 @@ export declare class WebGLRenderer implements Renderer {
     private createProgram;
     render(particles: readonly Particle[], width: number, height: number, postProcessing: PostProcessingOptions): void;
     resizeMaxParticles(maxParticles: number): void;
+    setErrorHandler(handler: ((reason: string) => void) | null): void;
     private disposeGpuResources;
     dispose(): void;
 }

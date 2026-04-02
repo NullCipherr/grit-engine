@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GRIT Browser Benchmark</title>
+    <meta name="description" content="Benchmark real em navegador para comparar backends webgl2, canvas2d e offscreen-worker." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <header class="hero">
+        <p class="kicker">GRIT ENGINE</p>
+        <h1>Benchmark Browser-side</h1>
+        <p>Comparação real de frame-time entre <code>webgl2</code>, <code>canvas2d</code> e <code>offscreen-worker</code>.</p>
+      </header>
+
+      <section class="controls" aria-label="Configuração do benchmark">
+        <label>
+          Duração por backend (ms)
+          <input id="duration" type="number" min="2000" step="500" value="5000" />
+        </label>
+
+        <label>
+          Warmup (ms)
+          <input id="warmup" type="number" min="500" step="250" value="1500" />
+        </label>
+
+        <label>
+          Preset
+          <select id="preset">
+            <option value="performance">performance</option>
+            <option value="balanced" selected>balanced</option>
+            <option value="quality">quality</option>
+          </select>
+        </label>
+
+        <label>
+          Partículas por burst
+          <input id="burst" type="number" min="100" step="100" value="320" />
+        </label>
+
+        <button id="run" type="button">Executar Benchmark</button>
+      </section>
+
+      <section class="results" aria-live="polite">
+        <h2>Resultados</h2>
+        <p id="status">Aguardando execução...</p>
+        <div class="table-wrap">
+          <table id="result-table">
+            <thead>
+              <tr>
+                <th>Backend solicitado</th>
+                <th>Backend efetivo</th>
+                <th>FPS médio</th>
+                <th>P95 (ms)</th>
+                <th>P99 (ms)</th>
+                <th>Partículas</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3>JSON</h3>
+        <pre id="json-output">[]</pre>
+      </section>
+
+      <section class="stage" aria-label="Canvas do benchmark">
+        <canvas id="bench-canvas" aria-label="Canvas benchmark"></canvas>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

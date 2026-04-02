@@ -20,11 +20,14 @@ export interface EngineStats {
     activeParticleLimit: number;
     adaptiveScale: number;
     effectivePreset: PerformancePreset;
+    usedJSHeapSize?: number;
+    jsHeapSizeLimit?: number;
 }
 export type ExecutionMode = 'main-thread' | 'worker-ticker';
 export type RenderBackend = 'auto' | 'webgl2' | 'canvas2d' | 'offscreen-worker';
 export type SimulationBackend = 'auto' | 'js' | 'wasm';
 export type PerformancePreset = 'performance' | 'balanced' | 'quality';
+export type WorkerTransportCompression = 'none' | 'quantized16';
 export interface AdaptiveBudgetOptions {
     enabled: boolean;
     targetFrameMs: number;
@@ -78,6 +81,8 @@ export interface GritEngineOptions {
     adaptiveBudget?: Partial<AdaptiveBudgetOptions>;
     hybridAdaptive?: boolean;
     autoTune?: boolean;
+    workerTransportCompression?: WorkerTransportCompression;
+    runtimeBackendFallback?: boolean;
     postProcessing?: Partial<PostProcessingOptions>;
     config?: Partial<SimConfig>;
     onStats?: (stats: EngineStats) => void;

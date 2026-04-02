@@ -61,6 +61,8 @@ It is designed to be consumed by wrappers in React, Vue, Svelte, or vanilla Java
 - **Multiple rendering backends** (`webgl2`, `canvas2d`, and experimental `offscreen-worker`).
 - **Execution presets** (`performance`, `balanced`, `quality`) and adaptive particle budget.
 - **Hybrid adaptive runtime** with local telemetry-based preset recommendation.
+- **Runtime backend fallback policy** for context/runtime failures (`offscreen-worker -> webgl2 -> canvas2d`).
+- **Optional worker transport compression** (`quantized16`) for offscreen render payloads.
 
 ---
 
@@ -73,7 +75,7 @@ Main runtime flow:
 3. Render loop advances simulation at `requestAnimationFrame` cadence.
 4. `SpatialGrid` provides local neighborhoods for flocking/collision logic.
 5. `WebGLRenderer` uploads per-instance attributes and draws the frame.
-6. Optional `onStats` callback exposes particle count and FPS.
+6. Optional `onStats` callback exposes FPS, frame-time percentiles, adaptive budget and memory telemetry when available.
 
 ---
 
@@ -241,6 +243,7 @@ npm run test
 
 ```bash
 npm run benchmark
+npm run benchmark:browser
 npm run profile
 npm run perf:check
 ```

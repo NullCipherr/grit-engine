@@ -8,6 +8,8 @@ export declare class GritEngine {
     private readonly maxDpr;
     private readonly executionMode;
     private readonly onStats?;
+    private readonly workerTransportCompression;
+    private readonly runtimeBackendFallbackEnabled;
     private renderer;
     private renderBackend;
     private simulationBackend;
@@ -42,6 +44,8 @@ export declare class GritEngine {
     private frameTimeWindow;
     private frameTimeSummary;
     private adaptiveScale;
+    private usedJSHeapSize;
+    private jsHeapSizeLimit;
     private pluginsById;
     private forcePlugins;
     private constraintPlugins;
@@ -91,6 +95,10 @@ export declare class GritEngine {
     private applyActiveParticleBudget;
     private applyHybridRuntimeTuning;
     private tryInitializeWasmKernel;
+    private bindRendererErrorHandler;
+    private handleRendererRuntimeError;
+    private resolveFallbackBackend;
+    private sampleMemoryStats;
     private configureRandom;
     private getRandom;
 }

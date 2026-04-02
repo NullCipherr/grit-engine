@@ -30,15 +30,15 @@
 
 ### Curto Prazo (Próximo)
 
-- [ ] Adicionar métricas de memória (`usedJSHeapSize`) no callback de stats quando disponível
-- [ ] Criar benchmark browser-side real para comparar `webgl2`, `canvas2d` e `offscreen-worker`
-- [ ] Publicar relatório automatizado de benchmark em artifact de CI
+- [x] Adicionar métricas de memória (`usedJSHeapSize`) no callback de stats quando disponível
+- [x] Criar benchmark browser-side real para comparar `webgl2`, `canvas2d` e `offscreen-worker`
+- [x] Publicar relatório automatizado de benchmark em artifact de CI
 
 ### Médio Prazo (Próximo)
 
-- [ ] Expandir kernel WASM para blocos vetorizados (batch de partículas)
-- [ ] Implementar compressão opcional de atributos no transporte para worker renderer
-- [ ] Adicionar política de fallback entre backends por erro de contexto em runtime
+- [x] Expandir kernel WASM para blocos vetorizados (batch de partículas)
+- [x] Implementar compressão opcional de atributos no transporte para worker renderer
+- [x] Adicionar política de fallback entre backends por erro de contexto em runtime
 
 ### Longo Prazo (Próximo)
 

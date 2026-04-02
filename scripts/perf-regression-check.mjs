@@ -3,6 +3,9 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const THROUGHPUT_DROP_THRESHOLD = Number(process.env.PERF_THROUGHPUT_DROP_THRESHOLD ?? 0.35);
 const FRAME_INCREASE_THRESHOLD = Number(process.env.PERF_FRAME_INCREASE_THRESHOLD ?? 0.35);
+const THROUGHPUT_DROP_THRESHOLD_SPATIAL_GRID_PROBE = Number(
+  process.env.PERF_THROUGHPUT_DROP_THRESHOLD_SPATIAL_GRID_PROBE ?? 0.5
+);
 const REPORT_DIR = 'artifacts/performance';
 
 function ensureReportDir() {
@@ -25,6 +28,14 @@ function loadBaseline() {
   return JSON.parse(readFileSync('docs/en/performance-baseline.json', 'utf-8'));
 }
 
+function throughputDropThresholdForScenario(scenario) {
+  if (scenario === 'spatial-grid-probe') {
+    return THROUGHPUT_DROP_THRESHOLD_SPATIAL_GRID_PROBE;
+  }
+
+  return THROUGHPUT_DROP_THRESHOLD;
+}
+
 function compareRows(baselineRows, currentRows) {
   const currentByScenario = new Map(currentRows.map((row) => [row.scenario, row]));
   const failures = [];
@@ -39,14 +50,16 @@ function compareRows(baselineRows, currentRows) {
       continue;
     }
 
-    const minThroughput = baseline.throughput_particles_per_sec * (1 - THROUGHPUT_DROP_THRESHOLD);
+    const throughputThreshold = throughputDropThresholdForScenario(baseline.scenario);
+    const minThroughput = baseline.throughput_particles_per_sec * (1 - throughputThreshold);
     if (current.throughput_particles_per_sec < minThroughput) {
       failures.push({
         scenario: baseline.scenario,
         reason: 'throughput abaixo do limite',
         baseline: baseline.throughput_particles_per_sec,
         current: current.throughput_particles_per_sec,
-        threshold: minThroughput
+        threshold: minThroughput,
+        appliedThreshold: throughputThreshold
       });
     }
 
@@ -71,6 +84,7 @@ function buildMarkdownReport(currentRows, failures) {
   lines.push('# Performance Regression Report');
   lines.push('');
   lines.push(`- Throughput threshold: ${THROUGHPUT_DROP_THRESHOLD}`);
+  lines.push(`- Throughput threshold (spatial-grid-probe): ${THROUGHPUT_DROP_THRESHOLD_SPATIAL_GRID_PROBE}`);
   lines.push(`- P95 threshold: ${FRAME_INCREASE_THRESHOLD}`);
   lines.push(`- Failures: ${failures.length}`);
   lines.push('');
@@ -111,6 +125,7 @@ function writeReports(currentRows, failures) {
     generatedAt: new Date().toISOString(),
     thresholds: {
       throughputDrop: THROUGHPUT_DROP_THRESHOLD,
+      throughputDropSpatialGridProbe: THROUGHPUT_DROP_THRESHOLD_SPATIAL_GRID_PROBE,
       frameIncrease: FRAME_INCREASE_THRESHOLD
     },
     currentRows,

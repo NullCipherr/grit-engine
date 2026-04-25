@@ -17,6 +17,7 @@
 Technical docs are organized by topic for faster onboarding and easier maintenance.
 English is the primary language for this repository.
 
+- [Changelog](CHANGELOG.md)
 - [Documentation Index](docs/README.md)
 - [Architecture](docs/en/ARCHITECTURE.md)
 - [Simulation Model](docs/en/SIMULATION.md)
@@ -57,6 +58,16 @@ It is designed to be consumed by wrappers in React, Vue, Svelte, or vanilla Java
 - **Deterministic seed mode** for reproducible sessions.
 - **Optional worker ticker mode** for experimental scheduling.
 - **Plugin system** for custom forces and constraints.
+- **External simulation mode** via `externalFrameProvider` for domain-specific engines.
+- **External Simulation API v2** with descriptor/capabilities and packed buffers.
+- **Multi-rate scheduler** for independent simulation and external update frequencies.
+- **Pluggable spatial backends** (`grid`, `bruteforce`) for domain trade-offs.
+- **Job system foundation** with batched execution API and runtime metrics.
+- **Subsystem telemetry** (plugins/simulation/external/spatial/render/jobs).
+- **Quality governor policy** for adaptive degradation and recovery.
+- **Plugin stage pipeline** (`pre-sim`, `post-sim`, `render-prep`, `render`).
+- **Replay/deterministic snapshot** for debugging and reproducibility.
+- **Control Center UI** para inspeção e controle de runtime em desenvolvimento.
 - **Optional WASM simulation path** with safe JS fallback.
 - **Multiple rendering backends** (`webgl2`, `canvas2d`, and experimental `offscreen-worker`).
 - **Execution presets** (`performance`, `balanced`, `quality`) and adaptive particle budget.
@@ -103,7 +114,8 @@ const engine = new GritEngine({
   overlayCanvas,
   seed: 42,
   executionMode: 'main-thread',
-  config: DEFAULT_SIM_CONFIG
+  config: DEFAULT_SIM_CONFIG,
+  externalFrameProvider: null
 });
 
 engine.start();
@@ -120,6 +132,24 @@ Main methods:
 - `setPaused(boolean)`
 - `setPointer(x, y)`
 - `clearPointer()`
+- `setExternalFrameProvider(provider | null)`
+- `setExternalSimulation(simulation | null)`
+- `getExternalSimulationDescriptor()`
+- `setSimulationStepHz(number)`
+- `setExternalStepHz(number)`
+- `getSchedulerConfig()`
+- `getExternalFrameProviderEnabled()`
+- `setSpatialBackend(type)`
+- `getSpatialBackend()`
+- `getJobSystemSnapshot()`
+- `setQualityGovernorPolicy(partialPolicy)`
+- `getQualityGovernorPolicy()`
+- `startReplayRecording(maxFrames?)`
+- `stopReplayRecording()`
+- `playReplay(tape, loop?)`
+- `stopReplayPlayback()`
+- `isReplayPlaybackEnabled()`
+- `getDeterministicSnapshot()`
 - `spawnAt(x, y)`
 - `addObstacle(x, y)`
 - `clear()`

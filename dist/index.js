@@ -1,126 +1,126 @@
-var Pt = Object.defineProperty;
-var wt = (h, t, e) => t in h ? Pt(h, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : h[t] = e;
-var s = (h, t, e) => wt(h, typeof t != "symbol" ? t + "" : t, e);
-class At {
-  constructor(t, e, i = 40) {
-    s(this, "x");
-    s(this, "y");
-    s(this, "radius");
-    s(this, "color");
-    this.x = t, this.y = e, this.radius = i, this.color = "rgba(255, 255, 255, 0.1)";
+var Me = Object.defineProperty;
+var Ce = (u, e, t) => e in u ? Me(u, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : u[e] = t;
+var r = (u, e, t) => Ce(u, typeof e != "symbol" ? e + "" : e, t);
+class Fe {
+  constructor(e, t, i = 40) {
+    r(this, "x");
+    r(this, "y");
+    r(this, "radius");
+    r(this, "color");
+    this.x = e, this.y = t, this.radius = i, this.color = "rgba(255, 255, 255, 0.1)";
   }
-  draw(t) {
-    t.save(), t.beginPath(), t.arc(this.x, this.y, this.radius, 0, Math.PI * 2), t.fillStyle = this.color, t.fill(), t.strokeStyle = "rgba(255, 255, 255, 0.2)", t.lineWidth = 2, t.stroke();
-    const e = t.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
-    e.addColorStop(0, "rgba(102, 138, 255, 0.1)"), e.addColorStop(1, "rgba(102, 138, 255, 0)"), t.fillStyle = e, t.fill(), t.restore();
+  draw(e) {
+    e.save(), e.beginPath(), e.arc(this.x, this.y, this.radius, 0, Math.PI * 2), e.fillStyle = this.color, e.fill(), e.strokeStyle = "rgba(255, 255, 255, 0.2)", e.lineWidth = 2, e.stroke();
+    const t = e.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+    t.addColorStop(0, "rgba(102, 138, 255, 0.1)"), t.addColorStop(1, "rgba(102, 138, 255, 0)"), e.fillStyle = t, e.fill(), e.restore();
   }
-  contains(t, e) {
-    const i = t - this.x, r = e - this.y;
-    return i * i + r * r <= this.radius * this.radius;
+  contains(e, t) {
+    const i = e - this.x, s = t - this.y;
+    return i * i + s * s <= this.radius * this.radius;
   }
 }
-let kt = 0;
-const X = 2e-4, Z = 0.0141421356, Ct = 16e4, tt = 0.8, _ = -0.7, et = 8, Mt = 33, it = 0.02, st = 1e-3, rt = 12;
-class Ft {
-  constructor(t, e, i, r, n = Math.random) {
-    s(this, "id");
-    s(this, "x");
-    s(this, "y");
-    s(this, "vx");
-    s(this, "vy");
-    s(this, "ax");
-    s(this, "ay");
-    s(this, "life");
-    s(this, "maxLife");
-    s(this, "size");
-    s(this, "baseSize");
-    s(this, "hue");
-    s(this, "mass");
+let Ae = 0;
+const X = 2e-4, Z = 0.0141421356, Re = 16e4, ee = 0.8, z = -0.7, te = 8, Ee = 33, ie = 0.02, se = 1e-3, re = 12;
+class ae {
+  constructor(e, t, i, s, a = Math.random) {
+    r(this, "id");
+    r(this, "x");
+    r(this, "y");
+    r(this, "vx");
+    r(this, "vy");
+    r(this, "ax");
+    r(this, "ay");
+    r(this, "life");
+    r(this, "maxLife");
+    r(this, "size");
+    r(this, "baseSize");
+    r(this, "hue");
+    r(this, "mass");
     // Flocking cache / throttling
-    s(this, "flockingTimer");
-    s(this, "flockAvgVx");
-    s(this, "flockAvgVy");
-    s(this, "flockAvgX");
-    s(this, "flockAvgY");
-    s(this, "flockNeighborCount");
+    r(this, "flockingTimer");
+    r(this, "flockAvgVx");
+    r(this, "flockAvgVy");
+    r(this, "flockAvgX");
+    r(this, "flockAvgY");
+    r(this, "flockNeighborCount");
     // Fallback color cache
-    s(this, "colorString");
-    this.id = ++kt, this.x = t, this.y = e, this.vx = (n() - 0.5) * 10, this.vy = (n() - 0.5) * 10, this.ax = 0, this.ay = 0, this.maxLife = r.particleLife + n() * 50, this.life = this.maxLife, this.baseSize = r.particleSize * (0.4 + n() * 0.8), this.size = this.baseSize, this.hue = 200 + n() * 60, this.mass = this.size, this.flockingTimer = this.id % 3 * 11, this.flockAvgVx = 0, this.flockAvgVy = 0, this.flockAvgX = this.x, this.flockAvgY = this.y, this.flockNeighborCount = 0, this.colorString = i;
+    r(this, "colorString");
+    this.id = ++Ae, this.x = e, this.y = t, this.vx = (a() - 0.5) * 10, this.vy = (a() - 0.5) * 10, this.ax = 0, this.ay = 0, this.maxLife = s.particleLife + a() * 50, this.life = this.maxLife, this.baseSize = s.particleSize * (0.4 + a() * 0.8), this.size = this.baseSize, this.hue = 200 + a() * 60, this.mass = this.size, this.flockingTimer = this.id % 3 * 11, this.flockAvgVx = 0, this.flockAvgVy = 0, this.flockAvgX = this.x, this.flockAvgY = this.y, this.flockNeighborCount = 0, this.colorString = i;
   }
-  update(t, e, i, r, n, a, l, o, c) {
-    const d = c ?? ((m, g, f) => m + g * f), {
-      attraction: u,
-      repulsion: w,
-      vortex: M,
-      flocking: F,
+  update(e, t, i, s, a, n, l, o, c) {
+    const h = c ?? ((m, p, f) => m + p * f), {
+      attraction: d,
+      repulsion: x,
+      vortex: w,
+      flocking: M,
       collisions: R,
-      gravity: y,
+      gravity: v,
       friction: I
-    } = t;
-    if (this.size = this.baseSize, this.mass = this.size > 0.1 ? this.size : 0.1, r !== null && n !== null) {
-      const m = r - this.x, g = n - this.y, f = m * m + g * g;
-      if (f < Ct) {
-        const p = (u - w) / (f + 500);
-        this.ax += m * p, this.ay += g * p, M && (this.ax += g * 0.03, this.ay -= m * 0.03);
+    } = e;
+    if (this.size = this.baseSize, this.mass = this.size > 0.1 ? this.size : 0.1, s !== null && a !== null) {
+      const m = s - this.x, p = a - this.y, f = m * m + p * p;
+      if (f < Re) {
+        const g = (d - x) / (f + 500);
+        this.ax += m * g, this.ay += p * g, w && (this.ax += p * 0.03, this.ay -= m * 0.03);
       }
     }
-    const k = a.length;
-    if (F && k > 0) {
-      if (this.flockingTimer += o * 16.6667, this.flockingTimer >= Mt) {
+    const F = n.length;
+    if (M && F > 0) {
+      if (this.flockingTimer += o * 16.6667, this.flockingTimer >= Ee) {
         this.flockingTimer = 0;
-        const m = k < et ? k : et;
-        let g = 0, f = 0, p = 0, x = 0;
-        for (let S = 0; S < m; S++) {
-          const b = a[S];
-          g += b.vx, f += b.vy, p += b.x, x += b.y;
+        const m = F < te ? F : te;
+        let p = 0, f = 0, g = 0, b = 0;
+        for (let P = 0; P < m; P++) {
+          const S = n[P];
+          p += S.vx, f += S.vy, g += S.x, b += S.y;
         }
-        const v = 1 / m;
-        this.flockAvgVx = g * v, this.flockAvgVy = f * v, this.flockAvgX = p * v, this.flockAvgY = x * v, this.flockNeighborCount = m;
+        const y = 1 / m;
+        this.flockAvgVx = p * y, this.flockAvgVy = f * y, this.flockAvgX = g * y, this.flockAvgY = b * y, this.flockNeighborCount = m;
       }
-      this.flockNeighborCount > 0 && (this.ax += (this.flockAvgVx - this.vx) * it, this.ay += (this.flockAvgVy - this.vy) * it, this.ax += (this.flockAvgX - this.x) * st, this.ay += (this.flockAvgY - this.y) * st);
+      this.flockNeighborCount > 0 && (this.ax += (this.flockAvgVx - this.vx) * ie, this.ay += (this.flockAvgVy - this.vy) * ie, this.ax += (this.flockAvgX - this.x) * se, this.ay += (this.flockAvgY - this.y) * se);
     }
-    if (R && k > 0) {
-      const m = k < rt ? k : rt;
-      for (let g = 0; g < m; g++) {
-        const f = a[g];
+    if (R && F > 0) {
+      const m = F < re ? F : re;
+      for (let p = 0; p < m; p++) {
+        const f = n[p];
         if (this.id >= f.id) continue;
-        let p = f.x - this.x, x = f.y - this.y, v = p * p + x * x;
-        const S = this.size + f.size;
-        if (v < S * S) {
-          let b = Z;
-          v <= 0 ? (p = 0.01, x = 0.01, v = X) : b = Math.sqrt(v);
-          const A = p / b, C = x / b, E = S - b, G = this.mass + f.mass, q = G > 0 ? 1 / G : 1, Y = this.mass * q, j = f.mass * q;
-          this.x -= A * E * j, this.y -= C * E * j, f.x += A * E * Y, f.y += C * E * Y;
-          const bt = this.vx - f.vx, St = this.vy - f.vy, $ = bt * A + St * C;
-          if ($ < 0) {
-            const K = -1.8 * $ / (1 / this.mass + 1 / f.mass), Q = K * A, J = K * C;
-            this.vx += Q / this.mass, this.vy += J / this.mass, f.vx -= Q / f.mass, f.vy -= J / f.mass;
+        let g = f.x - this.x, b = f.y - this.y, y = g * g + b * b;
+        const P = this.size + f.size;
+        if (y < P * P) {
+          let S = Z;
+          y <= 0 ? (g = 0.01, b = 0.01, y = X) : S = Math.sqrt(y);
+          const C = g / S, A = b / S, B = P - S, q = this.mass + f.mass, V = q > 0 ? 1 / q : 1, j = this.mass * V, $ = f.mass * V;
+          this.x -= C * B * $, this.y -= A * B * $, f.x += C * B * j, f.y += A * B * j;
+          const we = this.vx - f.vx, ke = this.vy - f.vy, J = we * C + ke * A;
+          if (J < 0) {
+            const Q = -1.8 * J / (1 / this.mass + 1 / f.mass), Y = Q * C, K = Q * A;
+            this.vx += Y / this.mass, this.vy += K / this.mass, f.vx -= Y / f.mass, f.vy -= K / f.mass;
           }
         }
       }
     }
     for (let m = 0; m < l.length; m++) {
-      const g = l[m];
-      let f = this.x - g.x, p = this.y - g.y, x = f * f + p * p;
-      const v = this.size + g.radius;
-      if (x < v * v) {
-        let S = Z;
-        x <= 0 ? (f = 0.01, p = 0.01, x = X) : S = Math.sqrt(x);
-        const b = f / S, A = p / S;
-        this.x = g.x + b * v, this.y = g.y + A * v;
-        const C = this.vx * b + this.vy * A;
-        this.vx = (this.vx - 2 * C * b) * tt, this.vy = (this.vy - 2 * C * A) * tt;
+      const p = l[m];
+      let f = this.x - p.x, g = this.y - p.y, b = f * f + g * g;
+      const y = this.size + p.radius;
+      if (b < y * y) {
+        let P = Z;
+        b <= 0 ? (f = 0.01, g = 0.01, b = X) : P = Math.sqrt(b);
+        const S = f / P, C = g / P;
+        this.x = p.x + S * y, this.y = p.y + C * y;
+        const A = this.vx * S + this.vy * C;
+        this.vx = (this.vx - 2 * A * S) * ee, this.vy = (this.vy - 2 * A * C) * ee;
       }
     }
-    this.ay += y, this.vx = d(this.vx, this.ax, o), this.vy = d(this.vy, this.ay, o);
-    const z = Math.pow(I, o);
-    this.vx *= z, this.vy *= z, this.x = d(this.x, this.vx, o), this.y = d(this.y, this.vy, o), this.ax = 0, this.ay = 0, this.x < this.size ? (this.x = this.size, this.vx *= _) : this.x > e - this.size && (this.x = e - this.size, this.vx *= _), this.y < this.size ? (this.y = this.size, this.vy *= _) : this.y > i - this.size && (this.y = i - this.size, this.vy *= _), this.life -= o;
+    this.ay += v, this.vx = h(this.vx, this.ax, o), this.vy = h(this.vy, this.ay, o);
+    const _ = Math.pow(I, o);
+    this.vx *= _, this.vy *= _, this.x = h(this.x, this.vx, o), this.y = h(this.y, this.vy, o), this.ax = 0, this.ay = 0, this.x < this.size ? (this.x = this.size, this.vx *= z) : this.x > t - this.size && (this.x = t - this.size, this.vx *= z), this.y < this.size ? (this.y = this.size, this.vy *= z) : this.y > i - this.size && (this.y = i - this.size, this.vy *= z), this.life -= o;
   }
-  draw(t, e, i) {
-    const r = this.life > 0 ? this.life / this.maxLife : 0;
-    if (t.globalAlpha = r, i) {
-      const l = this.size * (e.bloom ? 3 : 1.5);
-      t.drawImage(
+  draw(e, t, i) {
+    const s = this.life > 0 ? this.life / this.maxLife : 0;
+    if (e.globalAlpha = s, i) {
+      const l = this.size * (t.bloom ? 3 : 1.5);
+      e.drawImage(
         i,
         this.x - l,
         this.y - l,
@@ -129,129 +129,129 @@ class Ft {
       );
       return;
     }
-    const n = this.vx * this.vx + this.vy * this.vy, a = this.hue + Math.sqrt(n) * 5 | 0;
-    this.colorString = `hsl(${a}, 85%, 65%)`, t.fillStyle = this.colorString, t.beginPath(), t.arc(this.x, this.y, this.size, 0, Math.PI * 2), t.fill();
+    const a = this.vx * this.vx + this.vy * this.vy, n = this.hue + Math.sqrt(a) * 5 | 0;
+    this.colorString = `hsl(${n}, 85%, 65%)`, e.fillStyle = this.colorString, e.beginPath(), e.arc(this.x, this.y, this.size, 0, Math.PI * 2), e.fill();
   }
   isDead() {
     return this.life <= 0;
   }
 }
-const at = "#11131c", P = 48, D = 48, U = 16.67;
-class O {
-  constructor(t, e = 5e4) {
-    s(this, "canvas");
-    s(this, "ctx");
-    s(this, "maxParticles");
-    s(this, "firstFrame", !0);
-    s(this, "drawStride", 1);
-    s(this, "smoothedRenderMs", U);
-    s(this, "solidColorPalette");
-    s(this, "glowSpritePalette");
-    this.canvas = t;
-    const i = t.getContext("2d", { alpha: !0, desynchronized: !0 });
+const ne = "#11131c", k = 48, D = 48, U = 16.67;
+class N {
+  constructor(e, t = 5e4) {
+    r(this, "canvas");
+    r(this, "ctx");
+    r(this, "maxParticles");
+    r(this, "firstFrame", !0);
+    r(this, "drawStride", 1);
+    r(this, "smoothedRenderMs", U);
+    r(this, "solidColorPalette");
+    r(this, "glowSpritePalette");
+    this.canvas = e;
+    const i = e.getContext("2d", { alpha: !0, desynchronized: !0 });
     if (!i)
       throw new Error("Canvas2D not supported");
-    this.ctx = i, this.maxParticles = e, this.solidColorPalette = this.buildSolidPalette(), this.glowSpritePalette = this.buildGlowPalette();
+    this.ctx = i, this.maxParticles = t, this.solidColorPalette = this.buildSolidPalette(), this.glowSpritePalette = this.buildGlowPalette();
   }
-  render(t, e, i, r) {
-    const n = performance.now(), a = this.ctx;
-    this.firstFrame && (a.globalAlpha = 1, a.fillStyle = at, a.fillRect(0, 0, e, i), this.firstFrame = !1), this.updateQualityPolicy(t.length, r.bloom);
-    const l = Math.max(0, Math.min(r.trailStrength, 1)), o = Math.min(Math.max(1 - l, 0.04), 0.92);
-    a.globalCompositeOperation = "source-over", a.globalAlpha = o, a.fillStyle = at, a.fillRect(0, 0, e, i);
-    const c = Math.min(this.maxParticles, t.length);
-    if (a.globalCompositeOperation = r.bloom ? "lighter" : "source-over", this.drawStride > 1 ? this.renderFastPath(t, c, r.bloom) : this.renderQualityPath(t, c, r.bloom), r.vignette && this.drawStride < 4) {
-      const u = a.createRadialGradient(
-        e * 0.5,
+  render(e, t, i, s) {
+    const a = performance.now(), n = this.ctx;
+    this.firstFrame && (n.globalAlpha = 1, n.fillStyle = ne, n.fillRect(0, 0, t, i), this.firstFrame = !1), this.updateQualityPolicy(e.length, s.bloom);
+    const l = Math.max(0, Math.min(s.trailStrength, 1)), o = Math.min(Math.max(1 - l, 0.04), 0.92);
+    n.globalCompositeOperation = "source-over", n.globalAlpha = o, n.fillStyle = ne, n.fillRect(0, 0, t, i);
+    const c = Math.min(this.maxParticles, e.length);
+    if (n.globalCompositeOperation = s.bloom ? "lighter" : "source-over", this.drawStride > 1 ? this.renderFastPath(e, c, s.bloom) : this.renderQualityPath(e, c, s.bloom), s.vignette && this.drawStride < 4) {
+      const d = n.createRadialGradient(
+        t * 0.5,
         i * 0.5,
-        Math.min(e, i) * 0.18,
-        e * 0.5,
+        Math.min(t, i) * 0.18,
+        t * 0.5,
         i * 0.5,
-        Math.max(e, i) * 0.75
+        Math.max(t, i) * 0.75
       );
-      u.addColorStop(0, "rgba(0, 0, 0, 0)"), u.addColorStop(1, "rgba(0, 0, 0, 0.4)"), a.globalAlpha = 1, a.globalCompositeOperation = "source-over", a.fillStyle = u, a.fillRect(0, 0, e, i);
+      d.addColorStop(0, "rgba(0, 0, 0, 0)"), d.addColorStop(1, "rgba(0, 0, 0, 0.4)"), n.globalAlpha = 1, n.globalCompositeOperation = "source-over", n.fillStyle = d, n.fillRect(0, 0, t, i);
     }
-    const d = performance.now() - n;
-    this.smoothedRenderMs += (d - this.smoothedRenderMs) * 0.08;
+    const h = performance.now() - a;
+    this.smoothedRenderMs += (h - this.smoothedRenderMs) * 0.08;
   }
-  resizeMaxParticles(t) {
-    this.maxParticles = t;
+  resizeMaxParticles(e) {
+    this.maxParticles = e;
   }
   dispose() {
     this.ctx.globalCompositeOperation = "source-over", this.ctx.globalAlpha = 1;
   }
-  updateQualityPolicy(t, e) {
-    const i = t / Math.max(this.maxParticles, 1), r = e ? 1.45 : 1, n = this.smoothedRenderMs * r * (1 + i * 0.35);
-    n > U * 1.45 ? this.drawStride = Math.min(this.drawStride + 1, 4) : n < U * 0.86 && (this.drawStride = Math.max(this.drawStride - 1, 1));
+  updateQualityPolicy(e, t) {
+    const i = e / Math.max(this.maxParticles, 1), s = t ? 1.45 : 1, a = this.smoothedRenderMs * s * (1 + i * 0.35);
+    a > U * 1.45 ? this.drawStride = Math.min(this.drawStride + 1, 4) : a < U * 0.86 && (this.drawStride = Math.max(this.drawStride - 1, 1));
   }
-  renderFastPath(t, e, i) {
-    const r = this.ctx;
-    for (let n = 0; n < e; n += this.drawStride) {
-      const a = t[n], l = a.life > 0 ? a.life / a.maxLife : 0;
+  renderFastPath(e, t, i) {
+    const s = this.ctx;
+    for (let a = 0; a < t; a += this.drawStride) {
+      const n = e[a], l = n.life > 0 ? n.life / n.maxLife : 0;
       if (l <= 0.01) continue;
-      r.globalAlpha = l;
-      const o = this.paletteIndex(a.hue + Math.min((a.vx * a.vx + a.vy * a.vy) * 1.25, 60));
+      s.globalAlpha = l;
+      const o = this.paletteIndex(n.hue + Math.min((n.vx * n.vx + n.vy * n.vy) * 1.25, 60));
       if (i) {
         const c = this.glowSpritePalette[o];
         if (c) {
-          const d = a.size * 2.4, u = d * 2;
-          r.drawImage(c, a.x - d, a.y - d, u, u);
+          const h = n.size * 2.4, d = h * 2;
+          s.drawImage(c, n.x - h, n.y - h, d, d);
         } else
-          r.fillStyle = this.solidColorPalette[o], r.fillRect(a.x - a.size, a.y - a.size, a.size * 2, a.size * 2);
+          s.fillStyle = this.solidColorPalette[o], s.fillRect(n.x - n.size, n.y - n.size, n.size * 2, n.size * 2);
       } else
-        r.fillStyle = this.solidColorPalette[o], r.fillRect(a.x - a.size, a.y - a.size, a.size * 2, a.size * 2);
+        s.fillStyle = this.solidColorPalette[o], s.fillRect(n.x - n.size, n.y - n.size, n.size * 2, n.size * 2);
     }
   }
-  renderQualityPath(t, e, i) {
-    const r = this.ctx;
-    for (let n = 0; n < e; n++) {
-      const a = t[n], l = a.life > 0 ? a.life / a.maxLife : 0;
+  renderQualityPath(e, t, i) {
+    const s = this.ctx;
+    for (let a = 0; a < t; a++) {
+      const n = e[a], l = n.life > 0 ? n.life / n.maxLife : 0;
       if (l <= 0.01) continue;
-      r.globalAlpha = l;
-      const o = this.paletteIndex(a.hue + Math.min((a.vx * a.vx + a.vy * a.vy) * 1.25, 60));
+      s.globalAlpha = l;
+      const o = this.paletteIndex(n.hue + Math.min((n.vx * n.vx + n.vy * n.vy) * 1.25, 60));
       if (i) {
         const c = this.glowSpritePalette[o];
         if (c) {
-          const d = a.size * 2.6, u = d * 2;
-          r.drawImage(c, a.x - d, a.y - d, u, u);
+          const h = n.size * 2.6, d = h * 2;
+          s.drawImage(c, n.x - h, n.y - h, d, d);
           continue;
         }
       }
-      r.fillStyle = this.solidColorPalette[o], r.beginPath(), r.arc(a.x, a.y, a.size, 0, Math.PI * 2), r.fill();
+      s.fillStyle = this.solidColorPalette[o], s.beginPath(), s.arc(n.x, n.y, n.size, 0, Math.PI * 2), s.fill();
     }
   }
-  paletteIndex(t) {
-    const e = (t % 360 + 360) % 360;
-    return Math.floor(e / 360 * P) % P;
+  paletteIndex(e) {
+    const t = (e % 360 + 360) % 360;
+    return Math.floor(t / 360 * k) % k;
   }
   buildSolidPalette() {
-    const t = new Array(P);
-    for (let e = 0; e < P; e++) {
-      const i = Math.floor(e / P * 360);
-      t[e] = `hsl(${i}, 85%, 65%)`;
+    const e = new Array(k);
+    for (let t = 0; t < k; t++) {
+      const i = Math.floor(t / k * 360);
+      e[t] = `hsl(${i}, 85%, 65%)`;
     }
-    return t;
+    return e;
   }
   buildGlowPalette() {
-    const t = new Array(P);
+    const e = new Array(k);
     if (typeof document > "u") {
-      for (let e = 0; e < P; e++) t[e] = null;
-      return t;
+      for (let t = 0; t < k; t++) e[t] = null;
+      return e;
     }
-    for (let e = 0; e < P; e++) {
-      const i = Math.floor(e / P * 360), r = document.createElement("canvas");
-      r.width = D, r.height = D;
-      const n = r.getContext("2d");
-      if (!n) {
-        t[e] = null;
+    for (let t = 0; t < k; t++) {
+      const i = Math.floor(t / k * 360), s = document.createElement("canvas");
+      s.width = D, s.height = D;
+      const a = s.getContext("2d");
+      if (!a) {
+        e[t] = null;
         continue;
       }
-      const a = D * 0.5, l = n.createRadialGradient(a, a, 0, a, a, a);
-      l.addColorStop(0, `hsla(${i}, 85%, 70%, 1)`), l.addColorStop(1, `hsla(${i}, 85%, 70%, 0)`), n.fillStyle = l, n.beginPath(), n.arc(a, a, a, 0, Math.PI * 2), n.fill(), t[e] = r;
+      const n = D * 0.5, l = a.createRadialGradient(n, n, 0, n, n, n);
+      l.addColorStop(0, `hsla(${i}, 85%, 70%, 1)`), l.addColorStop(1, `hsla(${i}, 85%, 70%, 0)`), a.fillStyle = l, a.beginPath(), a.arc(n, n, n, 0, Math.PI * 2), a.fill(), e[t] = s;
     }
-    return t;
+    return e;
   }
 }
-const nt = "#11131c", B = 5, yt = 64, Rt = `
+const oe = "#11131c", E = 5, Se = 64, Be = `
 let canvas = null;
 let ctx = null;
 let maxParticles = 50000;
@@ -310,7 +310,7 @@ self.onmessage = (event) => {
 
     if (firstFrame) {
       ctx.globalAlpha = 1;
-      ctx.fillStyle = '${nt}';
+      ctx.fillStyle = '${oe}';
       ctx.fillRect(0, 0, width, height);
       firstFrame = false;
     }
@@ -318,7 +318,7 @@ self.onmessage = (event) => {
     const fadeAlpha = Math.min(Math.max(1 - trailStrength, 0.04), 0.92);
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = fadeAlpha;
-    ctx.fillStyle = '${nt}';
+    ctx.fillStyle = '${oe}';
     ctx.fillRect(0, 0, width, height);
 
     const compression = data.compression || 'none';
@@ -327,7 +327,7 @@ self.onmessage = (event) => {
     ctx.globalCompositeOperation = bloom ? 'lighter' : 'source-over';
 
     for (let i = 0; i < count; i++) {
-      const offset = i * ${B};
+      const offset = i * ${E};
       let x = 0;
       let y = 0;
       let size = 0;
@@ -337,7 +337,7 @@ self.onmessage = (event) => {
       if (compression === 'quantized16') {
         x = (packed[offset] / 65535) * width;
         y = (packed[offset + 1] / 65535) * height;
-        size = (packed[offset + 2] / 65535) * ${yt};
+        size = (packed[offset + 2] / 65535) * ${Se};
         hue = (packed[offset + 3] / 65535) * 360;
         alpha = packed[offset + 4] / 65535;
       } else {
@@ -380,123 +380,123 @@ self.onmessage = (event) => {
   self.postMessage({ type: 'rendered' });
 };
 `;
-class Bt {
-  constructor(t, e, i) {
-    s(this, "worker");
-    s(this, "workerUrl");
-    s(this, "maxParticles");
-    s(this, "packedDataFloat");
-    s(this, "packedDataQ16");
-    s(this, "compression");
-    s(this, "inFlight", !1);
-    s(this, "ready", !1);
-    s(this, "failed", !1);
-    s(this, "lastErrorReason", null);
-    s(this, "lastWidth", -1);
-    s(this, "lastHeight", -1);
-    s(this, "onError", null);
-    if (typeof Worker > "u" || typeof t.transferControlToOffscreen != "function")
+class ze {
+  constructor(e, t, i) {
+    r(this, "worker");
+    r(this, "workerUrl");
+    r(this, "maxParticles");
+    r(this, "packedDataFloat");
+    r(this, "packedDataQ16");
+    r(this, "compression");
+    r(this, "inFlight", !1);
+    r(this, "ready", !1);
+    r(this, "failed", !1);
+    r(this, "lastErrorReason", null);
+    r(this, "lastWidth", -1);
+    r(this, "lastHeight", -1);
+    r(this, "onError", null);
+    if (typeof Worker > "u" || typeof e.transferControlToOffscreen != "function")
       throw new Error("Offscreen worker rendering not supported");
-    const r = new Blob([Rt], { type: "text/javascript" });
-    this.workerUrl = URL.createObjectURL(r), this.worker = new Worker(this.workerUrl);
-    const n = t.transferControlToOffscreen();
-    this.maxParticles = e, this.compression = (i == null ? void 0 : i.compression) ?? "none", this.packedDataFloat = new Float32Array(e * B), this.packedDataQ16 = new Uint16Array(e * B), this.worker.onmessage = (a) => {
+    const s = new Blob([Be], { type: "text/javascript" });
+    this.workerUrl = URL.createObjectURL(s), this.worker = new Worker(this.workerUrl);
+    const a = e.transferControlToOffscreen();
+    this.maxParticles = t, this.compression = (i == null ? void 0 : i.compression) ?? "none", this.packedDataFloat = new Float32Array(t * E), this.packedDataQ16 = new Uint16Array(t * E), this.worker.onmessage = (n) => {
       var o, c;
-      const l = (o = a.data) == null ? void 0 : o.type;
+      const l = (o = n.data) == null ? void 0 : o.type;
       if (l === "ready") {
         this.ready = !0;
         return;
       }
-      l === "error" && (this.failed = !0, this.lastErrorReason = a.data.message ?? "offscreen-worker-render-error", (c = this.onError) == null || c.call(this, this.lastErrorReason)), this.inFlight = !1;
+      l === "error" && (this.failed = !0, this.lastErrorReason = n.data.message ?? "offscreen-worker-render-error", (c = this.onError) == null || c.call(this, this.lastErrorReason)), this.inFlight = !1;
     }, this.worker.onerror = () => {
-      var a;
-      this.failed = !0, this.inFlight = !1, this.lastErrorReason = "offscreen-worker-error", (a = this.onError) == null || a.call(this, this.lastErrorReason);
+      var n;
+      this.failed = !0, this.inFlight = !1, this.lastErrorReason = "offscreen-worker-error", (n = this.onError) == null || n.call(this, this.lastErrorReason);
     }, this.worker.postMessage(
       {
         type: "init",
-        canvas: n,
-        maxParticles: e
+        canvas: a,
+        maxParticles: t
       },
-      [n]
+      [a]
     );
   }
-  render(t, e, i, r) {
+  render(e, t, i, s) {
     if (this.failed || !this.ready || this.inFlight) return;
-    (e !== this.lastWidth || i !== this.lastHeight) && (this.worker.postMessage({ type: "resize", width: e, height: i }), this.lastWidth = e, this.lastHeight = i);
-    const n = Math.min(t.length, this.maxParticles);
-    let a = 0;
-    for (let l = 0; l < n; l++) {
-      const o = t[l], c = o.vx * o.vx + o.vy * o.vy, d = ((o.hue + Math.min(c * 1.25, 60)) % 360 + 360) % 360, u = o.life > 0 ? o.life / o.maxLife : 0;
-      this.compression === "quantized16" ? (this.packedDataQ16[a++] = this.quantizeUnit(o.x / Math.max(e, 1)), this.packedDataQ16[a++] = this.quantizeUnit(o.y / Math.max(i, 1)), this.packedDataQ16[a++] = this.quantizeUnit(o.size / yt), this.packedDataQ16[a++] = this.quantizeUnit(d / 360), this.packedDataQ16[a++] = this.quantizeUnit(u)) : (this.packedDataFloat[a++] = o.x, this.packedDataFloat[a++] = o.y, this.packedDataFloat[a++] = o.size, this.packedDataFloat[a++] = d, this.packedDataFloat[a++] = u);
+    (t !== this.lastWidth || i !== this.lastHeight) && (this.worker.postMessage({ type: "resize", width: t, height: i }), this.lastWidth = t, this.lastHeight = i);
+    const a = Math.min(e.length, this.maxParticles);
+    let n = 0;
+    for (let l = 0; l < a; l++) {
+      const o = e[l], c = o.vx * o.vx + o.vy * o.vy, h = ((o.hue + Math.min(c * 1.25, 60)) % 360 + 360) % 360, d = o.life > 0 ? o.life / o.maxLife : 0;
+      this.compression === "quantized16" ? (this.packedDataQ16[n++] = this.quantizeUnit(o.x / Math.max(t, 1)), this.packedDataQ16[n++] = this.quantizeUnit(o.y / Math.max(i, 1)), this.packedDataQ16[n++] = this.quantizeUnit(o.size / Se), this.packedDataQ16[n++] = this.quantizeUnit(h / 360), this.packedDataQ16[n++] = this.quantizeUnit(d)) : (this.packedDataFloat[n++] = o.x, this.packedDataFloat[n++] = o.y, this.packedDataFloat[n++] = o.size, this.packedDataFloat[n++] = h, this.packedDataFloat[n++] = d);
     }
     this.inFlight = !0, this.worker.postMessage({
       type: "render",
       compression: this.compression,
-      width: e,
+      width: t,
       height: i,
-      count: n,
-      bloom: r.bloom,
-      trailStrength: r.trailStrength,
-      vignette: r.vignette,
+      count: a,
+      bloom: s.bloom,
+      trailStrength: s.trailStrength,
+      vignette: s.vignette,
       packed: this.compression === "quantized16" ? this.packedDataQ16 : this.packedDataFloat
     });
   }
-  resizeMaxParticles(t) {
-    t !== this.maxParticles && (this.maxParticles = t, this.packedDataFloat = new Float32Array(t * B), this.packedDataQ16 = new Uint16Array(t * B), this.worker.postMessage({ type: "set-max-particles", maxParticles: t }));
+  resizeMaxParticles(e) {
+    e !== this.maxParticles && (this.maxParticles = e, this.packedDataFloat = new Float32Array(e * E), this.packedDataQ16 = new Uint16Array(e * E), this.worker.postMessage({ type: "set-max-particles", maxParticles: e }));
   }
-  setErrorHandler(t) {
-    this.onError = t, this.onError && this.failed && this.lastErrorReason && this.onError(this.lastErrorReason);
+  setErrorHandler(e) {
+    this.onError = e, this.onError && this.failed && this.lastErrorReason && this.onError(this.lastErrorReason);
   }
   dispose() {
     this.worker.terminate(), URL.revokeObjectURL(this.workerUrl);
   }
-  quantizeUnit(t) {
-    return Math.max(0, Math.min(1, t)) * 65535 | 0;
+  quantizeUnit(e) {
+    return Math.max(0, Math.min(1, e)) * 65535 | 0;
   }
 }
-const ot = 17 / 255, lt = 19 / 255, ht = 28 / 255, L = 7, T = L * 4, Et = 2;
-class _t {
-  constructor(t, e = 5e4) {
-    s(this, "canvas");
-    s(this, "gl");
-    s(this, "program", null);
-    s(this, "fadeProgram", null);
-    s(this, "vaos", []);
-    s(this, "fadeVao", null);
-    s(this, "instanceBuffers", []);
-    s(this, "activeInstanceSlot", 0);
-    s(this, "quadBuffer", null);
-    s(this, "maxParticles");
-    s(this, "instanceData");
-    s(this, "uResolutionLoc", null);
-    s(this, "uBloomLoc", null);
-    s(this, "uVignetteLoc", null);
-    s(this, "uFadeAlphaLoc", null);
-    s(this, "firstFrame", !0);
-    s(this, "isContextLost", !1);
-    s(this, "onError", null);
-    s(this, "lastWidth", -1);
-    s(this, "lastHeight", -1);
-    s(this, "lastBloom", -1);
-    s(this, "lastVignette", -1);
-    s(this, "lastFadeAlpha", -1);
+const le = 17 / 255, he = 19 / 255, ce = 28 / 255, T = 7, L = T * 4, Le = 2;
+class Te {
+  constructor(e, t = 5e4) {
+    r(this, "canvas");
+    r(this, "gl");
+    r(this, "program", null);
+    r(this, "fadeProgram", null);
+    r(this, "vaos", []);
+    r(this, "fadeVao", null);
+    r(this, "instanceBuffers", []);
+    r(this, "activeInstanceSlot", 0);
+    r(this, "quadBuffer", null);
+    r(this, "maxParticles");
+    r(this, "instanceData");
+    r(this, "uResolutionLoc", null);
+    r(this, "uBloomLoc", null);
+    r(this, "uVignetteLoc", null);
+    r(this, "uFadeAlphaLoc", null);
+    r(this, "firstFrame", !0);
+    r(this, "isContextLost", !1);
+    r(this, "onError", null);
+    r(this, "lastWidth", -1);
+    r(this, "lastHeight", -1);
+    r(this, "lastBloom", -1);
+    r(this, "lastVignette", -1);
+    r(this, "lastFadeAlpha", -1);
     // 360-step LUT for HSL(h, 0.85, 0.65) -> RGB
-    s(this, "huePalette", new Float32Array(360 * 3));
-    s(this, "handleContextLost", (t) => {
-      var e;
-      t.preventDefault(), this.isContextLost = !0, (e = this.onError) == null || e.call(this, "webgl-context-lost");
-    });
-    s(this, "handleContextRestored", () => {
+    r(this, "huePalette", new Float32Array(360 * 3));
+    r(this, "handleContextLost", (e) => {
       var t;
+      e.preventDefault(), this.isContextLost = !0, (t = this.onError) == null || t.call(this, "webgl-context-lost");
+    });
+    r(this, "handleContextRestored", () => {
+      var e;
       this.isContextLost = !1;
       try {
         this.initResources();
       } catch {
-        (t = this.onError) == null || t.call(this, "webgl-context-restore-failed");
+        (e = this.onError) == null || e.call(this, "webgl-context-restore-failed");
       }
     });
-    this.canvas = t;
-    const i = t.getContext("webgl2", {
+    this.canvas = e;
+    const i = e.getContext("webgl2", {
       antialias: !1,
       preserveDrawingBuffer: !1,
       alpha: !0,
@@ -505,7 +505,7 @@ class _t {
     });
     if (!i)
       throw new Error("WebGL2 not supported");
-    this.gl = i, this.maxParticles = e, this.instanceData = new Float32Array(e * L), this.buildHuePalette(), this.initResources(), this.attachContextEvents();
+    this.gl = i, this.maxParticles = t, this.instanceData = new Float32Array(t * T), this.buildHuePalette(), this.initResources(), this.attachContextEvents();
   }
   attachContextEvents() {
     this.canvas.addEventListener("webglcontextlost", this.handleContextLost, !1), this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored, !1);
@@ -514,27 +514,27 @@ class _t {
     this.canvas.removeEventListener("webglcontextlost", this.handleContextLost, !1), this.canvas.removeEventListener("webglcontextrestored", this.handleContextRestored, !1);
   }
   buildHuePalette() {
-    for (let t = 0; t < 360; t++) {
-      const [e, i, r] = this.hslToRgb(t / 360, 0.85, 0.65), n = t * 3;
-      this.huePalette[n] = e, this.huePalette[n + 1] = i, this.huePalette[n + 2] = r;
+    for (let e = 0; e < 360; e++) {
+      const [t, i, s] = this.hslToRgb(e / 360, 0.85, 0.65), a = e * 3;
+      this.huePalette[a] = t, this.huePalette[a + 1] = i, this.huePalette[a + 2] = s;
     }
   }
-  hslToRgb(t, e, i) {
-    if (e === 0) return [i, i, i];
-    const r = (l, o, c) => {
-      let d = c;
-      return d < 0 && (d += 1), d > 1 && (d -= 1), d < 1 / 6 ? l + (o - l) * 6 * d : d < 1 / 2 ? o : d < 2 / 3 ? l + (o - l) * (2 / 3 - d) * 6 : l;
-    }, n = i < 0.5 ? i * (1 + e) : i + e - i * e, a = 2 * i - n;
+  hslToRgb(e, t, i) {
+    if (t === 0) return [i, i, i];
+    const s = (l, o, c) => {
+      let h = c;
+      return h < 0 && (h += 1), h > 1 && (h -= 1), h < 1 / 6 ? l + (o - l) * 6 * h : h < 1 / 2 ? o : h < 2 / 3 ? l + (o - l) * (2 / 3 - h) * 6 : l;
+    }, a = i < 0.5 ? i * (1 + t) : i + t - i * t, n = 2 * i - a;
     return [
-      r(a, n, t + 1 / 3),
-      r(a, n, t),
-      r(a, n, t - 1 / 3)
+      s(n, a, e + 1 / 3),
+      s(n, a, e),
+      s(n, a, e - 1 / 3)
     ];
   }
   initResources() {
-    const t = this.gl;
+    const e = this.gl;
     this.disposeGpuResources();
-    const e = `#version 300 es
+    const t = `#version 300 es
       precision highp float;
 
       layout(location = 0) in vec2 a_position;
@@ -598,21 +598,21 @@ class _t {
 
         outColor = vec4(v_color * alpha, alpha);
       }
-    `, r = `#version 300 es
+    `, s = `#version 300 es
       layout(location = 0) in vec2 a_position;
       void main() {
         gl_Position = vec4(a_position, 0.0, 1.0);
       }
-    `, n = `#version 300 es
+    `, a = `#version 300 es
       precision mediump float;
       uniform float u_fadeAlpha;
       out vec4 outColor;
       void main() {
-        outColor = vec4(${ot.toFixed(8)}, ${lt.toFixed(8)}, ${ht.toFixed(8)}, u_fadeAlpha);
+        outColor = vec4(${le.toFixed(8)}, ${he.toFixed(8)}, ${ce.toFixed(8)}, u_fadeAlpha);
       }
     `;
-    this.program = this.createProgram(e, i), this.fadeProgram = this.createProgram(r, n), this.uResolutionLoc = t.getUniformLocation(this.program, "u_resolution"), this.uBloomLoc = t.getUniformLocation(this.program, "u_bloom"), this.uVignetteLoc = t.getUniformLocation(this.program, "u_vignette"), this.uFadeAlphaLoc = t.getUniformLocation(this.fadeProgram, "u_fadeAlpha");
-    const a = new Float32Array([
+    this.program = this.createProgram(t, i), this.fadeProgram = this.createProgram(s, a), this.uResolutionLoc = e.getUniformLocation(this.program, "u_resolution"), this.uBloomLoc = e.getUniformLocation(this.program, "u_bloom"), this.uVignetteLoc = e.getUniformLocation(this.program, "u_vignette"), this.uFadeAlphaLoc = e.getUniformLocation(this.fadeProgram, "u_fadeAlpha");
+    const n = new Float32Array([
       -1,
       -1,
       1,
@@ -622,101 +622,101 @@ class _t {
       1,
       1
     ]);
-    if (this.quadBuffer = t.createBuffer(), !this.quadBuffer) throw new Error("Failed to create quad buffer");
-    t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.bufferData(t.ARRAY_BUFFER, a, t.STATIC_DRAW), this.vaos = [], this.instanceBuffers = [];
-    for (let l = 0; l < Et; l++) {
-      const o = t.createVertexArray();
+    if (this.quadBuffer = e.createBuffer(), !this.quadBuffer) throw new Error("Failed to create quad buffer");
+    e.bindBuffer(e.ARRAY_BUFFER, this.quadBuffer), e.bufferData(e.ARRAY_BUFFER, n, e.STATIC_DRAW), this.vaos = [], this.instanceBuffers = [];
+    for (let l = 0; l < Le; l++) {
+      const o = e.createVertexArray();
       if (!o) throw new Error("Failed to create particle VAO");
-      const c = t.createBuffer();
+      const c = e.createBuffer();
       if (!c)
-        throw t.deleteVertexArray(o), new Error("Failed to create instance buffer");
-      t.bindVertexArray(o), t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.enableVertexAttribArray(0), t.vertexAttribPointer(0, 2, t.FLOAT, !1, 0, 0), t.bindBuffer(t.ARRAY_BUFFER, c), t.bufferData(t.ARRAY_BUFFER, this.instanceData.byteLength, t.DYNAMIC_DRAW), t.enableVertexAttribArray(1), t.vertexAttribPointer(1, 2, t.FLOAT, !1, T, 0), t.vertexAttribDivisor(1, 1), t.enableVertexAttribArray(2), t.vertexAttribPointer(2, 1, t.FLOAT, !1, T, 8), t.vertexAttribDivisor(2, 1), t.enableVertexAttribArray(3), t.vertexAttribPointer(3, 3, t.FLOAT, !1, T, 12), t.vertexAttribDivisor(3, 1), t.enableVertexAttribArray(4), t.vertexAttribPointer(4, 1, t.FLOAT, !1, T, 24), t.vertexAttribDivisor(4, 1), this.vaos.push(o), this.instanceBuffers.push(c);
+        throw e.deleteVertexArray(o), new Error("Failed to create instance buffer");
+      e.bindVertexArray(o), e.bindBuffer(e.ARRAY_BUFFER, this.quadBuffer), e.enableVertexAttribArray(0), e.vertexAttribPointer(0, 2, e.FLOAT, !1, 0, 0), e.bindBuffer(e.ARRAY_BUFFER, c), e.bufferData(e.ARRAY_BUFFER, this.instanceData.byteLength, e.DYNAMIC_DRAW), e.enableVertexAttribArray(1), e.vertexAttribPointer(1, 2, e.FLOAT, !1, L, 0), e.vertexAttribDivisor(1, 1), e.enableVertexAttribArray(2), e.vertexAttribPointer(2, 1, e.FLOAT, !1, L, 8), e.vertexAttribDivisor(2, 1), e.enableVertexAttribArray(3), e.vertexAttribPointer(3, 3, e.FLOAT, !1, L, 12), e.vertexAttribDivisor(3, 1), e.enableVertexAttribArray(4), e.vertexAttribPointer(4, 1, e.FLOAT, !1, L, 24), e.vertexAttribDivisor(4, 1), this.vaos.push(o), this.instanceBuffers.push(c);
     }
-    if (this.fadeVao = t.createVertexArray(), !this.fadeVao) throw new Error("Failed to create fade VAO");
-    t.bindVertexArray(this.fadeVao), t.bindBuffer(t.ARRAY_BUFFER, this.quadBuffer), t.enableVertexAttribArray(0), t.vertexAttribPointer(0, 2, t.FLOAT, !1, 0, 0), t.bindVertexArray(null), t.bindBuffer(t.ARRAY_BUFFER, null), t.disable(t.DEPTH_TEST), t.disable(t.CULL_FACE), t.enable(t.BLEND), this.firstFrame = !0, this.lastWidth = -1, this.lastHeight = -1, this.lastBloom = -1, this.lastVignette = -1, this.lastFadeAlpha = -1, this.activeInstanceSlot = 0;
+    if (this.fadeVao = e.createVertexArray(), !this.fadeVao) throw new Error("Failed to create fade VAO");
+    e.bindVertexArray(this.fadeVao), e.bindBuffer(e.ARRAY_BUFFER, this.quadBuffer), e.enableVertexAttribArray(0), e.vertexAttribPointer(0, 2, e.FLOAT, !1, 0, 0), e.bindVertexArray(null), e.bindBuffer(e.ARRAY_BUFFER, null), e.disable(e.DEPTH_TEST), e.disable(e.CULL_FACE), e.enable(e.BLEND), this.firstFrame = !0, this.lastWidth = -1, this.lastHeight = -1, this.lastBloom = -1, this.lastVignette = -1, this.lastFadeAlpha = -1, this.activeInstanceSlot = 0;
   }
-  createProgram(t, e) {
-    const i = this.gl, r = i.createShader(i.VERTEX_SHADER);
-    if (!r) throw new Error("Failed to create vertex shader");
-    if (i.shaderSource(r, t), i.compileShader(r), !i.getShaderParameter(r, i.COMPILE_STATUS)) {
-      const l = i.getShaderInfoLog(r) || "Unknown vertex shader error";
-      throw i.deleteShader(r), new Error(`Vertex shader compile error: ${l}`);
+  createProgram(e, t) {
+    const i = this.gl, s = i.createShader(i.VERTEX_SHADER);
+    if (!s) throw new Error("Failed to create vertex shader");
+    if (i.shaderSource(s, e), i.compileShader(s), !i.getShaderParameter(s, i.COMPILE_STATUS)) {
+      const l = i.getShaderInfoLog(s) || "Unknown vertex shader error";
+      throw i.deleteShader(s), new Error(`Vertex shader compile error: ${l}`);
     }
-    const n = i.createShader(i.FRAGMENT_SHADER);
-    if (!n)
-      throw i.deleteShader(r), new Error("Failed to create fragment shader");
-    if (i.shaderSource(n, e), i.compileShader(n), !i.getShaderParameter(n, i.COMPILE_STATUS)) {
-      const l = i.getShaderInfoLog(n) || "Unknown fragment shader error";
-      throw i.deleteShader(r), i.deleteShader(n), new Error(`Fragment shader compile error: ${l}`);
-    }
-    const a = i.createProgram();
+    const a = i.createShader(i.FRAGMENT_SHADER);
     if (!a)
-      throw i.deleteShader(r), i.deleteShader(n), new Error("Failed to create program");
-    if (i.attachShader(a, r), i.attachShader(a, n), i.linkProgram(a), i.deleteShader(r), i.deleteShader(n), !i.getProgramParameter(a, i.LINK_STATUS)) {
-      const l = i.getProgramInfoLog(a) || "Unknown program link error";
-      throw i.deleteProgram(a), new Error(`Program link error: ${l}`);
+      throw i.deleteShader(s), new Error("Failed to create fragment shader");
+    if (i.shaderSource(a, t), i.compileShader(a), !i.getShaderParameter(a, i.COMPILE_STATUS)) {
+      const l = i.getShaderInfoLog(a) || "Unknown fragment shader error";
+      throw i.deleteShader(s), i.deleteShader(a), new Error(`Fragment shader compile error: ${l}`);
     }
-    return a;
+    const n = i.createProgram();
+    if (!n)
+      throw i.deleteShader(s), i.deleteShader(a), new Error("Failed to create program");
+    if (i.attachShader(n, s), i.attachShader(n, a), i.linkProgram(n), i.deleteShader(s), i.deleteShader(a), !i.getProgramParameter(n, i.LINK_STATUS)) {
+      const l = i.getProgramInfoLog(n) || "Unknown program link error";
+      throw i.deleteProgram(n), new Error(`Program link error: ${l}`);
+    }
+    return n;
   }
-  render(t, e, i, r) {
+  render(e, t, i, s) {
     if (!this.program || !this.fadeProgram || !this.fadeVao || this.vaos.length === 0 || this.instanceBuffers.length === 0 || this.isContextLost)
       return;
-    const n = this.gl;
-    n.viewport(0, 0, e, i), this.firstFrame && (n.clearColor(ot, lt, ht, 1), n.clear(n.COLOR_BUFFER_BIT), this.firstFrame = !1);
-    const a = Math.max(0, Math.min(r.trailStrength, 1)), l = Math.min(Math.max(1 - a, 0.04), 0.92);
-    n.useProgram(this.fadeProgram), n.bindVertexArray(this.fadeVao), l !== this.lastFadeAlpha && (n.uniform1f(this.uFadeAlphaLoc, l), this.lastFadeAlpha = l), n.blendFunc(n.SRC_ALPHA, n.ONE_MINUS_SRC_ALPHA), n.drawArrays(n.TRIANGLE_STRIP, 0, 4);
-    const o = Math.min(t.length, this.maxParticles);
+    const a = this.gl;
+    a.viewport(0, 0, t, i), this.firstFrame && (a.clearColor(le, he, ce, 1), a.clear(a.COLOR_BUFFER_BIT), this.firstFrame = !1);
+    const n = Math.max(0, Math.min(s.trailStrength, 1)), l = Math.min(Math.max(1 - n, 0.04), 0.92);
+    a.useProgram(this.fadeProgram), a.bindVertexArray(this.fadeVao), l !== this.lastFadeAlpha && (a.uniform1f(this.uFadeAlphaLoc, l), this.lastFadeAlpha = l), a.blendFunc(a.SRC_ALPHA, a.ONE_MINUS_SRC_ALPHA), a.drawArrays(a.TRIANGLE_STRIP, 0, 4);
+    const o = Math.min(e.length, this.maxParticles);
     let c = 0;
     for (let R = 0; R < o; R++) {
-      const y = t[R], I = y.vx * y.vx + y.vy * y.vy, m = ((y.hue + Math.min(I * 1.25, 60) | 0) % 360 + 360) % 360 * 3;
-      this.instanceData[c++] = y.x, this.instanceData[c++] = y.y, this.instanceData[c++] = y.size, this.instanceData[c++] = this.huePalette[m], this.instanceData[c++] = this.huePalette[m + 1], this.instanceData[c++] = this.huePalette[m + 2], this.instanceData[c++] = y.life > 0 ? y.life / y.maxLife : 0;
+      const v = e[R], I = v.vx * v.vx + v.vy * v.vy, m = ((v.hue + Math.min(I * 1.25, 60) | 0) % 360 + 360) % 360 * 3;
+      this.instanceData[c++] = v.x, this.instanceData[c++] = v.y, this.instanceData[c++] = v.size, this.instanceData[c++] = this.huePalette[m], this.instanceData[c++] = this.huePalette[m + 1], this.instanceData[c++] = this.huePalette[m + 2], this.instanceData[c++] = v.life > 0 ? v.life / v.maxLife : 0;
     }
-    const d = this.activeInstanceSlot, u = this.vaos[d], w = this.instanceBuffers[d];
-    if (!u || !w)
+    const h = this.activeInstanceSlot, d = this.vaos[h], x = this.instanceBuffers[h];
+    if (!d || !x)
       return;
-    n.bindBuffer(n.ARRAY_BUFFER, w), n.bufferSubData(n.ARRAY_BUFFER, 0, this.instanceData, 0, o * L), n.useProgram(this.program), n.bindVertexArray(u), (e !== this.lastWidth || i !== this.lastHeight) && (n.uniform2f(this.uResolutionLoc, e, i), this.lastWidth = e, this.lastHeight = i);
-    const M = r.bloom ? 1 : 0;
-    M !== this.lastBloom && (n.uniform1f(this.uBloomLoc, M), this.lastBloom = M);
-    const F = r.vignette ? 1 : 0;
-    F !== this.lastVignette && (n.uniform1f(this.uVignetteLoc, F), this.lastVignette = F), r.bloom ? n.blendFunc(n.ONE, n.ONE) : n.blendFunc(n.ONE, n.ONE_MINUS_SRC_ALPHA), n.drawArraysInstanced(n.TRIANGLE_STRIP, 0, 4, o), n.bindVertexArray(null), this.activeInstanceSlot++, this.activeInstanceSlot >= this.instanceBuffers.length && (this.activeInstanceSlot = 0);
+    a.bindBuffer(a.ARRAY_BUFFER, x), a.bufferSubData(a.ARRAY_BUFFER, 0, this.instanceData, 0, o * T), a.useProgram(this.program), a.bindVertexArray(d), (t !== this.lastWidth || i !== this.lastHeight) && (a.uniform2f(this.uResolutionLoc, t, i), this.lastWidth = t, this.lastHeight = i);
+    const w = s.bloom ? 1 : 0;
+    w !== this.lastBloom && (a.uniform1f(this.uBloomLoc, w), this.lastBloom = w);
+    const M = s.vignette ? 1 : 0;
+    M !== this.lastVignette && (a.uniform1f(this.uVignetteLoc, M), this.lastVignette = M), s.bloom ? a.blendFunc(a.ONE, a.ONE) : a.blendFunc(a.ONE, a.ONE_MINUS_SRC_ALPHA), a.drawArraysInstanced(a.TRIANGLE_STRIP, 0, 4, o), a.bindVertexArray(null), this.activeInstanceSlot++, this.activeInstanceSlot >= this.instanceBuffers.length && (this.activeInstanceSlot = 0);
   }
-  resizeMaxParticles(t) {
-    if (t !== this.maxParticles && (this.maxParticles = t, this.instanceData = new Float32Array(t * L), this.instanceBuffers.length > 0)) {
-      const e = this.gl;
+  resizeMaxParticles(e) {
+    if (e !== this.maxParticles && (this.maxParticles = e, this.instanceData = new Float32Array(e * T), this.instanceBuffers.length > 0)) {
+      const t = this.gl;
       for (let i = 0; i < this.instanceBuffers.length; i++) {
-        const r = this.instanceBuffers[i];
-        r && (e.bindBuffer(e.ARRAY_BUFFER, r), e.bufferData(e.ARRAY_BUFFER, this.instanceData.byteLength, e.DYNAMIC_DRAW));
+        const s = this.instanceBuffers[i];
+        s && (t.bindBuffer(t.ARRAY_BUFFER, s), t.bufferData(t.ARRAY_BUFFER, this.instanceData.byteLength, t.DYNAMIC_DRAW));
       }
-      e.bindBuffer(e.ARRAY_BUFFER, null);
+      t.bindBuffer(t.ARRAY_BUFFER, null);
     }
   }
-  setErrorHandler(t) {
-    this.onError = t;
+  setErrorHandler(e) {
+    this.onError = e;
   }
   disposeGpuResources() {
-    const t = this.gl;
+    const e = this.gl;
     if (this.instanceBuffers.length > 0) {
-      for (let e = 0; e < this.instanceBuffers.length; e++) {
-        const i = this.instanceBuffers[e];
-        i && t.deleteBuffer(i);
+      for (let t = 0; t < this.instanceBuffers.length; t++) {
+        const i = this.instanceBuffers[t];
+        i && e.deleteBuffer(i);
       }
       this.instanceBuffers = [];
     }
-    if (this.quadBuffer && (t.deleteBuffer(this.quadBuffer), this.quadBuffer = null), this.vaos.length > 0) {
-      for (let e = 0; e < this.vaos.length; e++) {
-        const i = this.vaos[e];
-        i && t.deleteVertexArray(i);
+    if (this.quadBuffer && (e.deleteBuffer(this.quadBuffer), this.quadBuffer = null), this.vaos.length > 0) {
+      for (let t = 0; t < this.vaos.length; t++) {
+        const i = this.vaos[t];
+        i && e.deleteVertexArray(i);
       }
       this.vaos = [];
     }
-    this.fadeVao && (t.deleteVertexArray(this.fadeVao), this.fadeVao = null), this.program && (t.deleteProgram(this.program), this.program = null), this.fadeProgram && (t.deleteProgram(this.fadeProgram), this.fadeProgram = null);
+    this.fadeVao && (e.deleteVertexArray(this.fadeVao), this.fadeVao = null), this.program && (e.deleteProgram(this.program), this.program = null), this.fadeProgram && (e.deleteProgram(this.fadeProgram), this.fadeProgram = null);
   }
   dispose() {
     this.detachContextEvents(), this.disposeGpuResources();
   }
 }
-function Tt(h, t) {
-  return t === "offscreen-worker" ? "offscreen-worker" : t === "canvas2d" ? "canvas2d" : t === "webgl2" || h.getContext("webgl2", {
+function Ie(u, e) {
+  return e === "offscreen-worker" ? "offscreen-worker" : e === "canvas2d" ? "canvas2d" : e === "webgl2" || u.getContext("webgl2", {
     antialias: !1,
     preserveDrawingBuffer: !1,
     alpha: !0,
@@ -724,127 +724,165 @@ function Tt(h, t) {
     powerPreference: "high-performance"
   }) ? "webgl2" : "canvas2d";
 }
-function N(h, t, e, i) {
-  const r = Tt(h, e);
-  if (r === "offscreen-worker")
+function O(u, e, t, i) {
+  const s = Ie(u, t);
+  if (s === "offscreen-worker")
     try {
       return {
-        renderer: new Bt(h, t, {
+        renderer: new ze(u, e, {
           compression: (i == null ? void 0 : i.workerTransportCompression) ?? "none"
         }),
-        backend: r
+        backend: s
       };
     } catch {
       return {
-        renderer: new O(h, t),
+        renderer: new N(u, e),
         backend: "canvas2d"
       };
     }
-  if (r === "webgl2")
+  if (s === "webgl2")
     try {
       return {
-        renderer: new _t(h, t),
-        backend: r
+        renderer: new Te(u, e),
+        backend: s
       };
     } catch {
       return {
-        renderer: new O(h, t),
+        renderer: new N(u, e),
         backend: "canvas2d"
       };
     }
   return {
-    renderer: new O(h, t),
-    backend: r
+    renderer: new N(u, e),
+    backend: s
   };
 }
-const ct = [];
-class Lt {
-  constructor(t) {
-    s(this, "grid");
-    s(this, "cellSize");
-    s(this, "invCellSize");
-    this.grid = /* @__PURE__ */ new Map(), this.cellSize = t, this.invCellSize = 1 / t;
+const de = [];
+class _e {
+  constructor(e) {
+    r(this, "grid");
+    r(this, "cellSize");
+    r(this, "invCellSize");
+    this.grid = /* @__PURE__ */ new Map(), this.cellSize = e, this.invCellSize = 1 / e;
   }
-  setCellSize(t) {
-    this.cellSize = t, this.invCellSize = 1 / t, this.grid.clear();
+  setCellSize(e) {
+    this.cellSize = e, this.invCellSize = 1 / e, this.grid.clear();
   }
   clear() {
-    for (const t of this.grid.values())
-      t.length = 0;
+    for (const e of this.grid.values())
+      e.length = 0;
   }
-  toGridCoord(t) {
-    return Math.floor(t * this.invCellSize);
+  toGridCoord(e) {
+    return Math.floor(e * this.invCellSize);
   }
-  hash(t, e) {
-    return t * 73856093 ^ e * 19349663 | 0;
+  hash(e, t) {
+    return e * 73856093 ^ t * 19349663 | 0;
   }
-  add(t) {
-    const e = this.toGridCoord(t.x), i = this.toGridCoord(t.y), r = this.hash(e, i);
-    let n = this.grid.get(r);
-    n || (n = [], this.grid.set(r, n)), n.push(t);
+  add(e) {
+    const t = this.toGridCoord(e.x), i = this.toGridCoord(e.y), s = this.hash(t, i);
+    let a = this.grid.get(s);
+    a || (a = [], this.grid.set(s, a)), a.push(e);
   }
-  getNeighbors(t) {
-    const e = this.toGridCoord(t.x), i = this.toGridCoord(t.y), r = [];
-    for (let n = e - 1; n <= e + 1; n++)
-      for (let a = i - 1; a <= i + 1; a++) {
-        const l = this.grid.get(this.hash(n, a));
+  getNeighbors(e) {
+    const t = this.toGridCoord(e.x), i = this.toGridCoord(e.y), s = [];
+    for (let a = t - 1; a <= t + 1; a++)
+      for (let n = i - 1; n <= i + 1; n++) {
+        const l = this.grid.get(this.hash(a, n));
         if (l)
           for (let o = 0; o < l.length; o++) {
             const c = l[o];
-            c !== t && r.push(c);
+            c !== e && s.push(c);
           }
       }
-    return r.length > 0 ? r : ct;
+    return s.length > 0 ? s : de;
   }
-  getNeighborsInto(t, e) {
-    e.length = 0;
-    const i = this.toGridCoord(t.x), r = this.toGridCoord(t.y);
-    for (let n = i - 1; n <= i + 1; n++)
-      for (let a = r - 1; a <= r + 1; a++) {
-        const l = this.grid.get(this.hash(n, a));
+  getNeighborsInto(e, t) {
+    t.length = 0;
+    const i = this.toGridCoord(e.x), s = this.toGridCoord(e.y);
+    for (let a = i - 1; a <= i + 1; a++)
+      for (let n = s - 1; n <= s + 1; n++) {
+        const l = this.grid.get(this.hash(a, n));
         if (l)
           for (let o = 0; o < l.length; o++) {
             const c = l[o];
-            c !== t && e.push(c);
+            c !== e && t.push(c);
           }
       }
   }
-  getCellParticlesAt(t, e) {
-    const i = this.toGridCoord(t), r = this.toGridCoord(e);
-    return this.grid.get(this.hash(i, r)) ?? ct;
+  getCellParticlesAt(e, t) {
+    const i = this.toGridCoord(e), s = this.toGridCoord(t);
+    return this.grid.get(this.hash(i, s)) ?? de;
   }
 }
-class It {
-  constructor(t, e) {
-    s(this, "baseLimit");
-    s(this, "options");
-    s(this, "scale", 1);
-    s(this, "activeParticleLimit");
-    s(this, "frameCounter", 0);
-    this.baseLimit = Math.max(1, t | 0), this.options = e, this.activeParticleLimit = this.baseLimit;
+class De {
+  constructor(e) {
+    r(this, "type", "grid");
+    r(this, "grid");
+    this.grid = new _e(e);
+  }
+  clear() {
+    this.grid.clear();
+  }
+  add(e) {
+    this.grid.add(e);
+  }
+  getNeighborsInto(e, t) {
+    this.grid.getNeighborsInto(e, t);
+  }
+}
+class Ue {
+  constructor() {
+    r(this, "type", "bruteforce");
+    r(this, "particles", []);
+  }
+  clear() {
+    this.particles.length = 0;
+  }
+  add(e) {
+    this.particles.push(e);
+  }
+  getNeighborsInto(e, t) {
+    t.length = 0;
+    for (let i = 0; i < this.particles.length; i++) {
+      const s = this.particles[i];
+      s !== e && t.push(s);
+    }
+  }
+}
+function ue(u, e) {
+  return u === "bruteforce" ? new Ue() : new De(e);
+}
+class Ne {
+  constructor(e, t) {
+    r(this, "baseLimit");
+    r(this, "options");
+    r(this, "scale", 1);
+    r(this, "activeParticleLimit");
+    r(this, "frameCounter", 0);
+    this.baseLimit = Math.max(1, e | 0), this.options = t, this.activeParticleLimit = this.baseLimit;
   }
   reset() {
     this.scale = 1, this.activeParticleLimit = this.baseLimit, this.frameCounter = 0;
   }
-  update(t, e) {
+  update(e, t) {
     if (!this.options.enabled) {
       this.scale = 1, this.activeParticleLimit = this.baseLimit;
       return;
     }
     if (this.frameCounter++, this.frameCounter % this.options.updateIntervalFrames !== 0)
       return;
-    const i = e > 0 ? e : t;
+    const i = t > 0 ? t : e;
     if (i >= this.options.highWatermarkMs) {
-      const r = (i - this.options.highWatermarkMs) / this.options.highWatermarkMs;
-      this.scale -= this.options.dropRate * (1 + r);
+      const s = (i - this.options.highWatermarkMs) / this.options.highWatermarkMs;
+      this.scale -= this.options.dropRate * (1 + s);
     } else if (i <= this.options.lowWatermarkMs) {
-      const r = (this.options.lowWatermarkMs - i) / this.options.lowWatermarkMs;
-      this.scale += this.options.recoveryRate * (1 + r);
+      const s = (this.options.lowWatermarkMs - i) / this.options.lowWatermarkMs;
+      this.scale += this.options.recoveryRate * (1 + s);
     }
     this.scale < this.options.minScale && (this.scale = this.options.minScale), this.scale > 1 && (this.scale = 1), this.activeParticleLimit = Math.max(1, Math.floor(this.baseLimit * this.scale));
   }
-  setEnabled(t) {
-    this.options.enabled = t, t || this.reset();
+  setEnabled(e) {
+    this.options.enabled = e, e || this.reset();
   }
   snapshot() {
     return {
@@ -854,52 +892,52 @@ class It {
   }
 }
 const H = 0;
-class zt {
-  constructor(t = 300, e = 0.25, i = 120) {
-    s(this, "samples");
-    s(this, "buckets");
-    s(this, "bucketSizeMs");
-    s(this, "maxBucketMs");
-    s(this, "writeIndex", 0);
-    s(this, "size", 0);
-    s(this, "sumMs", 0);
-    const r = Math.max(1, t | 0), n = Math.max(0.05, e), a = Math.max(16, i);
-    this.samples = new Float32Array(r), this.bucketSizeMs = n, this.maxBucketMs = a, this.buckets = new Uint32Array(Math.floor(a / n) + 1);
+class Oe {
+  constructor(e = 300, t = 0.25, i = 120) {
+    r(this, "samples");
+    r(this, "buckets");
+    r(this, "bucketSizeMs");
+    r(this, "maxBucketMs");
+    r(this, "writeIndex", 0);
+    r(this, "size", 0);
+    r(this, "sumMs", 0);
+    const s = Math.max(1, e | 0), a = Math.max(0.05, t), n = Math.max(16, i);
+    this.samples = new Float32Array(s), this.bucketSizeMs = a, this.maxBucketMs = n, this.buckets = new Uint32Array(Math.floor(n / a) + 1);
   }
-  push(t) {
-    const e = this.clampFrameMs(t);
+  push(e) {
+    const t = this.clampFrameMs(e);
     if (this.size === this.samples.length) {
       const i = this.samples[this.writeIndex];
       this.sumMs -= i, this.buckets[this.toBucket(i)]--;
     } else
       this.size++;
-    this.samples[this.writeIndex] = e, this.sumMs += e, this.buckets[this.toBucket(e)]++, this.writeIndex++, this.writeIndex >= this.samples.length && (this.writeIndex = 0);
+    this.samples[this.writeIndex] = t, this.sumMs += t, this.buckets[this.toBucket(t)]++, this.writeIndex++, this.writeIndex >= this.samples.length && (this.writeIndex = 0);
   }
   reset() {
     this.samples.fill(0), this.buckets.fill(0), this.writeIndex = 0, this.size = 0, this.sumMs = 0;
   }
-  snapshot(t) {
-    const e = t ?? {
+  snapshot(e) {
+    const t = e ?? {
       sampleCount: 0,
       avgMs: 0,
       p95Ms: 0,
       p99Ms: 0
     };
-    return this.size === 0 ? (e.sampleCount = 0, e.avgMs = 0, e.p95Ms = 0, e.p99Ms = 0, e) : (e.sampleCount = this.size, e.avgMs = this.sumMs / this.size, e.p95Ms = this.percentileFromHistogram(0.95), e.p99Ms = this.percentileFromHistogram(0.99), e);
+    return this.size === 0 ? (t.sampleCount = 0, t.avgMs = 0, t.p95Ms = 0, t.p99Ms = 0, t) : (t.sampleCount = this.size, t.avgMs = this.sumMs / this.size, t.p95Ms = this.percentileFromHistogram(0.95), t.p99Ms = this.percentileFromHistogram(0.99), t);
   }
-  clampFrameMs(t) {
-    return !Number.isFinite(t) || t < H ? H : t > this.maxBucketMs ? this.maxBucketMs : t;
+  clampFrameMs(e) {
+    return !Number.isFinite(e) || e < H ? H : e > this.maxBucketMs ? this.maxBucketMs : e;
   }
-  toBucket(t) {
-    const e = Math.floor(t / this.bucketSizeMs);
-    return e < 0 ? 0 : e >= this.buckets.length ? this.buckets.length - 1 : e;
+  toBucket(e) {
+    const t = Math.floor(e / this.bucketSizeMs);
+    return t < 0 ? 0 : t >= this.buckets.length ? this.buckets.length - 1 : t;
   }
-  percentileFromHistogram(t) {
-    const e = Math.max(1, Math.ceil(this.size * t));
+  percentileFromHistogram(e) {
+    const t = Math.max(1, Math.ceil(this.size * e));
     let i = 0;
-    for (let r = 0; r < this.buckets.length; r++)
-      if (i += this.buckets[r], i >= e)
-        return r * this.bucketSizeMs;
+    for (let s = 0; s < this.buckets.length; s++)
+      if (i += this.buckets[s], i >= t)
+        return s * this.bucketSizeMs;
     return this.maxBucketMs;
   }
 }
@@ -915,11 +953,11 @@ const W = {
   flocking: !0,
   collisions: !0,
   obstacleMode: !1
-}, dt = {
+}, fe = {
   bloom: !0,
   trailStrength: 0.72,
   vignette: !1
-}, Dt = {
+}, He = {
   enabled: !0,
   targetFrameMs: 16.67,
   lowWatermarkMs: 13.5,
@@ -928,23 +966,29 @@ const W = {
   recoveryRate: 0.025,
   dropRate: 0.08,
   updateIntervalFrames: 24
+}, me = {
+  enabled: !0,
+  highWatermarkMs: 24,
+  lowWatermarkMs: 12,
+  cooldownFrames: 24,
+  degradationOrder: ["postprocessing", "preset", "simulation-rate"]
 };
-function V(h, t, e) {
+function G(u, e, t) {
   return {
-    preset: h,
+    preset: u,
     config: {
       ...W,
-      ...t
+      ...e
     },
     postProcessing: {
-      ...dt,
-      ...e,
-      bloom: e.bloom ?? t.bloom ?? dt.bloom
+      ...fe,
+      ...t,
+      bloom: t.bloom ?? e.bloom ?? fe.bloom
     }
   };
 }
-const Ut = {
-  performance: V(
+const Ge = {
+  performance: G(
     "performance",
     {
       attraction: 3,
@@ -964,7 +1008,7 @@ const Ut = {
       vignette: !1
     }
   ),
-  balanced: V(
+  balanced: G(
     "balanced",
     {
       attraction: 6,
@@ -984,7 +1028,7 @@ const Ut = {
       vignette: !1
     }
   ),
-  quality: V(
+  quality: G(
     "quality",
     {
       attraction: 10,
@@ -1005,14 +1049,14 @@ const Ut = {
     }
   )
 };
-function ft(h) {
-  return Ut[h];
+function pe(u) {
+  return Ge[u];
 }
-function Jt() {
+function it() {
   return ["performance", "balanced", "quality"];
 }
-const xt = "grit-engine:telemetry:v2", ut = 24;
-function Ot() {
+const Pe = "grit-engine:telemetry:v2", ge = 24;
+function We() {
   return typeof navigator > "u" || typeof screen > "u" ? "server" : [
     navigator.userAgent,
     navigator.hardwareConcurrency,
@@ -1021,56 +1065,56 @@ function Ot() {
     window.devicePixelRatio
   ].join("|");
 }
-function mt() {
+function xe() {
   if (typeof localStorage > "u")
     return { records: [] };
   try {
-    const h = localStorage.getItem(xt);
-    if (!h) return { records: [] };
-    const t = JSON.parse(h);
-    return Array.isArray(t.records) ? t : { records: [] };
+    const u = localStorage.getItem(Pe);
+    if (!u) return { records: [] };
+    const e = JSON.parse(u);
+    return Array.isArray(e.records) ? e : { records: [] };
   } catch {
     return { records: [] };
   }
 }
-function Nt(h) {
+function qe(u) {
   if (!(typeof localStorage > "u"))
     try {
-      localStorage.setItem(xt, JSON.stringify(h));
+      localStorage.setItem(Pe, JSON.stringify(u));
     } catch {
     }
 }
-class Ht {
-  constructor(t) {
-    s(this, "deviceId", Ot());
-    s(this, "enabled");
-    s(this, "sampleCount", 0);
-    s(this, "avgP99Ms", 0);
-    s(this, "avgFps", 0);
-    this.enabled = t;
+class Ve {
+  constructor(e) {
+    r(this, "deviceId", We());
+    r(this, "enabled");
+    r(this, "sampleCount", 0);
+    r(this, "avgP99Ms", 0);
+    r(this, "avgFps", 0);
+    this.enabled = e;
   }
-  recommendPreset(t) {
-    if (!this.enabled) return t;
-    const i = mt().records.find((r) => r.deviceId === this.deviceId);
-    return !i || i.samples < 30 ? t : i.avgP99Ms > 30 || i.avgFps < 35 ? "performance" : i.avgP99Ms < 16 && i.avgFps > 55 ? "quality" : "balanced";
+  recommendPreset(e) {
+    if (!this.enabled) return e;
+    const i = xe().records.find((s) => s.deviceId === this.deviceId);
+    return !i || i.samples < 30 ? e : i.avgP99Ms > 30 || i.avgFps < 35 ? "performance" : i.avgP99Ms < 16 && i.avgFps > 55 ? "quality" : "balanced";
   }
-  capture(t, e) {
-    this.enabled && (this.sampleCount++, this.avgP99Ms += (t - this.avgP99Ms) / this.sampleCount, this.avgFps += (e - this.avgFps) / this.sampleCount);
+  capture(e, t) {
+    this.enabled && (this.sampleCount++, this.avgP99Ms += (e - this.avgP99Ms) / this.sampleCount, this.avgFps += (t - this.avgFps) / this.sampleCount);
   }
-  persist(t) {
+  persist(e) {
     if (!this.enabled || this.sampleCount === 0) return;
-    const i = mt().records.filter((r) => r.deviceId !== this.deviceId);
+    const i = xe().records.filter((s) => s.deviceId !== this.deviceId);
     i.unshift({
       deviceId: this.deviceId,
-      preset: t,
+      preset: e,
       avgP99Ms: Number(this.avgP99Ms.toFixed(3)),
       avgFps: Number(this.avgFps.toFixed(2)),
       samples: this.sampleCount,
       updatedAt: Date.now()
-    }), i.length > ut && (i.length = ut), Nt({ records: i });
+    }), i.length > ge && (i.length = ge), qe({ records: i });
   }
 }
-const Vt = new Uint8Array([
+const je = new Uint8Array([
   0,
   97,
   115,
@@ -1123,43 +1167,43 @@ const Vt = new Uint8Array([
   160,
   11
 ]);
-class Wt {
+class $e {
   constructor() {
-    s(this, "ready", !1);
-    s(this, "integrateFn", null);
+    r(this, "ready", !1);
+    r(this, "integrateFn", null);
   }
   async init() {
     if (!(typeof WebAssembly > "u"))
       try {
-        const e = (await WebAssembly.instantiate(Vt)).instance.exports.integrate;
-        typeof e == "function" && (this.integrateFn = e, this.ready = !0);
+        const t = (await WebAssembly.instantiate(je)).instance.exports.integrate;
+        typeof t == "function" && (this.integrateFn = t, this.ready = !0);
       } catch {
         this.integrateFn = null, this.ready = !1;
       }
   }
-  mulAdd(t, e, i) {
-    return this.integrateFn ? this.integrateFn(t, e, i) : t + e * i;
+  mulAdd(e, t, i) {
+    return this.integrateFn ? this.integrateFn(e, t, i) : e + t * i;
   }
-  mulAddBatch(t, e, i, r) {
-    const n = Math.min(t.length, e.length), a = r ?? new Float32Array(n);
-    if (a.length < n)
+  mulAddBatch(e, t, i, s) {
+    const a = Math.min(e.length, t.length), n = s ?? new Float32Array(a);
+    if (n.length < a)
       throw new Error("Buffer de saída insuficiente para mulAddBatch");
     if (!this.integrateFn) {
-      for (let o = 0; o < n; o++)
-        a[o] = t[o] + e[o] * i;
-      return a;
+      for (let o = 0; o < a; o++)
+        n[o] = e[o] + t[o] * i;
+      return n;
     }
     const l = this.integrateFn;
-    for (let o = 0; o < n; o++)
-      a[o] = l(t[o], e[o], i);
-    return a;
+    for (let o = 0; o < a; o++)
+      n[o] = l(e[o], t[o], i);
+    return n;
   }
 }
-class Gt {
-  constructor(t) {
-    s(this, "worker");
-    s(this, "listener");
-    const e = `
+class Je {
+  constructor(e) {
+    r(this, "worker");
+    r(this, "listener");
+    const t = `
       let timer = null;
       self.onmessage = (event) => {
         if (event.data === 'start') {
@@ -1177,9 +1221,9 @@ class Gt {
           }
         }
       };
-    `, i = new Blob([e], { type: "application/javascript" }), r = URL.createObjectURL(i);
-    this.worker = new Worker(r), URL.revokeObjectURL(r), this.listener = (n) => {
-      t(n.data);
+    `, i = new Blob([t], { type: "application/javascript" }), s = URL.createObjectURL(i);
+    this.worker = new Worker(s), URL.revokeObjectURL(s), this.listener = (a) => {
+      e(a.data);
     }, this.worker.addEventListener("message", this.listener);
   }
   start() {
@@ -1192,103 +1236,159 @@ class Gt {
     this.worker.removeEventListener("message", this.listener), this.worker.terminate();
   }
 }
-const qt = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]);
-function gt() {
+class Qe {
+  constructor(e = {}) {
+    r(this, "mode");
+    r(this, "maxWorkers");
+    r(this, "defaultBatchSize");
+    r(this, "executedJobs", 0);
+    r(this, "executedBatches", 0);
+    r(this, "totalJobMs", 0);
+    this.mode = e.mode ?? "inline", this.maxWorkers = Math.max(1, e.maxWorkers ?? 1), this.defaultBatchSize = Math.max(1, e.defaultBatchSize ?? 1024);
+  }
+  run(e) {
+    const t = performance.now(), i = e(), s = performance.now() - t;
+    return this.executedJobs++, this.totalJobMs += s, i;
+  }
+  forEachRange(e, t, i) {
+    const s = Math.max(1, i ?? this.defaultBatchSize);
+    for (let a = 0; a < e; a += s) {
+      const n = Math.min(a + s, e);
+      this.executedBatches++, t(a, n);
+    }
+  }
+  snapshot() {
+    return {
+      mode: this.mode,
+      maxWorkers: this.maxWorkers,
+      defaultBatchSize: this.defaultBatchSize,
+      executedJobs: this.executedJobs,
+      executedBatches: this.executedBatches,
+      totalJobMs: this.totalJobMs
+    };
+  }
+  resetFrameCounters() {
+    this.executedJobs = 0, this.executedBatches = 0, this.totalJobMs = 0;
+  }
+}
+const Ye = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]);
+function ye() {
   if (typeof WebAssembly > "u")
     return !1;
   try {
-    return WebAssembly.validate(qt);
+    return WebAssembly.validate(Ye);
   } catch {
     return !1;
   }
 }
-function pt(h) {
-  return h === "js" ? "js" : gt() ? "wasm" : "js";
+function ve(u) {
+  return u === "js" ? "js" : ye() ? "wasm" : "js";
 }
-const Yt = 4294967296;
-class jt {
-  constructor(t) {
-    s(this, "state");
-    s(this, "initialSeed");
-    const e = t >>> 0;
-    this.state = e || 1, this.initialSeed = e || 1;
+const Ke = 4294967296;
+class Xe {
+  constructor(e) {
+    r(this, "state");
+    r(this, "initialSeed");
+    const t = e >>> 0;
+    this.state = t || 1, this.initialSeed = t || 1;
   }
   next() {
     this.state += 1831565813;
-    let t = this.state;
-    return t = Math.imul(t ^ t >>> 15, t | 1), t ^= t + Math.imul(t ^ t >>> 7, t | 61), ((t ^ t >>> 14) >>> 0) / Yt;
+    let e = this.state;
+    return e = Math.imul(e ^ e >>> 15, e | 1), e ^= e + Math.imul(e ^ e >>> 7, e | 61), ((e ^ e >>> 14) >>> 0) / Ke;
   }
-  setSeed(t) {
-    const e = t >>> 0;
-    this.initialSeed = e || 1, this.state = this.initialSeed;
+  setSeed(e) {
+    const t = e >>> 0;
+    this.initialSeed = t || 1, this.state = this.initialSeed;
   }
   getSeed() {
     return this.initialSeed;
   }
 }
-const $t = 200, Kt = [], vt = [
+const Ze = 200, et = [], be = [
   "rgba(102, 138, 255, 1)",
   "rgba(156, 135, 188, 1)",
   "rgba(52, 211, 153, 1)"
 ];
-class Xt {
-  constructor(t) {
-    s(this, "canvas");
-    s(this, "overlayCanvas");
-    s(this, "overlayCtx");
-    s(this, "maxParticles");
-    s(this, "spawnBatch");
-    s(this, "maxDpr");
-    s(this, "executionMode");
-    s(this, "onStats");
-    s(this, "workerTransportCompression");
-    s(this, "runtimeBackendFallbackEnabled");
-    s(this, "renderer");
-    s(this, "renderBackend");
-    s(this, "simulationBackend");
-    s(this, "performancePreset");
-    s(this, "hybridAdaptiveEnabled");
-    s(this, "hybridCooldownTicks", 0);
-    s(this, "adaptiveBudget");
-    s(this, "activeParticleLimit");
-    s(this, "grid");
-    s(this, "requestId", null);
-    s(this, "workerTicker", null);
-    s(this, "running", !1);
-    s(this, "paused", !1);
-    s(this, "particles", []);
-    s(this, "obstacles", []);
-    s(this, "neighborsBuffer", []);
-    s(this, "overlayDirty", !0);
-    s(this, "pointer", { x: null, y: null });
-    s(this, "config");
-    s(this, "postProcessing");
-    s(this, "frameCount", 0);
-    s(this, "frameIndex", 0);
-    s(this, "lastTime", performance.now());
-    s(this, "lastFpsTime", performance.now());
-    s(this, "lastUiUpdate", performance.now());
-    s(this, "fps", 0);
-    s(this, "random", null);
-    s(this, "seededRandom", null);
-    s(this, "telemetryTuner");
-    s(this, "wasmKernel", null);
-    s(this, "wasmMulAdd", null);
-    s(this, "frameTimeWindow", new zt(360, 0.25, 120));
-    s(this, "frameTimeSummary", {
+class st {
+  constructor(e) {
+    r(this, "canvas");
+    r(this, "overlayCanvas");
+    r(this, "overlayCtx");
+    r(this, "maxParticles");
+    r(this, "spawnBatch");
+    r(this, "maxDpr");
+    r(this, "executionMode");
+    r(this, "onStats");
+    r(this, "workerTransportCompression");
+    r(this, "runtimeBackendFallbackEnabled");
+    r(this, "renderer");
+    r(this, "renderBackend");
+    r(this, "simulationBackend");
+    r(this, "performancePreset");
+    r(this, "hybridAdaptiveEnabled");
+    r(this, "performancePresetLockedByUser", !1);
+    r(this, "hybridCooldownTicks", 0);
+    r(this, "adaptiveBudget");
+    r(this, "activeParticleLimit");
+    r(this, "spatialBackendType");
+    r(this, "spatialCellSize");
+    r(this, "spatial");
+    r(this, "jobSystem");
+    r(this, "requestId", null);
+    r(this, "workerTicker", null);
+    r(this, "running", !1);
+    r(this, "paused", !1);
+    r(this, "particles", []);
+    r(this, "obstacles", []);
+    r(this, "neighborsBuffer", []);
+    r(this, "overlayDirty", !0);
+    r(this, "pointer", { x: null, y: null });
+    r(this, "config");
+    r(this, "postProcessing");
+    r(this, "frameCount", 0);
+    r(this, "frameIndex", 0);
+    r(this, "lastTime", performance.now());
+    r(this, "lastFpsTime", performance.now());
+    r(this, "lastUiUpdate", performance.now());
+    r(this, "fps", 0);
+    r(this, "random", null);
+    r(this, "seededRandom", null);
+    r(this, "telemetryTuner");
+    r(this, "wasmKernel", null);
+    r(this, "wasmMulAdd", null);
+    r(this, "frameTimeWindow", new Oe(360, 0.25, 120));
+    r(this, "frameTimeSummary", {
       sampleCount: 0,
       avgMs: 0,
       p95Ms: 0,
       p99Ms: 0
     });
-    s(this, "adaptiveScale", 1);
-    s(this, "usedJSHeapSize");
-    s(this, "jsHeapSizeLimit");
-    s(this, "pluginsById", /* @__PURE__ */ new Map());
-    s(this, "forcePlugins", []);
-    s(this, "constraintPlugins", []);
-    s(this, "framePlugins", []);
-    s(this, "pluginFrameContext", {
+    r(this, "adaptiveScale", 1);
+    r(this, "usedJSHeapSize");
+    r(this, "jsHeapSizeLimit");
+    r(this, "subsystemMs", {
+      frameTotal: 0,
+      plugins: 0,
+      simulation: 0,
+      external: 0,
+      spatial: 0,
+      render: 0,
+      jobs: 0
+    });
+    r(this, "simulationStepMs", 16.666);
+    r(this, "externalStepMs", 16.666);
+    r(this, "simulationAccumulatorMs", 0);
+    r(this, "externalAccumulatorMs", 0);
+    r(this, "maxSimulationStepsPerFrame", 4);
+    r(this, "qualityGovernor", me);
+    r(this, "qualityGovernorCooldown", 0);
+    r(this, "pluginsById", /* @__PURE__ */ new Map());
+    r(this, "forcePlugins", []);
+    r(this, "constraintPlugins", []);
+    r(this, "framePlugins", []);
+    r(this, "stagePlugins", []);
+    r(this, "pluginFrameContext", {
       config: W,
       canvasWidth: 0,
       canvasHeight: 0,
@@ -1296,7 +1396,7 @@ class Xt {
       frame: 0,
       now: 0
     });
-    s(this, "pluginParticleContext", {
+    r(this, "pluginParticleContext", {
       config: W,
       canvasWidth: 0,
       canvasHeight: 0,
@@ -1306,59 +1406,115 @@ class Xt {
       pointerX: null,
       pointerY: null
     });
-    s(this, "animate", (t) => {
+    r(this, "externalFrameProvider", null);
+    r(this, "externalSimulation", null);
+    r(this, "cachedExternalFramePayload", null);
+    r(this, "externalFallbackParticleColor", "rgba(102, 138, 255, 1)");
+    r(this, "replayRecording", !1);
+    r(this, "replayMaxFrames", 0);
+    r(this, "replayFrames", []);
+    r(this, "replayPlayback", null);
+    r(this, "replayPlaybackIndex", 0);
+    r(this, "replayLoop", !1);
+    r(this, "animate", (e) => {
       if (this.running) {
         if (this.paused)
-          this.lastTime = t;
+          this.lastTime = e;
         else {
-          const e = t - this.lastTime, i = Math.min(e / 16.666, 3);
-          this.lastTime = t, this.frameIndex++, this.frameTimeWindow.push(e);
-          const { x: r, y: n } = this.pointer;
-          this.applyActiveParticleBudget(), this.grid.clear();
-          const a = this.particles.length;
-          for (let d = 0; d < a; d++)
-            this.grid.add(this.particles[d]);
-          const l = this.config.flocking || this.config.collisions;
-          this.updatePluginContexts(i, t, r, n), this.runFrameStartPlugins();
-          let o = 0;
-          for (let d = 0; d < a; d++) {
-            const u = this.particles[d];
-            let w = Kt;
-            l ? (this.grid.getNeighborsInto(u, this.neighborsBuffer), w = this.neighborsBuffer) : this.neighborsBuffer.length = 0, this.runForcePlugins(u), this.simulationBackend === "wasm" ? this.updateParticleWasmPath(u, w, r, n, i) : this.updateParticleJsPath(u, w, r, n, i), this.runConstraintPlugins(u), u.isDead() || (this.particles[o++] = u);
+          const t = performance.now(), i = e - this.lastTime, s = Math.min(i / 16.666, 3);
+          this.lastTime = e, this.frameIndex++, this.frameTimeWindow.push(i), this.jobSystem.resetFrameCounters(), this.subsystemMs = {
+            frameTotal: 0,
+            plugins: 0,
+            simulation: 0,
+            external: 0,
+            spatial: 0,
+            render: 0,
+            jobs: 0
+          };
+          const { x: a, y: n } = this.pointer;
+          this.applyActiveParticleBudget(), this.updatePluginContexts(s, e, a, n);
+          const l = performance.now();
+          if (this.runFrameStartPlugins(), this.runStagePlugins("pre-sim"), this.subsystemMs.plugins += performance.now() - l, this.replayPlayback) {
+            const d = this.replayPlayback.frames[this.replayPlaybackIndex];
+            d && this.consumeExternalPackedParticles(d.particles, 8, d.count, {
+              x: 0,
+              y: 1,
+              vx: 2,
+              vy: 3,
+              size: 4,
+              life: 5,
+              maxLife: 6,
+              hue: 7
+            }), this.replayPlaybackIndex++, this.replayPlaybackIndex >= this.replayPlayback.frames.length && (this.replayLoop ? this.replayPlaybackIndex = 0 : this.stopReplayPlayback());
+          } else if (this.externalSimulation || this.externalFrameProvider) {
+            const d = performance.now();
+            this.externalAccumulatorMs += i;
+            let x = 0;
+            for (; this.externalAccumulatorMs >= this.externalStepMs && x < this.maxSimulationStepsPerFrame; ) {
+              const w = Math.min(this.externalStepMs / 16.666, 3), M = this.buildExternalFrameContext(w, e);
+              try {
+                this.externalSimulation ? this.cachedExternalFramePayload = this.externalSimulation.getFrame(M) : this.externalFrameProvider && (this.cachedExternalFramePayload = {
+                  kind: "objects",
+                  particles: this.externalFrameProvider(M)
+                });
+              } catch {
+              }
+              this.externalAccumulatorMs -= this.externalStepMs, x++;
+            }
+            this.cachedExternalFramePayload && this.consumeExternalFramePayload(this.cachedExternalFramePayload), this.subsystemMs.external += performance.now() - d;
+          } else {
+            const d = performance.now();
+            this.simulationAccumulatorMs += i;
+            let x = 0;
+            for (; this.simulationAccumulatorMs >= this.simulationStepMs && x < this.maxSimulationStepsPerFrame; ) {
+              const w = Math.min(this.simulationStepMs / 16.666, 3);
+              this.runInternalSimulationStep(a, n, w), this.simulationAccumulatorMs -= this.simulationStepMs, x++;
+            }
+            this.subsystemMs.simulation += performance.now() - d;
           }
-          o !== a && (this.particles.length = o), this.runFrameEndPlugins(), this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.postProcessing), this.redrawOverlay(), this.frameCount++;
-          const c = t - this.lastFpsTime;
-          c >= 1e3 && (this.fps = Math.round(this.frameCount * 1e3 / c), this.frameCount = 0, this.lastFpsTime = t), t - this.lastUiUpdate >= $t && (this.lastUiUpdate = t, this.emitStats());
+          const o = performance.now();
+          this.runStagePlugins("post-sim"), this.runFrameEndPlugins(), this.subsystemMs.plugins += performance.now() - o, this.replayRecording && !this.replayPlayback && (this.replayFrames.push({
+            particles: this.exportParticlesPacked(),
+            count: this.particles.length,
+            frame: this.frameIndex
+          }), this.replayFrames.length > this.replayMaxFrames && this.replayFrames.shift()), this.runStagePlugins("render-prep");
+          const c = performance.now();
+          this.renderer.render(this.particles, this.canvas.width, this.canvas.height, this.postProcessing), this.redrawOverlay(), this.subsystemMs.render += performance.now() - c, this.runStagePlugins("render"), this.frameCount++;
+          const h = e - this.lastFpsTime;
+          h >= 1e3 && (this.fps = Math.round(this.frameCount * 1e3 / h), this.frameCount = 0, this.lastFpsTime = e), e - this.lastUiUpdate >= Ze && (this.lastUiUpdate = e, this.subsystemMs.jobs = this.jobSystem.snapshot().totalJobMs, this.subsystemMs.frameTotal = performance.now() - t, this.emitStats());
         }
         this.requestId = requestAnimationFrame(this.animate);
       }
     });
-    var a, l, o;
-    this.canvas = t.canvas, this.overlayCanvas = t.overlayCanvas, this.overlayCtx = ((a = this.overlayCanvas) == null ? void 0 : a.getContext("2d")) ?? null, this.maxParticles = t.maxParticles ?? 5e4, this.spawnBatch = t.spawnBatch ?? 100, this.maxDpr = t.maxDpr ?? 2, this.executionMode = t.executionMode ?? "main-thread", this.onStats = t.onStats, this.workerTransportCompression = t.workerTransportCompression ?? "none", this.runtimeBackendFallbackEnabled = t.runtimeBackendFallback ?? !0, this.hybridAdaptiveEnabled = t.hybridAdaptive ?? !0, this.telemetryTuner = new Ht(t.autoTune ?? !0);
-    const e = t.performancePreset ?? "balanced";
-    this.performancePreset = this.telemetryTuner.recommendPreset(e);
-    const i = ft(this.performancePreset);
+    var n, l, o, c;
+    this.canvas = e.canvas, this.overlayCanvas = e.overlayCanvas, this.overlayCtx = ((n = this.overlayCanvas) == null ? void 0 : n.getContext("2d")) ?? null, this.maxParticles = e.maxParticles ?? 5e4, this.spawnBatch = e.spawnBatch ?? 100, this.maxDpr = e.maxDpr ?? 2, this.executionMode = e.executionMode ?? "main-thread", this.onStats = e.onStats, this.workerTransportCompression = e.workerTransportCompression ?? "none", this.runtimeBackendFallbackEnabled = e.runtimeBackendFallback ?? !0, this.hybridAdaptiveEnabled = e.hybridAdaptive ?? !0, this.telemetryTuner = new Ve(e.autoTune ?? !0), this.qualityGovernor = {
+      ...me,
+      ...e.qualityGovernor
+    };
+    const t = e.performancePreset ?? "balanced";
+    this.performancePreset = this.telemetryTuner.recommendPreset(t);
+    const i = pe(this.performancePreset);
     this.config = {
       ...i.config,
-      ...t.config
+      ...e.config
     }, this.postProcessing = {
       ...i.postProcessing,
-      ...t.postProcessing,
-      bloom: ((l = t.config) == null ? void 0 : l.bloom) ?? ((o = t.postProcessing) == null ? void 0 : o.bloom) ?? i.postProcessing.bloom
-    }, this.adaptiveBudget = new It(this.maxParticles, {
-      ...Dt,
-      ...t.adaptiveBudget
-    }), this.activeParticleLimit = this.maxParticles, this.grid = new Lt(t.gridCellSize ?? 40);
-    const { renderer: r, backend: n } = N(this.canvas, this.maxParticles, t.renderBackend ?? "auto", {
+      ...e.postProcessing,
+      bloom: ((l = e.config) == null ? void 0 : l.bloom) ?? ((o = e.postProcessing) == null ? void 0 : o.bloom) ?? i.postProcessing.bloom
+    }, this.adaptiveBudget = new Ne(this.maxParticles, {
+      ...He,
+      ...e.adaptiveBudget
+    }), this.activeParticleLimit = this.maxParticles, this.spatialCellSize = e.gridCellSize ?? 40, this.spatialBackendType = e.spatialBackend ?? "grid", this.spatial = ue(this.spatialBackendType, this.spatialCellSize), this.jobSystem = new Qe(e.jobSystem);
+    const { renderer: s, backend: a } = O(this.canvas, this.maxParticles, e.renderBackend ?? "auto", {
       workerTransportCompression: this.workerTransportCompression
     });
-    this.renderer = r, this.renderBackend = n, this.bindRendererErrorHandler(), this.simulationBackend = pt(t.simulationBackend ?? "auto"), this.tryInitializeWasmKernel(), this.configureRandom(t.seed), this.resize(), this.redrawOverlay();
+    this.renderer = s, this.renderBackend = a, this.bindRendererErrorHandler(), this.simulationBackend = ve(e.simulationBackend ?? "auto"), this.tryInitializeWasmKernel(), this.configureRandom(e.seed), this.externalFrameProvider = e.externalFrameProvider ?? null, this.externalSimulation = e.externalSimulation ?? null, this.simulationStepMs = 1e3 / Math.max(e.simulationStepHz ?? 60, 1), this.externalStepMs = 1e3 / Math.max(e.externalStepHz ?? 60, 1), this.maxSimulationStepsPerFrame = Math.max(1, e.maxSimulationStepsPerFrame ?? 4), this.resize(), (c = this.externalSimulation) != null && c.onAttach && this.externalSimulation.onAttach(this.buildExternalFrameContext(1, performance.now())), this.redrawOverlay();
   }
   start() {
     if (!this.running) {
       if (this.running = !0, this.lastTime = performance.now(), this.lastFpsTime = this.lastTime, this.lastUiUpdate = this.lastTime, this.frameTimeWindow.reset(), this.adaptiveBudget.reset(), this.activeParticleLimit = this.maxParticles, this.adaptiveScale = 1, this.executionMode === "worker-ticker" && typeof Worker < "u") {
-        this.workerTicker = new Gt((t) => {
-          this.animate(t);
+        this.workerTicker = new Je((e) => {
+          this.animate(e);
         }), this.workerTicker.start();
         return;
       }
@@ -1369,28 +1525,29 @@ class Xt {
     this.running = !1, this.workerTicker && (this.workerTicker.stop(), this.workerTicker.dispose(), this.workerTicker = null), this.requestId !== null && (cancelAnimationFrame(this.requestId), this.requestId = null);
   }
   dispose() {
-    this.stop(), this.telemetryTuner.persist(this.performancePreset), this.clearPlugins(), this.renderer.dispose();
+    var e, t;
+    this.stop(), (t = (e = this.externalSimulation) == null ? void 0 : e.onDetach) == null || t.call(e), this.telemetryTuner.persist(this.performancePreset), this.clearPlugins(), this.renderer.dispose();
   }
   resize() {
-    const t = Math.min(window.devicePixelRatio || 1, this.maxDpr), e = this.canvas.getBoundingClientRect(), i = Math.max(1, Math.floor(e.width)), r = Math.max(1, Math.floor(e.height)), n = Math.max(1, Math.floor(i * t)), a = Math.max(1, Math.floor(r * t));
-    (this.canvas.width !== n || this.canvas.height !== a) && (this.canvas.width = n, this.canvas.height = a, this.canvas.style.width = `${i}px`, this.canvas.style.height = `${r}px`), this.overlayCanvas && (this.overlayCanvas.width !== n || this.overlayCanvas.height !== a) && (this.overlayCanvas.width = n, this.overlayCanvas.height = a, this.overlayCanvas.style.width = `${i}px`, this.overlayCanvas.style.height = `${r}px`, this.overlayDirty = !0), this.overlayCtx && (this.overlayCtx.setTransform(1, 0, 0, 1, 0, 0), this.overlayCtx.scale(t, t));
+    const e = Math.min(window.devicePixelRatio || 1, this.maxDpr), t = this.canvas.getBoundingClientRect(), i = Math.max(1, Math.floor(t.width)), s = Math.max(1, Math.floor(t.height)), a = Math.max(1, Math.floor(i * e)), n = Math.max(1, Math.floor(s * e));
+    (this.canvas.width !== a || this.canvas.height !== n) && (this.canvas.width = a, this.canvas.height = n, this.canvas.style.width = `${i}px`, this.canvas.style.height = `${s}px`), this.overlayCanvas && (this.overlayCanvas.width !== a || this.overlayCanvas.height !== n) && (this.overlayCanvas.width = a, this.overlayCanvas.height = n, this.overlayCanvas.style.width = `${i}px`, this.overlayCanvas.style.height = `${s}px`, this.overlayDirty = !0), this.overlayCtx && (this.overlayCtx.setTransform(1, 0, 0, 1, 0, 0), this.overlayCtx.scale(e, e));
   }
-  updateSettings(t) {
+  updateSettings(e) {
     this.config = {
       ...this.config,
-      ...t
-    }, typeof t.bloom == "boolean" && (this.postProcessing = {
+      ...e
+    }, typeof e.bloom == "boolean" && (this.postProcessing = {
       ...this.postProcessing,
-      bloom: t.bloom
+      bloom: e.bloom
     });
   }
   getSettings() {
     return { ...this.config };
   }
-  updatePostProcessing(t) {
+  updatePostProcessing(e) {
     this.postProcessing = {
       ...this.postProcessing,
-      ...t
+      ...e
     };
   }
   getPostProcessing() {
@@ -1399,65 +1556,152 @@ class Xt {
   getRenderBackend() {
     return this.renderBackend;
   }
-  setRenderBackend(t) {
-    const { renderer: e, backend: i } = N(this.canvas, this.maxParticles, t, {
+  setRenderBackend(e) {
+    const { renderer: t, backend: i } = O(this.canvas, this.maxParticles, e, {
       workerTransportCompression: this.workerTransportCompression
     });
-    this.renderer.dispose(), this.renderer = e, this.renderBackend = i, this.bindRendererErrorHandler();
+    this.renderer.dispose(), this.renderer = t, this.renderBackend = i, this.bindRendererErrorHandler();
   }
   getSimulationBackend() {
     return this.simulationBackend;
   }
-  setSimulationBackend(t) {
-    this.simulationBackend = pt(t), this.tryInitializeWasmKernel();
+  setSimulationBackend(e) {
+    this.simulationBackend = ve(e), this.tryInitializeWasmKernel();
   }
   getPerformancePreset() {
     return this.performancePreset;
   }
-  setPerformancePreset(t) {
-    const e = ft(t);
-    this.performancePreset = t, this.config = { ...e.config }, this.postProcessing = { ...e.postProcessing };
+  setPerformancePreset(e) {
+    this.performancePresetLockedByUser = !0, this.applyPerformancePreset(e);
   }
-  setAdaptiveBudgetEnabled(t) {
-    this.adaptiveBudget.setEnabled(t);
+  setPerformancePresetLock(e) {
+    this.performancePresetLockedByUser = e;
   }
-  setPaused(t) {
-    this.paused = t;
+  getPerformancePresetLock() {
+    return this.performancePresetLockedByUser;
+  }
+  setAdaptiveBudgetEnabled(e) {
+    this.adaptiveBudget.setEnabled(e);
+  }
+  setPaused(e) {
+    this.paused = e;
   }
   getPaused() {
     return this.paused;
   }
-  setPointer(t, e) {
-    this.pointer = { x: t, y: e };
+  setPointer(e, t) {
+    this.pointer = { x: e, y: t };
   }
   clearPointer() {
     this.pointer = { x: null, y: null };
   }
-  spawnAt(t, e) {
-    if (this.particles.length >= this.activeParticleLimit) return;
-    const i = this.activeParticleLimit - this.particles.length, r = i < this.spawnBatch ? i : this.spawnBatch;
-    for (let n = 0; n < r; n++) {
-      const a = this.getRandom(), l = vt[a() * vt.length | 0];
-      this.particles.push(new Ft(t, e, l, this.config, a));
+  setExternalFrameProvider(e) {
+    var t, i;
+    (i = (t = this.externalSimulation) == null ? void 0 : t.onDetach) == null || i.call(t), this.externalSimulation = null, this.externalFrameProvider = e, e && (this.neighborsBuffer.length = 0, this.obstacles.length = 0, this.overlayDirty = !0);
+  }
+  getExternalFrameProviderEnabled() {
+    return this.externalFrameProvider !== null || this.externalSimulation !== null;
+  }
+  setExternalSimulation(e) {
+    var t, i, s;
+    if ((i = (t = this.externalSimulation) == null ? void 0 : t.onDetach) == null || i.call(t), this.externalFrameProvider = null, this.externalSimulation = e, this.cachedExternalFramePayload = null, this.externalAccumulatorMs = 0, !!e) {
+      this.neighborsBuffer.length = 0, this.obstacles.length = 0, this.overlayDirty = !0;
+      try {
+        (s = e.onAttach) == null || s.call(e, this.buildExternalFrameContext(1, performance.now()));
+      } catch {
+        this.externalSimulation = null;
+      }
     }
   }
-  setSeed(t) {
-    this.configureRandom(t);
+  getExternalSimulationDescriptor() {
+    var e;
+    return ((e = this.externalSimulation) == null ? void 0 : e.descriptor) ?? null;
+  }
+  setSimulationStepHz(e) {
+    this.simulationStepMs = 1e3 / Math.max(e, 1);
+  }
+  setExternalStepHz(e) {
+    this.externalStepMs = 1e3 / Math.max(e, 1);
+  }
+  getSchedulerConfig() {
+    return {
+      simulationStepHz: 1e3 / this.simulationStepMs,
+      externalStepHz: 1e3 / this.externalStepMs,
+      maxSimulationStepsPerFrame: this.maxSimulationStepsPerFrame
+    };
+  }
+  setSpatialBackend(e) {
+    this.spatialBackendType !== e && (this.spatialBackendType = e, this.spatial = ue(e, this.spatialCellSize));
+  }
+  getSpatialBackend() {
+    return this.spatialBackendType;
+  }
+  getJobSystemSnapshot() {
+    return this.jobSystem.snapshot();
+  }
+  setQualityGovernorPolicy(e) {
+    this.qualityGovernor = {
+      ...this.qualityGovernor,
+      ...e
+    };
+  }
+  getQualityGovernorPolicy() {
+    return { ...this.qualityGovernor };
+  }
+  startReplayRecording(e = 1800) {
+    this.replayRecording = !0, this.replayMaxFrames = Math.max(1, e | 0), this.replayFrames = [];
+  }
+  stopReplayRecording() {
+    return this.replayRecording ? (this.replayRecording = !1, {
+      version: 1,
+      createdAt: Date.now(),
+      sourceSeed: this.getSeed(),
+      frameStride: 8,
+      frames: this.replayFrames.slice()
+    }) : null;
+  }
+  playReplay(e, t = !1) {
+    this.replayPlayback = e, this.replayPlaybackIndex = 0, this.replayLoop = t;
+  }
+  stopReplayPlayback() {
+    this.replayPlayback = null, this.replayPlaybackIndex = 0, this.replayLoop = !1;
+  }
+  isReplayPlaybackEnabled() {
+    return this.replayPlayback !== null;
+  }
+  getDeterministicSnapshot() {
+    return {
+      seed: this.getSeed(),
+      frame: this.frameIndex,
+      particles: this.exportParticlesPacked(),
+      count: this.particles.length
+    };
+  }
+  spawnAt(e, t) {
+    if (this.particles.length >= this.activeParticleLimit) return;
+    const i = this.activeParticleLimit - this.particles.length, s = i < this.spawnBatch ? i : this.spawnBatch;
+    for (let a = 0; a < s; a++) {
+      const n = this.getRandom(), l = be[n() * be.length | 0];
+      this.particles.push(new ae(e, t, l, this.config, n));
+    }
+  }
+  setSeed(e) {
+    this.configureRandom(e);
   }
   getSeed() {
-    var t;
-    return ((t = this.seededRandom) == null ? void 0 : t.getSeed()) ?? null;
+    var e;
+    return ((e = this.seededRandom) == null ? void 0 : e.getSeed()) ?? null;
   }
-  addObstacle(t, e) {
-    this.obstacles.push(new At(t, e)), this.overlayDirty = !0;
+  addObstacle(e, t) {
+    this.obstacles.push(new Fe(e, t)), this.overlayDirty = !0;
   }
   clear() {
     this.particles.length = 0, this.obstacles.length = 0, this.neighborsBuffer.length = 0, this.overlayDirty = !0, this.emitStats(!0);
   }
   getStats() {
     this.frameTimeWindow.snapshot(this.frameTimeSummary);
-    const t = this.adaptiveBudget.snapshot();
-    return this.sampleMemoryStats(), this.activeParticleLimit = t.activeParticleLimit, this.adaptiveScale = t.scale, {
+    const e = this.adaptiveBudget.snapshot();
+    return this.sampleMemoryStats(), this.activeParticleLimit = e.activeParticleLimit, this.adaptiveScale = e.scale, {
       particleCount: this.particles.length,
       fps: this.fps,
       frameTimeAvgMs: this.frameTimeSummary.avgMs,
@@ -1466,101 +1710,210 @@ class Xt {
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
       effectivePreset: this.performancePreset,
+      spatialBackend: this.spatialBackendType,
+      subsystemMs: this.subsystemMs,
+      jobs: this.jobSystem.snapshot(),
       usedJSHeapSize: this.usedJSHeapSize,
       jsHeapSizeLimit: this.jsHeapSizeLimit
     };
   }
-  registerPlugin(t) {
-    var e;
-    if (!t.id)
+  registerPlugin(e) {
+    var t;
+    if (!e.id)
       throw new Error("Plugin precisa definir id único");
-    if (this.pluginsById.has(t.id))
-      throw new Error(`Plugin com id "${t.id}" já registrado`);
-    this.pluginsById.set(t.id, t), t.applyForce && this.forcePlugins.push(t), t.applyConstraint && this.constraintPlugins.push(t), (t.onFrameStart || t.onFrameEnd) && this.framePlugins.push(t), (e = t.onRegister) == null || e.call(t);
+    if (this.pluginsById.has(e.id))
+      throw new Error(`Plugin com id "${e.id}" já registrado`);
+    this.pluginsById.set(e.id, e), e.applyForce && this.forcePlugins.push(e), e.applyConstraint && this.constraintPlugins.push(e), (e.onFrameStart || e.onFrameEnd) && this.framePlugins.push(e), (e.onPreSim || e.onPostSim || e.onRenderPrep || e.onRender) && this.stagePlugins.push(e), (t = e.onRegister) == null || t.call(e);
   }
-  unregisterPlugin(t) {
+  unregisterPlugin(e) {
     var i;
-    const e = this.pluginsById.get(t);
-    return e ? (this.pluginsById.delete(t), this.forcePlugins = this.forcePlugins.filter((r) => r.id !== t), this.constraintPlugins = this.constraintPlugins.filter((r) => r.id !== t), this.framePlugins = this.framePlugins.filter((r) => r.id !== t), (i = e.onUnregister) == null || i.call(e), !0) : !1;
+    const t = this.pluginsById.get(e);
+    return t ? (this.pluginsById.delete(e), this.forcePlugins = this.forcePlugins.filter((s) => s.id !== e), this.constraintPlugins = this.constraintPlugins.filter((s) => s.id !== e), this.framePlugins = this.framePlugins.filter((s) => s.id !== e), this.stagePlugins = this.stagePlugins.filter((s) => s.id !== e), (i = t.onUnregister) == null || i.call(t), !0) : !1;
   }
   clearPlugins() {
-    var t;
-    for (const e of this.pluginsById.values())
-      (t = e.onUnregister) == null || t.call(e);
-    this.pluginsById.clear(), this.forcePlugins.length = 0, this.constraintPlugins.length = 0, this.framePlugins.length = 0;
+    var e;
+    for (const t of this.pluginsById.values())
+      (e = t.onUnregister) == null || e.call(t);
+    this.pluginsById.clear(), this.forcePlugins.length = 0, this.constraintPlugins.length = 0, this.framePlugins.length = 0, this.stagePlugins.length = 0;
   }
   getPlugins() {
     return Array.from(this.pluginsById.values());
   }
-  updateParticleJsPath(t, e, i, r, n) {
-    t.update(
+  runInternalSimulationStep(e, t, i) {
+    const s = performance.now();
+    this.spatial.clear();
+    const a = this.particles.length;
+    this.jobSystem.run(() => {
+      this.jobSystem.forEachRange(a, (o, c) => {
+        for (let h = o; h < c; h++)
+          this.spatial.add(this.particles[h]);
+      }, 1024);
+    }), this.subsystemMs.spatial += performance.now() - s;
+    const n = this.config.flocking || this.config.collisions;
+    let l = 0;
+    for (let o = 0; o < a; o++) {
+      const c = this.particles[o];
+      let h = et;
+      n ? (this.spatial.getNeighborsInto(c, this.neighborsBuffer), h = this.neighborsBuffer) : this.neighborsBuffer.length = 0, this.runForcePlugins(c), this.simulationBackend === "wasm" ? this.updateParticleWasmPath(c, h, e, t, i) : this.updateParticleJsPath(c, h, e, t, i), this.runConstraintPlugins(c), c.isDead() || (this.particles[l++] = c);
+    }
+    l !== a && (this.particles.length = l);
+  }
+  buildExternalFrameContext(e, t) {
+    return {
+      canvasWidth: this.canvas.width,
+      canvasHeight: this.canvas.height,
+      dt: e,
+      frame: this.frameIndex,
+      now: t,
+      pointerX: this.pointer.x,
+      pointerY: this.pointer.y,
+      config: this.config
+    };
+  }
+  consumeExternalFramePayload(e) {
+    if (e.kind === "packed-f32") {
+      this.consumeExternalPackedParticles(e.data, e.stride, e.count, e.layout);
+      return;
+    }
+    this.consumeExternalObjectParticles(e.particles);
+  }
+  consumeExternalObjectParticles(e) {
+    const t = Math.min(e.length, this.activeParticleLimit);
+    this.ensureParticleCapacity(t);
+    for (let i = 0; i < t; i++)
+      this.writeExternalParticle(this.particles[i], e[i]);
+    this.particles.length = t;
+  }
+  consumeExternalPackedParticles(e, t, i, s) {
+    const a = Math.max(t | 0, 2);
+    if (!Number.isFinite(a) || a <= 0) return;
+    const n = Math.floor(e.length / a);
+    if (n <= 0) {
+      this.particles.length = 0;
+      return;
+    }
+    const l = Math.min(i ?? n, n, this.activeParticleLimit);
+    this.ensureParticleCapacity(l);
+    const o = {
+      x: this.normalizeLayoutIndex(s == null ? void 0 : s.x, a, 0),
+      y: this.normalizeLayoutIndex(s == null ? void 0 : s.y, a, 1),
+      vx: this.normalizeLayoutIndex(s == null ? void 0 : s.vx, a, -1),
+      vy: this.normalizeLayoutIndex(s == null ? void 0 : s.vy, a, -1),
+      size: this.normalizeLayoutIndex(s == null ? void 0 : s.size, a, -1),
+      life: this.normalizeLayoutIndex(s == null ? void 0 : s.life, a, -1),
+      maxLife: this.normalizeLayoutIndex(s == null ? void 0 : s.maxLife, a, -1),
+      hue: this.normalizeLayoutIndex(s == null ? void 0 : s.hue, a, -1)
+    };
+    for (let c = 0; c < l; c++) {
+      const h = c * a, d = this.particles[c];
+      d.x = this.safeRead(e, h, o.x, 0), d.y = this.safeRead(e, h, o.y, 0), d.vx = o.vx >= 0 ? this.safeRead(e, h, o.vx, 0) : 0, d.vy = o.vy >= 0 ? this.safeRead(e, h, o.vy, 0) : 0, d.ax = 0, d.ay = 0, d.baseSize = o.size >= 0 ? this.safeRead(e, h, o.size, this.config.particleSize) : this.config.particleSize, d.size = d.baseSize, d.mass = d.baseSize > 0.1 ? d.baseSize : 0.1, d.maxLife = o.maxLife >= 0 ? this.safeRead(e, h, o.maxLife, 1) : 1, d.life = o.life >= 0 ? this.safeRead(e, h, o.life, d.maxLife) : d.maxLife, d.hue = o.hue >= 0 ? this.safeRead(e, h, o.hue, 200) : 200;
+    }
+    this.particles.length = l;
+  }
+  ensureParticleCapacity(e) {
+    if (this.particles.length >= e) return;
+    const t = this.getRandom(), i = e - this.particles.length;
+    for (let s = 0; s < i; s++)
+      this.particles.push(new ae(0, 0, this.externalFallbackParticleColor, this.config, t));
+  }
+  writeExternalParticle(e, t) {
+    e.x = Number.isFinite(t.x) ? t.x : 0, e.y = Number.isFinite(t.y) ? t.y : 0, e.vx = t.vx ?? 0, e.vy = t.vy ?? 0, e.ax = 0, e.ay = 0, e.baseSize = Number.isFinite(t.size ?? NaN) ? t.size : this.config.particleSize, e.size = e.baseSize, e.mass = e.baseSize > 0.1 ? e.baseSize : 0.1, e.maxLife = Number.isFinite(t.maxLife ?? NaN) ? t.maxLife : 1, e.life = Number.isFinite(t.life ?? NaN) ? t.life : e.maxLife, e.hue = Number.isFinite(t.hue ?? NaN) ? t.hue : 200;
+  }
+  normalizeLayoutIndex(e, t, i) {
+    if (typeof e != "number" || !Number.isFinite(e)) return i;
+    const s = e | 0;
+    return s < 0 || s >= t ? i : s;
+  }
+  safeRead(e, t, i, s) {
+    const a = t + i;
+    if (a < 0 || a >= e.length) return s;
+    const n = e[a];
+    return Number.isFinite(n) ? n : s;
+  }
+  exportParticlesPacked() {
+    const t = new Float32Array(this.particles.length * 8);
+    for (let i = 0; i < this.particles.length; i++) {
+      const s = this.particles[i], a = i * 8;
+      t[a] = s.x, t[a + 1] = s.y, t[a + 2] = s.vx, t[a + 3] = s.vy, t[a + 4] = s.size, t[a + 5] = s.life, t[a + 6] = s.maxLife, t[a + 7] = s.hue;
+    }
+    return t;
+  }
+  updateParticleJsPath(e, t, i, s, a) {
+    e.update(
       this.config,
       this.canvas.width,
       this.canvas.height,
       i,
-      r,
-      e,
+      s,
+      t,
       this.obstacles,
-      n
+      a
     );
   }
-  updateParticleWasmPath(t, e, i, r, n) {
-    t.update(
+  updateParticleWasmPath(e, t, i, s, a) {
+    e.update(
       this.config,
       this.canvas.width,
       this.canvas.height,
       i,
-      r,
-      e,
+      s,
+      t,
       this.obstacles,
-      n,
+      a,
       this.wasmMulAdd ?? void 0
     );
   }
-  updatePluginContexts(t, e, i, r) {
-    this.pluginFrameContext.config = this.config, this.pluginFrameContext.canvasWidth = this.canvas.width, this.pluginFrameContext.canvasHeight = this.canvas.height, this.pluginFrameContext.dt = t, this.pluginFrameContext.frame = this.frameIndex, this.pluginFrameContext.now = e, this.pluginParticleContext.config = this.config, this.pluginParticleContext.canvasWidth = this.canvas.width, this.pluginParticleContext.canvasHeight = this.canvas.height, this.pluginParticleContext.dt = t, this.pluginParticleContext.frame = this.frameIndex, this.pluginParticleContext.now = e, this.pluginParticleContext.pointerX = i, this.pluginParticleContext.pointerY = r;
+  updatePluginContexts(e, t, i, s) {
+    this.pluginFrameContext.config = this.config, this.pluginFrameContext.canvasWidth = this.canvas.width, this.pluginFrameContext.canvasHeight = this.canvas.height, this.pluginFrameContext.dt = e, this.pluginFrameContext.frame = this.frameIndex, this.pluginFrameContext.now = t, this.pluginParticleContext.config = this.config, this.pluginParticleContext.canvasWidth = this.canvas.width, this.pluginParticleContext.canvasHeight = this.canvas.height, this.pluginParticleContext.dt = e, this.pluginParticleContext.frame = this.frameIndex, this.pluginParticleContext.now = t, this.pluginParticleContext.pointerX = i, this.pluginParticleContext.pointerY = s;
   }
   runFrameStartPlugins() {
     if (this.framePlugins.length !== 0)
-      for (let t = 0; t < this.framePlugins.length; t++) {
-        const e = this.framePlugins[t];
-        e.enabled === !1 || !e.onFrameStart || e.onFrameStart(this.pluginFrameContext);
+      for (let e = 0; e < this.framePlugins.length; e++) {
+        const t = this.framePlugins[e];
+        t.enabled === !1 || !t.onFrameStart || t.onFrameStart(this.pluginFrameContext);
       }
   }
   runFrameEndPlugins() {
     if (this.framePlugins.length !== 0)
-      for (let t = 0; t < this.framePlugins.length; t++) {
-        const e = this.framePlugins[t];
-        e.enabled === !1 || !e.onFrameEnd || e.onFrameEnd(this.pluginFrameContext);
+      for (let e = 0; e < this.framePlugins.length; e++) {
+        const t = this.framePlugins[e];
+        t.enabled === !1 || !t.onFrameEnd || t.onFrameEnd(this.pluginFrameContext);
       }
   }
-  runForcePlugins(t) {
+  runStagePlugins(e) {
+    if (this.stagePlugins.length !== 0)
+      for (let t = 0; t < this.stagePlugins.length; t++) {
+        const i = this.stagePlugins[t];
+        i.enabled !== !1 && (e === "pre-sim" && i.onPreSim ? i.onPreSim(this.pluginFrameContext) : e === "post-sim" && i.onPostSim ? i.onPostSim(this.pluginFrameContext) : e === "render-prep" && i.onRenderPrep ? i.onRenderPrep(this.pluginFrameContext) : e === "render" && i.onRender && i.onRender(this.pluginFrameContext));
+      }
+  }
+  runForcePlugins(e) {
     if (this.forcePlugins.length !== 0)
-      for (let e = 0; e < this.forcePlugins.length; e++) {
-        const i = this.forcePlugins[e];
-        i.enabled === !1 || !i.applyForce || i.applyForce(t, this.pluginParticleContext);
+      for (let t = 0; t < this.forcePlugins.length; t++) {
+        const i = this.forcePlugins[t];
+        i.enabled === !1 || !i.applyForce || i.applyForce(e, this.pluginParticleContext);
       }
   }
-  runConstraintPlugins(t) {
+  runConstraintPlugins(e) {
     if (this.constraintPlugins.length !== 0)
-      for (let e = 0; e < this.constraintPlugins.length; e++) {
-        const i = this.constraintPlugins[e];
-        i.enabled === !1 || !i.applyConstraint || i.applyConstraint(t, this.pluginParticleContext);
+      for (let t = 0; t < this.constraintPlugins.length; t++) {
+        const i = this.constraintPlugins[t];
+        i.enabled === !1 || !i.applyConstraint || i.applyConstraint(e, this.pluginParticleContext);
       }
   }
   redrawOverlay() {
     if (!this.overlayCanvas || !this.overlayCtx || !this.overlayDirty) return;
-    const t = this.overlayCanvas.getBoundingClientRect();
-    this.overlayCtx.clearRect(0, 0, t.width, t.height);
-    for (let e = 0; e < this.obstacles.length; e++)
-      this.obstacles[e].draw(this.overlayCtx);
+    const e = this.overlayCanvas.getBoundingClientRect();
+    this.overlayCtx.clearRect(0, 0, e.width, e.height);
+    for (let t = 0; t < this.obstacles.length; t++)
+      this.obstacles[t].draw(this.overlayCtx);
     this.overlayDirty = !1;
   }
-  emitStats(t = !1) {
+  emitStats(e = !1) {
     var i;
     this.frameTimeWindow.snapshot(this.frameTimeSummary), this.adaptiveBudget.update(this.frameTimeSummary.p95Ms, this.frameTimeSummary.p99Ms), this.telemetryTuner.capture(this.frameTimeSummary.p99Ms, this.fps), this.applyHybridRuntimeTuning();
-    const e = this.adaptiveBudget.snapshot();
-    this.sampleMemoryStats(), this.activeParticleLimit = e.activeParticleLimit, this.adaptiveScale = e.scale, !(!this.onStats && !t) && ((i = this.onStats) == null || i.call(this, {
+    const t = this.adaptiveBudget.snapshot();
+    this.sampleMemoryStats(), this.activeParticleLimit = t.activeParticleLimit, this.adaptiveScale = t.scale, !(!this.onStats && !e) && ((i = this.onStats) == null || i.call(this, {
       particleCount: this.particles.length,
       fps: this.fps,
       frameTimeAvgMs: this.frameTimeSummary.avgMs,
@@ -1569,6 +1922,9 @@ class Xt {
       activeParticleLimit: this.activeParticleLimit,
       adaptiveScale: this.adaptiveScale,
       effectivePreset: this.performancePreset,
+      spatialBackend: this.spatialBackendType,
+      subsystemMs: this.subsystemMs,
+      jobs: this.jobSystem.snapshot(),
       usedJSHeapSize: this.usedJSHeapSize,
       jsHeapSizeLimit: this.jsHeapSizeLimit
     }));
@@ -1577,43 +1933,111 @@ class Xt {
     this.particles.length <= this.activeParticleLimit || (this.particles.length = this.activeParticleLimit);
   }
   applyHybridRuntimeTuning() {
-    if (!this.hybridAdaptiveEnabled) return;
-    if (this.hybridCooldownTicks > 0) {
-      this.hybridCooldownTicks--;
+    if (!this.hybridAdaptiveEnabled && !this.qualityGovernor.enabled || this.performancePresetLockedByUser) return;
+    if (this.hybridCooldownTicks > 0 || this.qualityGovernorCooldown > 0) {
+      this.hybridCooldownTicks = Math.max(0, this.hybridCooldownTicks - 1), this.qualityGovernorCooldown = Math.max(0, this.qualityGovernorCooldown - 1);
       return;
     }
-    const t = this.frameTimeSummary.p99Ms;
-    if (t > 30 && this.performancePreset !== "performance") {
-      this.setPerformancePreset("performance"), this.setSimulationBackend("wasm"), this.hybridCooldownTicks = 12;
+    const e = this.frameTimeSummary.p99Ms;
+    if (this.qualityGovernor.enabled) {
+      if (e > this.qualityGovernor.highWatermarkMs) {
+        this.applyQualityDegradationStep(), this.qualityGovernorCooldown = this.qualityGovernor.cooldownFrames;
+        return;
+      }
+      if (e < this.qualityGovernor.lowWatermarkMs) {
+        this.applyQualityRecoveryStep(), this.qualityGovernorCooldown = this.qualityGovernor.cooldownFrames;
+        return;
+      }
+    }
+    if (this.hybridAdaptiveEnabled) {
+      if (e > 30 && this.performancePreset !== "performance") {
+        this.applyPerformancePreset("performance"), this.setSimulationBackend("wasm"), this.hybridCooldownTicks = 12;
+        return;
+      }
+      if (e < 14 && this.performancePreset === "performance") {
+        this.applyPerformancePreset("balanced"), this.hybridCooldownTicks = 12;
+        return;
+      }
+      e < 10 && this.performancePreset === "balanced" && (this.applyPerformancePreset("quality"), this.hybridCooldownTicks = 18);
+    }
+  }
+  applyQualityDegradationStep() {
+    for (let e = 0; e < this.qualityGovernor.degradationOrder.length; e++) {
+      const t = this.qualityGovernor.degradationOrder[e];
+      if (t === "postprocessing") {
+        if (this.postProcessing.bloom || this.postProcessing.vignette || this.postProcessing.trailStrength > 0.64) {
+          this.postProcessing = {
+            ...this.postProcessing,
+            bloom: !1,
+            vignette: !1,
+            trailStrength: Math.max(0.56, this.postProcessing.trailStrength - 0.08)
+          };
+          return;
+        }
+      } else if (t === "preset") {
+        if (this.performancePreset === "quality") {
+          this.applyPerformancePreset("balanced");
+          return;
+        }
+        if (this.performancePreset === "balanced") {
+          this.applyPerformancePreset("performance");
+          return;
+        }
+      } else if (t === "simulation-rate") {
+        const i = 1e3 / this.simulationStepMs;
+        if (i > 30) {
+          this.setSimulationStepHz(Math.max(30, i - 10));
+          return;
+        }
+      }
+    }
+  }
+  applyQualityRecoveryStep() {
+    const e = 1e3 / this.simulationStepMs;
+    if (e < 60) {
+      this.setSimulationStepHz(Math.min(60, e + 10));
       return;
     }
-    if (t < 14 && this.performancePreset === "performance") {
-      this.setPerformancePreset("balanced"), this.hybridCooldownTicks = 12;
+    if (!this.postProcessing.bloom || !this.postProcessing.vignette) {
+      this.postProcessing = {
+        ...this.postProcessing,
+        bloom: !0,
+        vignette: !0,
+        trailStrength: Math.min(0.84, this.postProcessing.trailStrength + 0.05)
+      };
       return;
     }
-    t < 10 && this.performancePreset === "balanced" && (this.setPerformancePreset("quality"), this.hybridCooldownTicks = 18);
+    if (this.performancePreset === "performance") {
+      this.applyPerformancePreset("balanced");
+      return;
+    }
+    this.performancePreset === "balanced" && this.applyPerformancePreset("quality");
+  }
+  applyPerformancePreset(e) {
+    const t = pe(e);
+    this.performancePreset = e, this.config = { ...t.config }, this.postProcessing = { ...t.postProcessing };
   }
   tryInitializeWasmKernel() {
-    this.simulationBackend === "wasm" && (this.wasmKernel || (this.wasmKernel = new Wt(), this.wasmKernel.init().then(() => {
-      var t;
-      (t = this.wasmKernel) != null && t.ready && (this.wasmMulAdd = (e, i, r) => this.wasmKernel.mulAdd(e, i, r));
+    this.simulationBackend === "wasm" && (this.wasmKernel || (this.wasmKernel = new $e(), this.wasmKernel.init().then(() => {
+      var e;
+      (e = this.wasmKernel) != null && e.ready && (this.wasmMulAdd = (t, i, s) => this.wasmKernel.mulAdd(t, i, s));
     }).catch(() => {
       this.wasmMulAdd = null;
     })));
   }
   bindRendererErrorHandler() {
-    var t, e;
-    (e = (t = this.renderer).setErrorHandler) == null || e.call(t, (i) => {
+    var e, t;
+    (t = (e = this.renderer).setErrorHandler) == null || t.call(e, (i) => {
       this.handleRendererRuntimeError(i);
     });
   }
-  handleRendererRuntimeError(t) {
+  handleRendererRuntimeError(e) {
     if (!this.runtimeBackendFallbackEnabled) return;
-    const e = this.resolveFallbackBackend(this.renderBackend);
-    if (!e) return;
+    const t = this.resolveFallbackBackend(this.renderBackend);
+    if (!t) return;
     let i = null;
     try {
-      i = N(this.canvas, this.maxParticles, e, {
+      i = O(this.canvas, this.maxParticles, t, {
         workerTransportCompression: this.workerTransportCompression
       });
     } catch {
@@ -1621,35 +2045,140 @@ class Xt {
     }
     i && (this.renderer.dispose(), this.renderer = i.renderer, this.renderBackend = i.backend, this.bindRendererErrorHandler());
   }
-  resolveFallbackBackend(t) {
-    return t === "offscreen-worker" ? "webgl2" : t === "webgl2" ? "canvas2d" : null;
+  resolveFallbackBackend(e) {
+    return e === "offscreen-worker" ? "webgl2" : e === "webgl2" ? "canvas2d" : null;
   }
   sampleMemoryStats() {
-    const e = performance.memory;
-    e && (typeof e.usedJSHeapSize == "number" && (this.usedJSHeapSize = e.usedJSHeapSize), typeof e.jsHeapSizeLimit == "number" && (this.jsHeapSizeLimit = e.jsHeapSizeLimit));
+    const t = performance.memory;
+    t && (typeof t.usedJSHeapSize == "number" && (this.usedJSHeapSize = t.usedJSHeapSize), typeof t.jsHeapSizeLimit == "number" && (this.jsHeapSizeLimit = t.jsHeapSizeLimit));
   }
-  configureRandom(t) {
-    if (typeof t != "number") {
+  configureRandom(e) {
+    if (typeof e != "number") {
       this.seededRandom = null, this.random = null;
       return;
     }
-    this.seededRandom = new jt(t), this.random = () => this.seededRandom.next();
+    this.seededRandom = new Xe(e), this.random = () => this.seededRandom.next();
   }
   getRandom() {
     return this.random ?? Math.random;
   }
 }
+class rt {
+  constructor(e, t = {}) {
+    r(this, "engine");
+    r(this, "root");
+    r(this, "statsEl");
+    r(this, "options");
+    r(this, "timer", null);
+    r(this, "lastReplay", null);
+    this.engine = e, this.options = {
+      container: t.container ?? document.body,
+      title: t.title ?? "Grit Control Center",
+      refreshMs: t.refreshMs ?? 300,
+      showReplay: t.showReplay ?? !0,
+      showQualityGovernor: t.showQualityGovernor ?? !0,
+      showScheduler: t.showScheduler ?? !0
+    }, this.root = document.createElement("aside"), this.root.setAttribute("aria-label", "Grit Control Center"), this.root.style.cssText = [
+      "position:fixed",
+      "right:12px",
+      "top:12px",
+      "z-index:9999",
+      "width:320px",
+      "max-width:90vw",
+      "padding:12px",
+      "border-radius:12px",
+      "background:rgba(10,14,20,.88)",
+      "border:1px solid rgba(255,255,255,.12)",
+      "backdrop-filter: blur(8px)",
+      "font:12px/1.4 ui-sans-serif,system-ui",
+      "color:#eef2f7",
+      "box-shadow:0 10px 28px rgba(0,0,0,.35)"
+    ].join(";");
+    const i = document.createElement("h2");
+    i.textContent = this.options.title, i.style.cssText = "margin:0 0 8px 0;font-size:13px;letter-spacing:.02em", this.root.appendChild(i);
+    const s = document.createElement("div");
+    s.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px";
+    const a = document.createElement("button");
+    a.textContent = "Pausar", a.onclick = () => {
+      const c = !this.engine.getPaused();
+      this.engine.setPaused(c), a.textContent = c ? "Continuar" : "Pausar";
+    }, s.appendChild(a);
+    const n = document.createElement("button");
+    n.textContent = "Limpar", n.onclick = () => this.engine.clear(), s.appendChild(n);
+    const l = document.createElement("select");
+    ["performance", "balanced", "quality"].forEach((c) => {
+      const h = document.createElement("option");
+      h.value = c, h.textContent = c, l.appendChild(h);
+    }), l.value = this.engine.getPerformancePreset(), l.onchange = () => this.engine.setPerformancePreset(l.value), s.appendChild(this.labeled("Preset", l));
+    const o = document.createElement("select");
+    if (["grid", "bruteforce"].forEach((c) => {
+      const h = document.createElement("option");
+      h.value = c, h.textContent = c, o.appendChild(h);
+    }), o.value = this.engine.getSpatialBackend(), o.onchange = () => this.engine.setSpatialBackend(o.value), s.appendChild(this.labeled("Spatial", o)), this.options.showScheduler) {
+      const c = this.engine.getSchedulerConfig(), h = document.createElement("input");
+      h.type = "range", h.min = "20", h.max = "120", h.value = String(Math.round(c.simulationStepHz)), h.oninput = () => this.engine.setSimulationStepHz(Number(h.value)), s.appendChild(this.labeled("Sim Hz", h));
+      const d = document.createElement("input");
+      d.type = "range", d.min = "10", d.max = "120", d.value = String(Math.round(c.externalStepHz)), d.oninput = () => this.engine.setExternalStepHz(Number(d.value)), s.appendChild(this.labeled("Ext Hz", d));
+    }
+    if (this.options.showQualityGovernor) {
+      const c = this.engine.getQualityGovernorPolicy(), h = document.createElement("input");
+      h.type = "checkbox", h.checked = c.enabled, h.onchange = () => this.engine.setQualityGovernorPolicy({ enabled: h.checked }), s.appendChild(this.labeled("Q Governor", h));
+    }
+    if (this.options.showReplay) {
+      const c = document.createElement("button");
+      c.textContent = "Rec", c.onclick = () => {
+        this.engine.startReplayRecording(1200);
+      }, s.appendChild(c);
+      const h = document.createElement("button");
+      h.textContent = "Stop Rec", h.onclick = () => {
+        this.lastReplay = this.engine.stopReplayRecording();
+      }, s.appendChild(h);
+      const d = document.createElement("button");
+      d.textContent = "Play Replay", d.onclick = () => {
+        this.lastReplay && this.engine.playReplay(this.lastReplay, !0);
+      }, s.appendChild(d);
+      const x = document.createElement("button");
+      x.textContent = "Stop Replay", x.onclick = () => this.engine.stopReplayPlayback(), s.appendChild(x);
+    }
+    this.root.appendChild(s), this.statsEl = document.createElement("pre"), this.statsEl.style.cssText = "margin:10px 0 0;max-height:220px;overflow:auto;padding:8px;background:rgba(0,0,0,.25);border-radius:8px", this.root.appendChild(this.statsEl), this.options.container.appendChild(this.root), this.refresh(), this.timer = window.setInterval(() => this.refresh(), this.options.refreshMs);
+  }
+  dispose() {
+    this.timer !== null && (window.clearInterval(this.timer), this.timer = null), this.root.remove();
+  }
+  refresh() {
+    const e = this.engine.getStats(), t = this.engine.getSchedulerConfig(), i = this.engine.getJobSystemSnapshot();
+    this.statsEl.textContent = [
+      `fps=${e.fps} particles=${e.particleCount}`,
+      `p95=${e.frameTimeP95Ms.toFixed(2)} p99=${e.frameTimeP99Ms.toFixed(2)}`,
+      `backend=${e.spatialBackend} preset=${e.effectivePreset}`,
+      `simMs=${e.subsystemMs.simulation.toFixed(2)} extMs=${e.subsystemMs.external.toFixed(2)} renderMs=${e.subsystemMs.render.toFixed(2)}`,
+      `jobs=${i.executedJobs} batches=${i.executedBatches} jobMs=${i.totalJobMs.toFixed(2)}`,
+      `simHz=${t.simulationStepHz.toFixed(1)} extHz=${t.externalStepHz.toFixed(1)}`
+    ].join(`
+`);
+  }
+  labeled(e, t) {
+    const i = document.createElement("label");
+    i.style.cssText = "display:flex;flex-direction:column;gap:4px";
+    const s = document.createElement("span");
+    return s.textContent = e, s.style.cssText = "opacity:.78", i.appendChild(s), i.appendChild(t), i;
+  }
+}
 export {
-  O as Canvas2DRenderer,
-  Dt as DEFAULT_ADAPTIVE_BUDGET,
-  dt as DEFAULT_POST_PROCESSING,
+  N as Canvas2DRenderer,
+  He as DEFAULT_ADAPTIVE_BUDGET,
+  fe as DEFAULT_POST_PROCESSING,
+  me as DEFAULT_QUALITY_GOVERNOR,
   W as DEFAULT_SIM_CONFIG,
-  Xt as GritEngine,
-  At as Obstacle,
-  Bt as OffscreenWorkerRenderer,
-  Ft as Particle,
-  Lt as SpatialGrid,
-  _t as WebGLRenderer,
-  Jt as listPerformancePresets,
-  ft as resolvePerformancePreset
+  rt as GritControlCenter,
+  st as GritEngine,
+  Qe as JobSystem,
+  Fe as Obstacle,
+  ze as OffscreenWorkerRenderer,
+  ae as Particle,
+  _e as SpatialGrid,
+  Te as WebGLRenderer,
+  ue as createSpatialBackend,
+  it as listPerformancePresets,
+  pe as resolvePerformancePreset
 };
